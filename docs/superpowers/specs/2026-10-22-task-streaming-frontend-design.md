@@ -129,7 +129,7 @@ State: `tasks: Map<id, TaskDto>`, `lastEventId`, `status`
    `Last-Event-ID`. `onopen`: status `open`; if this open follows an error, the
    hook reloads `GET /api/tasks` and replaces the map and `lastEventId` with it.
    *(Builder's call)* This covers a server whose ids went backwards (database
-   reset with `docker compose down -v`, or a restarted in-memory mock): without
+   reset with `docker compose down -v`): without
    it every new event would look like a duplicate and old timers would hang at
    `finishing…`. Events with ids above the reloaded `lastEventId` still apply.
    Holding is per attempt: each reload attempt holds stream events until it
@@ -139,8 +139,9 @@ State: `tasks: Map<id, TaskDto>`, `lastEventId`, `status`
    500 events is abandoned the same way (its eventual result is ignored) and
    a fresh one starts after 2 s. Only the newest attempt is applied when
    reconnects overlap. Trade-off: after a database reset, events applied
-   between failed attempts are judged against the old, higher `lastEventId`
-   and dropped until a reload succeeds.
+   outside a successful attempt (released by a failed or abandoned attempt,
+   or applied between attempts) are judged against the old, higher
+   `lastEventId` and dropped until a reload succeeds.
    If the browser gives up (`readyState === CLOSED`), the hook reopens the
    stream itself after a short delay with `?after=lastEventId`.
 5. On unmount: close the EventSource.
@@ -191,12 +192,10 @@ blink, `steps(19)` loader, `leetflash`, swap. Everything honours
 - Unit tests for countdown formatting and the progress step calculation.
 - A light component test that the running/archive split follows task state.
 - Manual check in the browser against the real backend (start, watch, cancel, history,
-  reconnect by restarting the backend), then against the real backend once Tasks
-  5–6 are merged, plus `stream-verifier` since its scope names the frontend
-  stream hook.
+  reconnect by restarting the backend), plus `stream-verifier` since its scope
+  names the frontend stream hook.
 
 ## Left to the builder
 
 - File layout inside `frontend/`, component boundaries and naming.
 - Exact spacing and type sizes within the design-system scale.
-- Mock server internals.

@@ -67,9 +67,12 @@ export function useTaskStream(): {
     // attempt applies what it held and retries after RETRY_MS; events between
     // attempts go straight to the reducer. An attempt that holds
     // RESYNC_HOLD_LIMIT events is abandoned the same way, under a new gen.
-    // Trade-off: after a database reset, events applied directly between
-    // failed attempts are judged against the old, higher lastEventId and
-    // dropped until a list reload succeeds.
+    // An attempt started by a newer onopen inherits what the superseded one
+    // held, so `buffered` may be non-empty at its start; the cap still bounds
+    // it. Trade-off: after a database reset, events applied outside a
+    // successful attempt (released by a failed or abandoned attempt, or
+    // applied between attempts) are judged against the old, higher
+    // lastEventId and dropped until a list reload succeeds.
     const resync = (gen: number) => {
       resyncing = true;
       listTasks().then(

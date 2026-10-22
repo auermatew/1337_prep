@@ -299,6 +299,31 @@ describe('useTaskStream', () => {
     expect(mockList).toHaveBeenCalledTimes(3);
   });
 
+  it('ignores the rejection of an abandoned attempt', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    let reject!: (e: Error) => void;
+    mockList.mockReturnValueOnce(new Promise((_, r) => (reject = r)));
+    mockList.mockReturnValue(new Promise(() => {}));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    const last = 4 + RESYNC_HOLD_LIMIT;
+    act(() => {
+      for (let id = 5; id <= last; id++) es().emit(change(id, task('a')));
+    });
+    expect(result.current.lastEventId).toBe(last);
+    await act(async () => reject(new Error('boom')));
+    expect(result.current.error).toBeNull();
+    expect(mockList).toHaveBeenCalledTimes(2);
+    await advance(2000);
+    expect(mockList).toHaveBeenCalledTimes(3);
+    await advance(4000);
+    expect(mockList).toHaveBeenCalledTimes(3);
+    expect(result.current.error).toBeNull();
+  });
+
   it('stops retrying a failed resync once a newer one supersedes it', async () => {
     mockList.mockResolvedValueOnce(list([task('a')], 4));
     mockList.mockRejectedValueOnce(new Error('boom'));
