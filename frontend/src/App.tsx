@@ -45,7 +45,7 @@ export default function App() {
           >
             GITHUB ↗
           </a>
-          <StreamLabel status={status} lastEventId={lastEventId} />
+          <StreamLabel status={status} />
         </div>
       </header>
       {error && (

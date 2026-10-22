@@ -122,4 +122,12 @@ describe('App', () => {
     expect(screen.queryByText('TRANSCRIPTS', { selector: 'p' })).toBeNull();
     expect(screen.getByRole('button', { name: 'TRANSCRIPTS' })).toBeTruthy();
   });
+
+  it('shows only the connection status in the header', () => {
+    withTasks([]);
+    const { container } = render(<App />);
+    const top = container.querySelector('.top')!;
+    expect(top.textContent).toContain('CONNECTED');
+    expect(top.textContent).not.toContain('LAST ID');
+  });
 });
