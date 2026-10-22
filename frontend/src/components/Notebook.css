@@ -9,6 +9,7 @@
 }
 
 .nb-paper {
+  position: relative;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
@@ -34,7 +35,68 @@
   object-fit: contain;
 }
 
+/* Draw layer: covers both pages; in scroll mode it lets touches through. */
+.nb-draw {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.nb-paper[data-mode='scroll'] .nb-draw {
+  pointer-events: none;
+}
+
+.nb-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Two-cell segmented control, ink fill on the active cell (phones only:
+   desktop is always pen). */
+.nb-mode {
+  display: none;
+  box-shadow: var(--ink-shadow-ring);
+}
+
+.nb-mode button {
+  padding: 7px 9px;
+  border: 0;
+  border-radius: var(--radius-none);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: var(--label-weight);
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.nb-mode button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.nb-mode button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
 @media (max-width: 599px) {
+  .nb-meta {
+    display: none;
+  }
+  .nb-mode {
+    display: flex;
+  }
   .nb-paper {
     grid-template-columns: 1fr;
     gap: 24px;
