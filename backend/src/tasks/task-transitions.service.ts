@@ -9,7 +9,7 @@ import {
 } from './task.types.js';
 
 // Serialises all transitions so event ids are assigned in commit order.
-const TRANSITION_LOCK_KEY = 4242001;
+export const TRANSITION_LOCK_KEY = 4242001;
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;

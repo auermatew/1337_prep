@@ -2,7 +2,10 @@ import { INestApplication } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 import { Client } from 'pg';
 import { PrismaService } from '../src/prisma/prisma.service.js';
-import { TaskTransitions } from '../src/tasks/task-transitions.service.js';
+import {
+  TRANSITION_LOCK_KEY,
+  TaskTransitions,
+} from '../src/tasks/task-transitions.service.js';
 import { TASK_EVENTS_CHANNEL, TaskChange } from '../src/tasks/task.types.js';
 import { createApp } from './helpers/app.js';
 import { resetDb } from './helpers/db.js';
@@ -12,6 +15,7 @@ describe('TaskTransitions (e2e)', () => {
   let prisma: PrismaService;
   let transitions: TaskTransitions;
   let listener: Client | undefined;
+  let locker: Client | undefined;
 
   beforeEach(async () => {
     ({ app } = await createApp());
@@ -23,6 +27,9 @@ describe('TaskTransitions (e2e)', () => {
   afterEach(async () => {
     await listener?.end();
     listener = undefined;
+    // Ending the session releases a still-held advisory lock as well.
+    await locker?.end();
+    locker = undefined;
     await app.close();
   });
 
@@ -129,5 +136,40 @@ describe('TaskTransitions (e2e)', () => {
     for (let i = 1; i < ids.length; i++) {
       expect(ids[i]).toBeGreaterThan(ids[i - 1]);
     }
+  });
+
+  it('waits for the transition advisory lock before writing', async () => {
+    const running = await transitions.create({
+      name: 'a',
+      durationSeconds: 60,
+    });
+    locker = new Client({ connectionString: process.env.DATABASE_URL });
+    await locker.connect();
+    await locker.query('SELECT pg_advisory_lock($1)', [TRANSITION_LOCK_KEY]);
+
+    let settled = 0;
+    const track = <T>(p: Promise<T>): Promise<T> =>
+      p.finally(() => {
+        settled++;
+      });
+    const created = track(
+      transitions.create({ name: 'b', durationSeconds: 60 }),
+    );
+    const cancelled = track(
+      transitions.transition(running.task.id, 'cancelled'),
+    );
+    try {
+      await new Promise((r) => setTimeout(r, 200));
+      expect(settled).toBe(0);
+      expect(await prisma.taskEvent.count()).toBe(1);
+    } finally {
+      await locker.query('SELECT pg_advisory_unlock($1)', [
+        TRANSITION_LOCK_KEY,
+      ]);
+    }
+
+    expect((await created).task.state).toBe('running');
+    expect((await cancelled)?.task.state).toBe('cancelled');
+    expect(await prisma.taskEvent.count()).toBe(3);
   });
 });
