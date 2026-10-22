@@ -137,9 +137,9 @@ describe('App', () => {
       { ...task('y', 'finished'), id: 'bbbb1111-2222-4333-8444-555566667777' },
     ]);
     render(<App />);
-    expect(
-      screen.getByRole('button', { name: /aaaa1111-2222/ }).textContent,
-    ).toBe('aaaa1111');
+    expect(screen.getByText('aaaa1111').getAttribute('title')).toBe(
+      'aaaa1111-2222-4333-8444-555566667777',
+    );
     const row = archiveRows()[0];
     expect(row.textContent).toContain('bbbb1111');
   });

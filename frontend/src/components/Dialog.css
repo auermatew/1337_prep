@@ -48,12 +48,13 @@
   }
 }
 
-/* Drawer variant: full height, pinned to the right edge, slides in. */
+/* Drawer variant: full height, pinned to the left edge beside its tab,
+   slides in from and back out to the left. */
 .dlg.dlg-drawer {
   width: min(440px, 100vw);
   height: 100dvh;
   max-height: 100dvh;
-  margin: 0 0 0 auto;
+  margin: 0 auto 0 0;
 }
 
 .dlg-drawer .win-body {
@@ -64,7 +65,7 @@
   height: 100%;
   max-height: none;
   margin-right: 0;
-  border-right: 0;
+  border-left: 0;
 }
 
 .dlg-drawer[open] .win {
@@ -73,7 +74,7 @@
 
 @keyframes dlg-drawer-in {
   from {
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
   to {
     transform: none;
@@ -93,7 +94,7 @@
     transform: none;
   }
   to {
-    transform: translateX(100%);
+    transform: translateX(-100%);
   }
 }
 

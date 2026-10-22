@@ -6,7 +6,9 @@ Small change on `feature/frontend`.
 
 - **Short task id** (first 8 characters of the UUID), muted mono:
   after the name in archive rows, and in the timer window footer.
-  Hover shows the full id; clicking copies the full id. live.log unchanged.
+  Hover shows the full id. Not copyable or selectable (the user asked to
+  drop click-to-copy). live.log unchanged. In timer windows it sits on the
+  state line, right-aligned, since the footer is full at 260px.
 - **Side tabs move to the left edge** (the right edge fights the scrollbar).
   The transcripts drawer slides in and out from the left, mirrored.
 
@@ -17,6 +19,4 @@ Small change on `feature/frontend`.
 
 ## My calls
 
-- After a copy the label reads `COPIED` for 1.2 s, then returns to the id.
-  If the clipboard is unavailable it just keeps showing the id.
 - Left tabs keep the same look; hover lifts toward the page (right).

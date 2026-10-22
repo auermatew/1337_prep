@@ -1,14 +1,15 @@
-/* Vertical ink tabs stacked on the right edge, purple square on top.
+/* Vertical ink tabs stacked on the left edge (the right edge is where the
+   scrollbar lives), purple square on top.
    Narrower than the page gutter (24px desktop, 16px phones) so they never
    cover content. */
 .side-tabs {
   position: fixed;
   top: 50%;
-  right: 0;
+  left: 0;
   z-index: 10;
   display: flex;
   flex-direction: column;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
   transform: translateY(-50%);
 }
@@ -43,7 +44,7 @@
 }
 
 .side-tab:hover {
-  transform: translate(-2px, -2px);
+  transform: translate(2px, -2px);
   box-shadow: var(--ink-shadow-hard-sm);
 }
 
@@ -53,7 +54,7 @@
 }
 
 /* Phones: the gutter is 16px, so the tabs stay inside it instead of
-   covering the right edge of rows. */
+   covering the left edge of rows. */
 @media (max-width: 599px) {
   .side-tab {
     gap: 8px;
