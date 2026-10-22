@@ -1,4 +1,5 @@
 import { INestApplication } from '@nestjs/common';
+import { Client } from 'pg';
 import { PrismaService } from '../src/prisma/prisma.service.js';
 import { TaskEventsListener } from '../src/tasks/task-events.listener.js';
 import { TaskTransitions } from '../src/tasks/task-transitions.service.js';
@@ -36,12 +37,16 @@ describe('TaskEventsListener (e2e)', () => {
 
   afterEach(async () => {
     const open = apps.splice(0);
+    const errors: unknown[] = [];
     for (const app of open) {
       try {
         await app.close();
-      } catch {
-        // keep closing the rest
+      } catch (err) {
+        errors.push(err); // keep closing the rest
       }
+    }
+    if (errors.length) {
+      throw new AggregateError(errors, 'app.close() failed during teardown');
     }
   });
 
@@ -132,5 +137,109 @@ describe('TaskEventsListener (e2e)', () => {
       next.event.id,
     ]);
     expect(listener.lastSeenId()).toBe(next.event.id);
+  });
+
+  it('reconnects when the connection drops during catch-up', async () => {
+    const a = await start();
+    const b = await start();
+    const prisma = a.get(PrismaService);
+    const listenerB = b.get(TaskEventsListener);
+    const received: TaskChange[] = [];
+    listenerB.changes$.subscribe((c) => received.push(c));
+
+    type Internals = { catchUp(): Promise<void> };
+    const internals = listenerB as unknown as Internals;
+    const original = internals.catchUp.bind(listenerB);
+    let killedDuringCatchUp = false;
+    const spy = vi.spyOn(internals, 'catchUp').mockImplementation(async () => {
+      if (!killedDuringCatchUp) {
+        killedDuringCatchUp = true;
+        const pid = listenerB.backendPid();
+        await prisma.$queryRaw`SELECT pg_terminate_backend(${pid}::int)`;
+        // Let the termination reach the pg client before the read finishes.
+        await new Promise((r) => setTimeout(r, 200));
+      }
+      return original();
+    });
+
+    await prisma.$queryRaw`SELECT pg_terminate_backend(${listenerB.backendPid()}::int)`;
+    await waitFor(() => killedDuringCatchUp);
+    await waitFor(() => listenerB.backendPid() !== null, 8000);
+    spy.mockRestore();
+    // Give any (wrongly) pending reconnect a chance, then check we listen.
+    await new Promise((r) => setTimeout(r, 300));
+    expect(listenerB.backendPid()).not.toBeNull();
+
+    const change = await a
+      .get(TaskTransitions)
+      .create({ name: 'after', durationSeconds: 60 });
+    await waitFor(() => received.length === 1);
+    expect(received[0]).toEqual(change);
+  });
+
+  it('does not leave an unhandled rejection when destroyed mid-reconnect', async () => {
+    const a = await start();
+    const b = await start();
+    const prisma = a.get(PrismaService);
+    const listenerB = b.get(TaskEventsListener);
+    const rejections: unknown[] = [];
+    const onRejection = (err: unknown) => rejections.push(err);
+    process.on('unhandledRejection', onRejection);
+    try {
+      type Internals = { catchUp(): Promise<void> };
+      let closing: Promise<void> | null = null;
+      vi.spyOn(listenerB as unknown as Internals, 'catchUp').mockImplementation(
+        () => {
+          closing = b.close();
+          return Promise.reject(new Error('boom during catch-up'));
+        },
+      );
+      await prisma.$queryRaw`SELECT pg_terminate_backend(${listenerB.backendPid()}::int)`;
+      await waitFor(() => closing !== null, 8000);
+      await closing;
+      await new Promise((r) => setTimeout(r, 300));
+      expect(rejections).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', onRejection);
+    }
+  });
+
+  it('ends a connection that is still being set up when destroyed', async () => {
+    const app = await start();
+    const listener = app.get(TaskEventsListener);
+    const probe = new PrismaService();
+    await probe.$connect();
+    const origConnect = Client.prototype.connect;
+    let connectedAndStalled = false;
+    const spy = vi
+      .spyOn(Client.prototype, 'connect')
+      .mockImplementation(async function (this: Client, ...args: unknown[]) {
+        await (
+          origConnect as unknown as (...a: unknown[]) => Promise<void>
+        ).apply(this, args);
+        if (
+          (
+            this as unknown as {
+              connectionParameters: { application_name?: string };
+            }
+          ).connectionParameters.application_name === 'task-events-listener'
+        ) {
+          connectedAndStalled = true;
+          await new Promise((r) => setTimeout(r, 500));
+        }
+      } as never);
+    try {
+      await probe.$queryRaw`SELECT pg_terminate_backend(${listener.backendPid()}::int)`;
+      await waitFor(() => connectedAndStalled, 8000);
+      await app.close();
+      apps.splice(0);
+      const rows = await probe.$queryRaw<{ n: bigint }[]>`
+        SELECT count(*) AS n FROM pg_stat_activity
+        WHERE application_name = 'task-events-listener'`;
+      expect(Number(rows[0].n)).toBe(0);
+    } finally {
+      spy.mockRestore();
+      await probe.$disconnect();
+    }
   });
 });

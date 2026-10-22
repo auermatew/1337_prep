@@ -29,6 +29,8 @@ export class TaskEventsListener implements OnModuleInit, OnModuleDestroy {
   readonly changes$: Observable<TaskChange> = this.subject.asObservable();
 
   private client: Client | null = null;
+  // Client (and its connect() run) that is still being set up.
+  private connecting: { client: Client; done: Promise<void> } | null = null;
   private lastSeen = 0;
   private destroyed = false;
   private retryTimer: NodeJS.Timeout | null = null;
@@ -58,17 +60,30 @@ export class TaskEventsListener implements OnModuleInit, OnModuleDestroy {
     if (this.retryTimer) clearTimeout(this.retryTimer);
     this.retryTimer = null;
     const client = this.client;
+    const inFlight = this.connecting;
     this.client = null;
     this.buffer = null;
     this.subject.complete();
-    await client?.end().catch(() => undefined);
+    await Promise.all([
+      client?.end().catch(() => undefined),
+      inFlight?.client.end().catch(() => undefined),
+    ]);
+    await inFlight?.done.catch(() => undefined);
   }
 
-  private async connect(initial: boolean): Promise<void> {
+  private connect(initial: boolean): Promise<void> {
     const client = new Client({
       connectionString: process.env.DATABASE_URL,
       application_name: 'task-events-listener',
     });
+    const done = this.runConnect(client, initial).finally(() => {
+      if (this.connecting?.client === client) this.connecting = null;
+    });
+    this.connecting = { client, done };
+    return done;
+  }
+
+  private async runConnect(client: Client, initial: boolean): Promise<void> {
     let failed = false;
     let established = false;
     const fail = (err?: Error) => {
@@ -107,8 +122,17 @@ export class TaskEventsListener implements OnModuleInit, OnModuleDestroy {
       this.client = null;
       client.removeAllListeners('notification');
       await client.end().catch(() => undefined);
-      if (initial || this.destroyed) throw err;
+      if (this.destroyed) return;
+      if (initial) throw err;
       this.logger.warn(`reconnect failed: ${(err as Error).message}`);
+      this.scheduleReconnect();
+      return;
+    }
+    if (failed) {
+      // The connection dropped while the baseline/catch-up read was running.
+      this.buffer = null;
+      if (this.destroyed) return;
+      this.logger.warn('listener connection lost during setup; reconnecting');
       this.scheduleReconnect();
       return;
     }
@@ -123,7 +147,9 @@ export class TaskEventsListener implements OnModuleInit, OnModuleDestroy {
     this.backoffMs = Math.min(this.backoffMs * 2, MAX_BACKOFF_MS);
     this.retryTimer = setTimeout(() => {
       this.retryTimer = null;
-      void this.connect(false);
+      this.connect(false).catch((err: Error) =>
+        this.logger.error(`reconnect crashed: ${err.message}`),
+      );
     }, delay);
   }
 
