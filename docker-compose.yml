@@ -1,0 +1,57 @@
+x-backend: &backend
+  profiles: [multi]
+  image: 1337test-backend
+  init: true
+  restart: on-failure:5
+  # Shutdown waits for in-flight transitions (up to ~20 s), beyond compose's default 10 s.
+  stop_grace_period: 25s
+  healthcheck:
+    test: [CMD, node, -e, "fetch('http://localhost:3000/api').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+    interval: 3s
+    timeout: 3s
+    retries: 10
+    start_period: 15s
+  environment:
+    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/tasks
+    PORT: '3000'
+    FRONTEND_ORIGIN: http://localhost:5173
+    STREAM_KEEPALIVE_MS: '15000'
+  depends_on:
+    postgres:
+      condition: service_healthy
+
+name: 1337test
+services:
+  postgres:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: tasks
+    ports:
+      - '5432:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql
+      - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d tasks']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+
+  # Two backend processes against the same Postgres: `docker compose --profile multi up -d --build --wait`.
+  # Inside a git worktree with Postgres already running, append `--no-deps backend-1 backend-2`
+  # (the postgres bind-mount path differs per checkout and would recreate it).
+  backend-1:
+    <<: *backend
+    build: ./backend
+    ports:
+      - '3001:3000'
+
+  backend-2:
+    <<: *backend
+    ports:
+      - '3002:3000'
+
+volumes:
+  pgdata:
