@@ -14,6 +14,7 @@ function secondsHint(seconds: string): string | null {
   if (!/^\d+$/.test(trimmed)) return null;
   const n = Number(trimmed);
   if (n > SECONDS_MAX) return 'HELL NAW';
+  if (n === 1337) return '= LEET';
   if (n < 60) return null;
   return `= ${formatDuration(n)}`;
 }

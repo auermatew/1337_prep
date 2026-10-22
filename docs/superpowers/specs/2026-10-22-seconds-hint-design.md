@@ -14,7 +14,7 @@ while typing, so nobody has to do the arithmetic.
   a hint fades in above the field, right-aligned, at half opacity.
 - Zero parts are left out: `1500` → `= 25M`, `3725` → `= 1H 02M 05S`,
   `7200` → `= 2H`, `3605` → `= 1H 05S`. Under 60 s: no hint. Over 86400:
-  `HELL NAW` (added on request).
+  `HELL NAW`; exactly 1337: `= LEET` (both added on request).
 - It fades out on blur or when the value is invalid. Motion: 0.25 s fade
   plus a 4px rise with `--ease-1337`; reduced motion: fade only.
 - The input's `aria-describedby` points at the hint (read on focus, not on
