@@ -41,6 +41,8 @@ export function useTaskStream(): {
     let source: EventSource | null = null;
     let timer: ReturnType<typeof setTimeout> | null = null;
     let hadError = false;
+    let resyncing = false;
+    let buffered: TaskChange[] = [];
 
     const connect = () => {
       const after = lastIdRef.current;
@@ -49,26 +51,40 @@ export function useTaskStream(): {
       );
       source = es;
       es.addEventListener('task', (e) => {
-        dispatch({
-          type: 'change',
-          change: JSON.parse((e as MessageEvent).data) as TaskChange,
-        });
+        const change = JSON.parse((e as MessageEvent).data) as TaskChange;
+        if (resyncing) buffered.push(change);
+        else dispatch({ type: 'change', change });
       });
       es.onopen = () => {
         setStatus('open');
-        if (hadError) {
-          hadError = false;
-          listTasks().then(
-            (list) => {
-              if (disposed) return;
-              dispatch({ type: 'reset', list });
-              setError(null);
-            },
-            (err) => {
-              if (!disposed) setError(describe(err));
-            },
-          );
-        }
+        if (!hadError) return;
+        hadError = false;
+        resyncing = true;
+        buffered = [];
+        listTasks().then(
+          (list) => {
+            if (disposed) return;
+            resyncing = false;
+            dispatch({ type: 'reset', list });
+            for (const change of buffered) {
+              if (
+                list.lastEventId === null ||
+                change.event.id > list.lastEventId
+              ) {
+                dispatch({ type: 'change', change });
+              }
+            }
+            buffered = [];
+            setError(null);
+          },
+          (err) => {
+            if (disposed) return;
+            resyncing = false;
+            for (const change of buffered) dispatch({ type: 'change', change });
+            buffered = [];
+            setError(describe(err));
+          },
+        );
       };
       es.onerror = () => {
         hadError = true;

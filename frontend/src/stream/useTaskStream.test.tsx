@@ -103,6 +103,36 @@ describe('useTaskStream', () => {
     expect(result.current.lastEventId).toBe(3);
   });
 
+  it('keeps events received while the resync fetch is pending', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    let resolve!: (l: TaskList) => void;
+    mockList.mockReturnValueOnce(new Promise((r) => (resolve = r)));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    act(() => es().emit(change(5, task('a', { state: 'finished' }))));
+    await act(async () => resolve(list([task('a')], 4)));
+    expect(result.current.tasks[0].state).toBe('finished');
+    expect(result.current.lastEventId).toBe(5);
+  });
+
+  it('applies low-id events received during a database-reset resync', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 59));
+    let resolve!: (l: TaskList) => void;
+    mockList.mockReturnValueOnce(new Promise((r) => (resolve = r)));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    act(() => es().emit(change(3, task('b', { state: 'finished' }))));
+    await act(async () => resolve(list([task('b')], 2)));
+    expect(result.current.tasks.map((t) => t.state)).toEqual(['finished']);
+    expect(result.current.lastEventId).toBe(3);
+  });
+
   it('recreates a closed source after 2s using the current lastEventId', async () => {
     mockList.mockResolvedValue(list([task('a')], 4));
     renderHook(() => useTaskStream());
