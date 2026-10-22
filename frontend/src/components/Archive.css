@@ -146,6 +146,7 @@
   }
   .arc-stat dd {
     font-size: 24px;
+    white-space: normal;
   }
   .arc .arc-dur {
     width: 0;
