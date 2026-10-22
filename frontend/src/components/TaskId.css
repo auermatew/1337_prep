@@ -1,0 +1,29 @@
+/* Muted mono id; ink and the purple underline grow on hover. */
+.task-id {
+  padding: 2px 0;
+  border: 0;
+  border-radius: var(--radius-none);
+  background: linear-gradient(var(--purple), var(--purple)) 0 100% / 0 1px
+    no-repeat;
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  cursor: copy;
+  transition:
+    color var(--dur-fast) ease,
+    background-size 0.3s var(--ease-1337);
+}
+
+.task-id:hover {
+  color: var(--ink);
+  background-size: 100% 1px;
+}
+
+.task-id:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}

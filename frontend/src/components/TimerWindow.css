@@ -2,6 +2,13 @@
   padding: 16px 16px 18px;
 }
 
+.tw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .tw-state {
   display: block;
   font-family: var(--font-mono);

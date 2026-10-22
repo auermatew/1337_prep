@@ -87,11 +87,22 @@
 }
 
 .arc td.arc-name {
-  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
   font-size: 13px;
   font-weight: var(--label-weight);
+}
+
+.arc td.arc-name > * {
+  vertical-align: middle;
+}
+
+/* Name truncates; the short id after it always stays visible. */
+.arc-name-text {
+  display: inline-block;
+  max-width: calc(100% - 9ch - 10px);
+  margin-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .arc-state {

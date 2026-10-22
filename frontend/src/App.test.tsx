@@ -130,4 +130,17 @@ describe('App', () => {
     expect(top.textContent).toContain('CONNECTED');
     expect(top.textContent).not.toContain('LAST ID');
   });
+
+  it('shows the short task id in archive rows and timer windows', () => {
+    withTasks([
+      { ...task('x', 'running'), id: 'aaaa1111-2222-4333-8444-555566667777' },
+      { ...task('y', 'finished'), id: 'bbbb1111-2222-4333-8444-555566667777' },
+    ]);
+    render(<App />);
+    expect(
+      screen.getByRole('button', { name: /aaaa1111-2222/ }).textContent,
+    ).toBe('aaaa1111');
+    const row = archiveRows()[0];
+    expect(row.textContent).toContain('bbbb1111');
+  });
 });

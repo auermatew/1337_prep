@@ -8,6 +8,7 @@ import {
   remainingMs,
 } from '../time/format';
 import { History } from './History';
+import { TaskId } from './TaskId';
 import { Window } from './Window';
 import './TimerWindow.css';
 
@@ -124,7 +125,10 @@ export function TimerWindow({
         footer={footer}
         className={running ? 'tw' : 'tw leet-flash'}
       >
-        <StateLine task={task} remaining={remaining} />
+        <div className="tw-head">
+          <StateLine task={task} remaining={remaining} />
+          <TaskId id={task.id} />
+        </div>
         {showHistory ? (
           <div className="tw-history">
             <History taskId={task.id} refreshKey={newestEventId} />

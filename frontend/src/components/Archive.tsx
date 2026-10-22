@@ -3,6 +3,7 @@ import type { TaskDto } from '../api/types';
 import { formatClock, formatCountdown, formatSpent } from '../time/format';
 import { archiveStats } from '../time/stats';
 import { History } from './History';
+import { TaskId } from './TaskId';
 import './Archive.css';
 
 const PAGE = 20;
@@ -72,8 +73,11 @@ export const Archive = memo(function Archive({
             return (
               <Fragment key={t.id}>
                 <tr className={isOpen ? 'arc-row open' : 'arc-row'}>
-                  <td className="arc-name" title={t.name}>
-                    {t.name}
+                  <td className="arc-name">
+                    <span className="arc-name-text" title={t.name}>
+                      {t.name}
+                    </span>
+                    <TaskId id={t.id} />
                   </td>
                   <td className="arc-state">
                     {t.state === 'finished' ? (
