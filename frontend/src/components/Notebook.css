@@ -1,19 +1,49 @@
-/* Portrait picture: the dialog hugs the image instead of the wide default. */
+/* Two-page spread. The pages are transparent, so they sit on fixed notebook
+   paper (dot grid, centre fold) that stays paper even in the dark theme. */
 .dlg.dlg-notebook {
-  width: fit-content;
-  max-width: calc(100vw - 32px);
+  width: min(1100px, calc(100vw - 32px));
 }
 
 .dlg-notebook .win-body {
   padding: 0;
-  background: #fff;
 }
 
-.nb-img {
+.nb-paper {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 24px 20px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 14px),
+      rgb(0 0 0 / 0.045) calc(50% - 1px),
+      #cfc6b3 calc(50% - 0.5px) calc(50% + 0.5px),
+      rgb(0 0 0 / 0.045) calc(50% + 1px),
+      transparent calc(50% + 14px)
+    ),
+    radial-gradient(#d6cebd 1px, transparent 1.3px) 0 0 / 18px 18px,
+    #f7f3ea;
+}
+
+.nb-page {
   display: block;
-  width: auto;
+  width: 100%;
   height: auto;
-  max-width: 100%;
-  max-height: calc(100dvh - 160px);
-  margin: 0 auto;
+  max-height: calc(100dvh - 180px);
+  object-fit: contain;
+}
+
+@media (max-width: 599px) {
+  .nb-paper {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 16px 12px;
+    background:
+      radial-gradient(#d6cebd 1px, transparent 1.3px) 0 0 / 18px 18px,
+      #f7f3ea;
+  }
+  .nb-page {
+    max-height: none;
+  }
 }

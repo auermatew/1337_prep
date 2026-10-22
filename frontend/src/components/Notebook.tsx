@@ -3,7 +3,7 @@ import { Dialog } from './Dialog';
 import './SideTabs.css';
 import './Notebook.css';
 
-// A tab pinned to the right edge that opens the handwritten planning notes.
+// A side tab that opens the handwritten planning notes as a two-page spread.
 export function Notebook() {
   const [open, setOpen] = useState(false);
   const close = () => setOpen(false);
@@ -14,7 +14,7 @@ export function Notebook() {
         NOTES
       </button>
       <Dialog
-        title="notebook.webp"
+        title="notebook/"
         className="dlg-notebook"
         open={open}
         onClose={close}
@@ -31,14 +31,24 @@ export function Notebook() {
           </>
         }
       >
-        <img
-          className="nb-img"
-          src="/notebook.webp"
-          alt="Handwritten planning notes"
-          width={1052}
-          height={1494}
-          loading="lazy"
-        />
+        <div className="nb-paper">
+          <img
+            className="nb-page"
+            src="/notes-1.webp"
+            alt="Notes, page 1"
+            width={1052}
+            height={1494}
+            loading="lazy"
+          />
+          <img
+            className="nb-page"
+            src="/notes-2.png"
+            alt="Notes, page 2"
+            width={1055}
+            height={1491}
+            loading="lazy"
+          />
+        </div>
       </Dialog>
     </>
   );

@@ -6,14 +6,19 @@ import { Notebook } from './Notebook';
 afterEach(cleanup);
 
 describe('Notebook', () => {
-  it('opens the notes picture and closes it again', async () => {
+  it('opens the two notebook pages and closes again', async () => {
     const user = userEvent.setup();
     render(<Notebook />);
     await user.click(screen.getByRole('button', { name: 'NOTES' }));
-    const dialog = screen.getByRole('dialog', { name: 'notebook.webp' });
+    const dialog = screen.getByRole('dialog', { name: 'notebook/' });
     expect(dialog.hasAttribute('open')).toBe(true);
-    const img = within(dialog).getByAltText('Handwritten planning notes');
-    expect(img.getAttribute('src')).toBe('/notebook.webp');
+    const pages = within(dialog).getAllByRole('img');
+    expect(
+      pages.map((p) => [p.getAttribute('alt'), p.getAttribute('src')]),
+    ).toEqual([
+      ['Notes, page 1', '/notes-1.webp'],
+      ['Notes, page 2', '/notes-2.png'],
+    ]);
     await user.click(within(dialog).getByRole('button', { name: 'CLOSE' }));
     expect(dialog.hasAttribute('open')).toBe(false);
   });
