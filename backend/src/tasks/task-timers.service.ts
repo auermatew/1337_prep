@@ -12,6 +12,9 @@ import { TaskChange } from './task.types.js';
 
 const RETRY_DELAY_MS = 1000;
 
+const errMessage = (err: unknown): string =>
+  err instanceof Error ? err.message : String(err);
+
 /**
  * Per-process timers that finish running tasks when they expire. Every
  * process arms a timer for every running task; the conditional transition
@@ -24,6 +27,7 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
   private readonly subscription: Subscription;
   // Tasks whose timer fired and whose transition is still in flight.
   private readonly firing = new Map<string, { cleared: boolean }>();
+  private readonly inFlight = new Set<Promise<void>>();
   private destroyed = false;
   // While recovery runs: ids that already got a change through changes$.
   private touched: Set<string> | null = null;
@@ -34,9 +38,13 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
     private readonly prisma: PrismaService,
   ) {
     // Subscribe before recovery reads, so nothing falls between the two.
-    this.subscription = this.listener.changes$.subscribe((change) =>
-      this.onChange(change),
-    );
+    this.subscription = this.listener.changes$.subscribe((change) => {
+      try {
+        this.onChange(change);
+      } catch (err) {
+        this.logger.error(`handling task change failed: ${errMessage(err)}`);
+      }
+    });
   }
 
   armedCount(): number {
@@ -46,6 +54,8 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
   async onApplicationBootstrap(): Promise<void> {
     this.touched = new Set();
     try {
+      // If this read fails, bootstrap fails and the process exits. That is
+      // intentional (fail fast, like the listener's first connect).
       const running = await this.prisma.task.findMany({
         where: { state: 'running' },
       });
@@ -59,11 +69,13 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
     }
   }
 
-  onModuleDestroy(): void {
+  async onModuleDestroy(): Promise<void> {
     this.destroyed = true;
     this.subscription.unsubscribe();
     for (const timer of this.timers.values()) clearTimeout(timer);
     this.timers.clear();
+    // Let transitions already running finish, so nothing writes after us.
+    await Promise.allSettled([...this.inFlight]);
   }
 
   private onChange({ task }: TaskChange): void {
@@ -81,7 +93,10 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
     if (this.destroyed) return;
     this.clear(taskId);
     const timer = setTimeout(
-      () => void this.fire(taskId),
+      () => {
+        const run = this.fire(taskId).finally(() => this.inFlight.delete(run));
+        this.inFlight.add(run);
+      },
       Math.max(0, delayMs),
     );
     this.timers.set(taskId, timer);
@@ -103,7 +118,7 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
     } catch (err) {
       if (this.destroyed || state.cleared) return;
       this.logger.warn(
-        `finishing task ${taskId} failed: ${(err as Error).message}; retrying`,
+        `finishing task ${taskId} failed: ${errMessage(err)}; retrying`,
       );
       this.arm(taskId, RETRY_DELAY_MS);
     } finally {

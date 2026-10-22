@@ -6,6 +6,7 @@ import { PrismaService } from '../src/prisma/prisma.service.js';
 import { TaskEventsListener } from '../src/tasks/task-events.listener.js';
 import { TaskTimers } from '../src/tasks/task-timers.service.js';
 import { TaskTransitions } from '../src/tasks/task-transitions.service.js';
+import { toEventDto, toTaskDto } from '../src/tasks/task.types.js';
 import { createApp } from './helpers/app.js';
 import { resetDb } from './helpers/db.js';
 
@@ -96,8 +97,13 @@ describe('TaskTimers (e2e)', () => {
     await waitFor(() => timers.armedCount() === 1);
 
     await sleep(500);
-    await transitions.transition(task.id, 'cancelled');
-    await waitFor(() => timers.armedCount() === 0);
+    const cancelled = await transitions.transition(task.id, 'cancelled');
+    // Check right after the cancel was delivered, not by polling: a stale
+    // timer would remove itself at 1 s and hide the leak.
+    await waitFor(
+      () => app.get(TaskEventsListener).lastSeenId() === cancelled!.event.id,
+    );
+    expect(timers.armedCount()).toBe(0);
     await sleep(1500); // the point is that nothing happens
 
     expect(await finishedEvents(task.id)).toHaveLength(0);
@@ -126,11 +132,11 @@ describe('TaskTimers (e2e)', () => {
 
   it('recovery: arms a pending running task and finishes it on time', async () => {
     const now = Date.now();
-    const endsAt = new Date(now + 1000);
+    const endsAt = new Date(now + 3000);
     const task = await db.task.create({
       data: {
         name: 'pending',
-        durationSeconds: 1,
+        durationSeconds: 3,
         state: 'running',
         startedAt: new Date(now),
         endsAt,
@@ -188,36 +194,84 @@ describe('TaskTimers (e2e)', () => {
     expect(await finishedEvents(task.id)).toHaveLength(1);
   });
 
-  it('arms one timer when startup recovery reads a task that also arrives via NOTIFY', async () => {
-    const a = await start();
+  // An app that is built but not listening yet, so tests can hook into it.
+  async function build(): Promise<INestApplication> {
     const moduleRef = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
-    const b = moduleRef.createNestApplication();
-    configureApp(b);
-    apps.push(b);
+    const app = moduleRef.createNestApplication();
+    configureApp(app);
+    apps.push(app);
+    return app;
+  }
 
-    // Once B's listener is up, A creates a task in the middle of B's recovery
-    // read: the row is part of the read and its NOTIFY reaches B as well.
-    let created: Awaited<ReturnType<TaskTransitions['create']>> | undefined;
+  it('a second arm for the same task replaces the first: one timer, one transition call', async () => {
+    const now = Date.now();
+    const task = await db.task.create({
+      data: {
+        name: 'x',
+        durationSeconds: 2,
+        state: 'running',
+        startedAt: new Date(now),
+        endsAt: new Date(now + 2000),
+        updatedAt: new Date(now),
+      },
+    });
+    const b = await build();
+    const transitionsB = b.get(TaskTransitions);
+    const spy = vi.spyOn(transitionsB, 'transition');
+    await b.listen(0); // recovery arms the task (first arm)
+    const timers = b.get(TaskTimers);
+    expect(timers.armedCount()).toBe(1);
+
+    // A running change for the same task arrives (second arm).
+    const event = await db.taskEvent.create({
+      data: { taskId: task.id, state: 'running', at: new Date() },
+    });
+    const payload = JSON.stringify({
+      event: toEventDto(event),
+      task: toTaskDto(task),
+    });
+    await db.$executeRaw`SELECT pg_notify('task_events', ${payload})`;
+    await waitFor(
+      () => b.get(TaskEventsListener).lastSeenId() === Number(event.id),
+    );
+    expect(timers.armedCount()).toBe(1);
+
+    await waitForFinished(task.id);
+    await waitFor(() => timers.armedCount() === 0);
+    await sleep(300); // a leaked first timer would call transition again
+
+    const calls = spy.mock.calls.filter(([id]) => id === task.id);
+    expect(calls).toHaveLength(1);
+  });
+
+  it('recovery does not arm a task that was cancelled during the recovery read', async () => {
+    const a = await start();
+    const { task } = await a
+      .get(TaskTransitions)
+      .create({ name: 'x', durationSeconds: 60 });
+
+    const b = await build();
+    const listenerB = b.get(TaskEventsListener);
     const prismaB = b.get(PrismaService);
     const realFindMany = prismaB.task.findMany.bind(prismaB.task);
     vi.spyOn(prismaB.task, 'findMany').mockImplementation(((
       ...args: Parameters<typeof realFindMany>
     ) => {
       return (async () => {
-        created = await a
+        const rows = await realFindMany(...args); // still sees it running
+        const cancelled = await a
           .get(TaskTransitions)
-          .create({ name: 'x', durationSeconds: 60 });
-        return realFindMany(...args);
+          .transition(task.id, 'cancelled');
+        await waitFor(() => listenerB.lastSeenId() === cancelled!.event.id);
+        return rows;
       })();
     }) as typeof realFindMany);
 
     await b.listen(0);
-    const listenerB = b.get(TaskEventsListener);
-    await waitFor(() => listenerB.lastSeenId() === created?.event.id);
 
-    expect(b.get(TaskTimers).armedCount()).toBe(1);
+    expect(b.get(TaskTimers).armedCount()).toBe(0);
   });
 
   it('retries after a failed transition and then finishes the task', async () => {
