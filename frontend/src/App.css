@@ -9,6 +9,27 @@
 
 /* The shadow tokens hard-code #111; these follow --ink so the hard shadows
    and ghost rings survive the dark theme. Same values in light. */
+/* Label colour: ink-mute in light; in dark ink-mute equals muted, so labels
+   step up toward ink-soft to stay a notch stronger than dimmed data. */
+:root {
+  --label-mute: var(--ink-mute);
+}
+
+[data-theme='dark'] {
+  --label-mute: #bdb6aa;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --label-mute: #bdb6aa;
+  }
+}
+
+/* A modal <dialog> makes the page inert but not still: lock its scroll. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
 :root {
   --label-weight: 600;
   --ink-shadow-hard: 5px 5px 0 0 var(--ink);

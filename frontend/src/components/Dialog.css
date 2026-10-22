@@ -24,6 +24,7 @@
 .dlg .win-body {
   min-height: 0;
   overflow: auto;
+  overscroll-behavior: contain;
 }
 
 .dlg[open] .win {

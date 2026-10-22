@@ -31,7 +31,7 @@
   font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   text-transform: uppercase;
-  color: var(--ink-mute);
+  color: var(--label-mute);
 }
 
 .start-input {

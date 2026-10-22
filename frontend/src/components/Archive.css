@@ -30,7 +30,7 @@
   line-height: 1;
   font-weight: var(--label-weight);
   letter-spacing: 0.06em;
-  color: var(--ink-mute);
+  color: var(--label-mute);
 }
 
 .arc-stat dd {
@@ -65,7 +65,7 @@
   font-size: 9.5px;
   font-weight: var(--label-weight);
   letter-spacing: 0.06em;
-  color: var(--ink-mute);
+  color: var(--label-mute);
   border-bottom: var(--rule-hair) solid var(--line);
 }
 
