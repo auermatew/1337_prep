@@ -1,0 +1,48 @@
+/* Native modal dialog: no chrome of its own, the Window inside is the frame. */
+.dlg {
+  width: min(960px, calc(100vw - 32px));
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: visible;
+}
+
+.dlg::backdrop {
+  background: rgb(17 17 17 / 0.4);
+}
+
+.dlg .win {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 64px);
+  margin-right: 5px;
+}
+
+.dlg .win-body {
+  min-height: 0;
+  overflow: auto;
+}
+
+.dlg[open] .win {
+  animation: dlg-in var(--dur-swap) var(--ease-1337) both;
+}
+
+@keyframes dlg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dlg[open] .win {
+    animation: none;
+  }
+}

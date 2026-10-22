@@ -3,6 +3,7 @@ import { Archive } from './components/Archive';
 import { LiveLog, StreamLabel } from './components/LiveLog';
 import { StartForm } from './components/StartForm';
 import { TimerWindow } from './components/TimerWindow';
+import { Transcripts } from './components/Transcripts';
 import { useDeparting } from './stream/useDeparting';
 import { useTaskStream } from './stream/useTaskStream';
 import { useNow } from './time/useNow';
@@ -78,6 +79,8 @@ export default function App() {
         </div>
 
         <Archive tasks={ended} newestEventIds={newestEventIds} />
+
+        <Transcripts />
       </main>
     </div>
   );
