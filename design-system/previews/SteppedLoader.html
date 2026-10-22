@@ -1,0 +1,11 @@
+<!-- @dsCard group="Motion" height=200 subtitle="scaleX in steps(19) over 1.9s; live dot blinks steps(1) 1.6s" -->
+<!doctype html><html><head><link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"><style>html,body{margin:0;background:var(--paper);color:var(--ink)}.wrap{padding:20px 24px;font-family:var(--font-sans)}.tag{font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}button.replay{font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;background:none;border:1.5px solid var(--ink);color:var(--ink);padding:9px 12px;border-radius:0;cursor:pointer}button.replay:focus-visible{outline:2px solid var(--purple);outline-offset:2px}.row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.box{margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.ld{position:relative;height:14px;border:1.5px solid var(--ink)}.ld i{position:absolute;inset:2px;display:block}
+.ld i::after{content:"";position:absolute;inset:0;background:var(--ink);transform:scaleX(1);transform-origin:left center}
+.go .ld i::after{animation:ld 1.9s steps(19) both}@keyframes ld{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.live{display:inline-flex;align-items:center;gap:10px;font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase}
+.live::before{content:"";width:9px;height:9px;background:var(--purple);animation:blink 1.6s steps(1) infinite}@keyframes blink{50%{opacity:0}}
+</style></head><body><div class="wrap"><div class="row"><span class="tag">Indexing documents</span><button class="replay" id="b">Replay</button></div>
+<div class="box go" id="l"><div class="ld"><i></i></div><span class="live">Live</span></div></div>
+<script>function replay(el,cls){el.classList.remove(cls);void el.offsetWidth;el.classList.add(cls)};document.getElementById('b').onclick=()=>replay(document.getElementById('l'),'go')</script></body></html>

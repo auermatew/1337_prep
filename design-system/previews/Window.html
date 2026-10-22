@@ -1,0 +1,21 @@
+<!-- @dsCard group="Style" height=300 subtitle="1px ink frame, 28px pinstriped title bar, 5px hard shadow, mono meta footer" -->
+<!doctype html><html><head><link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"><style>
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+.p{padding:28px 32px 36px}
+.win{max-width:420px;border:1px solid var(--ink);background:var(--paper-raised);box-shadow:5px 5px 0 0 var(--ink)}
+.bar{height:28px;display:flex;align-items:center;gap:8px;padding:0 6px;border-bottom:1px solid var(--ink)}
+.menu{width:9px;height:9px;background:repeating-linear-gradient(var(--ink) 0 1.5px,transparent 1.5px 3.5px)}
+.box{width:12px;height:12px;border:1.5px solid var(--ink);box-sizing:border-box;flex:none}
+.stripe{flex:1;height:11px;background:repeating-linear-gradient(var(--ink) 0 1px,transparent 1px 2.5px)}
+.t{font:500 11px/1 var(--font-mono);padding:0 8px}
+.body{padding:12px 14px;font:11px/1.3 var(--font-mono)}
+.h{display:flex;justify-content:space-between;padding:0 0 6px 30px;border-bottom:1px solid var(--line);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.r{display:grid;grid-template-columns:30px 1fr 88px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line)}
+.r.on{color:var(--purple)}.bar-i{height:6px;background:var(--line-strong);position:relative}.bar-i i{position:absolute;inset:0 auto 0 0;background:var(--muted)}.on .bar-i i{background:var(--purple)}
+.foot{display:flex;justify-content:space-between;padding:9px 12px;border-top:1px solid var(--ink);font:500 9.5px/1 var(--font-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+</style></head><body><div class="p"><figure class="win" style="margin:0"><div class="bar"><span class="menu"></span><span class="box"></span><span class="stripe"></span><span class="t">use-cases.txt</span><span class="stripe"></span></div>
+<div class="body"><div class="h"><span>Use case</span><span>ROI estimate</span></div>
+<div class="r on"><span>[x]</span><span>Reporting</span><span class="bar-i"><i style="width:94%"></i></span></div>
+<div class="r"><span>[ ]</span><span>Contract review</span><span class="bar-i"><i style="width:70%"></i></span></div>
+<div class="r"><span>[ ]</span><span>Client email</span><span class="bar-i"><i style="width:48%"></i></span></div></div>
+<div class="foot"><span>Example</span><span>Use case = business case</span></div></figure></div></body></html>
