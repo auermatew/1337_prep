@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Archive } from './components/Archive';
+import { LeetWord } from './components/LeetWord';
 import { LiveLog, StreamLabel } from './components/LiveLog';
 import { Notebook } from './components/Notebook';
 import { StartForm } from './components/StartForm';
@@ -58,7 +59,8 @@ export default function App() {
         <section className="opener">
           <p className="tag">TIMERS</p>
           <h1 className="headline">
-            Start a <em>timer.</em>
+            Start a <LeetWord />
+            <em>.</em>
           </h1>
           <p className="lead">
             Every timer is shared with everyone watching. Start one, watch it

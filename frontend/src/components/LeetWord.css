@@ -1,0 +1,55 @@
+/* The word sits in a one-cell grid over an invisible "timer" ghost, so the
+   headline keeps its width while it reads 1337. */
+.leet-word {
+  display: inline-grid;
+}
+
+.leet-word::before {
+  content: attr(data-ghost);
+  grid-area: 1 / 1;
+  visibility: hidden;
+}
+
+.leet-word > span {
+  grid-area: 1 / 1;
+}
+
+/* Machine motion: stepped jitter, RGB-split shadow and sliced clipping. */
+.leet-word.glitch > span {
+  text-shadow:
+    2px 0 #ff4dd8,
+    -2px 0 #3cb9ff;
+  animation: leet-glitch 0.5s steps(1, end) both;
+}
+
+@keyframes leet-glitch {
+  0% {
+    transform: translate(2px, -1px);
+    clip-path: inset(0 0 55% 0);
+  }
+  12% {
+    transform: translate(-3px, 1px);
+    clip-path: inset(40% 0 0 0);
+  }
+  25% {
+    transform: translate(1px, 2px);
+    clip-path: inset(15% 0 30% 0);
+  }
+  38% {
+    transform: translate(-2px, -2px);
+    clip-path: none;
+  }
+  55% {
+    transform: translate(3px, 0);
+    clip-path: inset(60% 0 5% 0);
+  }
+  70% {
+    transform: translate(-1px, 1px);
+    clip-path: none;
+  }
+  85%,
+  100% {
+    transform: none;
+    clip-path: none;
+  }
+}
