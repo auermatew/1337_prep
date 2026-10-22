@@ -3,6 +3,7 @@ import type { TaskDto } from '../api/types';
 import {
   formatClock,
   formatCountdown,
+  formatDuration,
   formatSpent,
   progressStep,
   remainingMs,
@@ -100,5 +101,28 @@ describe('formatSpent', () => {
 
   it('clamps negatives to 0S', () => {
     expect(formatSpent(-5)).toBe('0S');
+  });
+});
+
+describe('formatDuration', () => {
+  it('shows whole minutes alone', () => {
+    expect(formatDuration(1500)).toBe('25M');
+  });
+
+  it('shows hours, padded minutes and seconds', () => {
+    expect(formatDuration(3725)).toBe('1H 02M 05S');
+  });
+
+  it('leaves out zero parts', () => {
+    expect(formatDuration(7200)).toBe('2H');
+    expect(formatDuration(3605)).toBe('1H 05S');
+  });
+
+  it('pads leftover seconds after minutes', () => {
+    expect(formatDuration(1505)).toBe('25M 05S');
+  });
+
+  it('shows seconds alone under a minute', () => {
+    expect(formatDuration(45)).toBe('45S');
   });
 });

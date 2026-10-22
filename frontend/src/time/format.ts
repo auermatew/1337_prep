@@ -37,3 +37,19 @@ export function formatSpent(ms: number): string {
   if (minutes > 0) return `${minutes}M ${pad(seconds)}S`;
   return `${seconds}S`;
 }
+
+// Like formatSpent but leaves out zero parts: 7200 → '2H', 3605 → '1H 05S'.
+export function formatDuration(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const parts: string[] = [];
+  const add = (n: number, unit: string) => {
+    if (n === 0) return;
+    parts.push(`${parts.length > 0 ? String(n).padStart(2, '0') : n}${unit}`);
+  };
+  add(hours, 'H');
+  add(minutes, 'M');
+  add(seconds, 'S');
+  return parts.join(' ');
+}
