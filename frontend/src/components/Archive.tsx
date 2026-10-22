@@ -39,7 +39,7 @@ export const Archive = memo(function Archive({
 
   return (
     <section className="archive">
-      <p className="tag">02 · ARCHIVE</p>
+      <p className="tag">ARCHIVE</p>
       <dl className="arc-stats" aria-label="ARCHIVE STATS">
         <div className="arc-stat">
           <dt>FINISHED</dt>

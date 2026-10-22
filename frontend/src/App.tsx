@@ -56,7 +56,7 @@ export default function App() {
 
       <main>
         <section className="opener">
-          <p className="tag">01 · TIMERS</p>
+          <p className="tag">TIMERS</p>
           <h1 className="headline">
             Start a <em>timer.</em>
           </h1>

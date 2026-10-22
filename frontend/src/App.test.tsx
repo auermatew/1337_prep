@@ -59,14 +59,14 @@ describe('App', () => {
     ]);
     render(<App />);
     expect(screen.getAllByText(/\.tmr$/)).toHaveLength(2);
-    expect(screen.getByText('02 · ARCHIVE')).toBeTruthy();
+    expect(screen.getByText('ARCHIVE')).toBeTruthy();
     expect(archiveRows()).toHaveLength(2);
   });
 
   it('hides the archive when nothing has ended', () => {
     withTasks([task('a', 'running')]);
     render(<App />);
-    expect(screen.queryByText('02 · ARCHIVE')).toBeNull();
+    expect(screen.queryByText('ARCHIVE')).toBeNull();
   });
 
   it('shows 20 archive rows until SHOW ALL is clicked', async () => {
@@ -106,5 +106,13 @@ describe('App', () => {
     );
     expect(link.getAttribute('target')).toBe('_blank');
     expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+
+  it('labels sections without numbers', () => {
+    withTasks([task('a', 'finished')]);
+    render(<App />);
+    expect(screen.getByText('TIMERS')).toBeTruthy();
+    expect(screen.getByText('ARCHIVE')).toBeTruthy();
+    expect(screen.queryByText(/^\d\d · /)).toBeNull();
   });
 });

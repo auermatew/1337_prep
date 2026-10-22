@@ -15,7 +15,7 @@
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.08em;
   writing-mode: vertical-rl;
   transform: translateY(-50%);

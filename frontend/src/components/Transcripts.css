@@ -33,7 +33,7 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--label-weight);
 }
 
 .tr-size {

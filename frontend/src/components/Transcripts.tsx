@@ -47,7 +47,7 @@ export function Transcripts() {
 
   return (
     <section className="transcripts">
-      <p className="tag">03 · TRANSCRIPTS</p>
+      <p className="tag">TRANSCRIPTS</p>
       <ul className="tr-list">
         {TRANSCRIPTS.map((t) => (
           <li key={t.file} className="tr-row">
