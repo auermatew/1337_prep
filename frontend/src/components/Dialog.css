@@ -80,8 +80,33 @@
   }
 }
 
+.dlg-drawer[data-closing] .win {
+  animation: dlg-drawer-out var(--dur-swap) var(--ease-1337) both;
+}
+
+.dlg-drawer[data-closing]::backdrop {
+  animation: dlg-backdrop-out var(--dur-swap) ease both;
+}
+
+@keyframes dlg-drawer-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes dlg-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .dlg-drawer[open] .win {
+  .dlg-drawer[open] .win,
+  .dlg-drawer[data-closing] .win,
+  .dlg-drawer[data-closing]::backdrop {
     animation: none;
   }
 }
