@@ -72,6 +72,31 @@ A timer started in one desk appears in the other.
 
 Both packages also have `npm run lint` and `npm run build`.
 
+## Deployment
+
+Live at https://1337.mateauer.me. Everything runs on one DigitalOcean Droplet
+as a single Docker Compose stack: Caddy (the built frontend, the `/api` proxy
+and a free Let's Encrypt certificate), the backend and Postgres.
+
+How it was set up:
+
+1. Rented the Droplet with a personal SSH key for root, and made a second,
+   separate key for GitHub Actions.
+2. Pointed an `A` record for the subdomain at the Droplet.
+3. Ran [deploy/bootstrap.sh](deploy/bootstrap.sh) once as root. It adds 1 GB
+   of swap, installs Docker, creates a `deploy` user (in the `docker` group,
+   no sudo) that accepts both keys, and turns off root and password login.
+   Afterwards root was refused and `deploy` could run `docker ps`.
+4. Stored the Droplet IP, the CI key, the Droplet's host key and the Postgres
+   password as repository secrets, and the hostname as the `SITE_ADDRESS`
+   variable.
+
+Every push to `main` runs [deploy.yml](.github/workflows/deploy.yml): tests,
+both images built into GHCR, SSH in as `deploy`, pull and restart, then a
+smoke check. Postgres keeps its data in the `pgdata` volume, so a deploy never
+recreates the database; the backend only applies new migrations. The full
+runbook is in [deploy/README.md](deploy/README.md).
+
 ## Repository layout
 
 ```
@@ -80,6 +105,8 @@ frontend/         React + Vite app
 design-system/    1337 tokens, motion notes and previews
 docker/           Postgres init script (creates tasks_test)
 docker-compose.yml  Postgres, plus the two-process `multi` profile
+deploy/           production compose file, Droplet bootstrap script, runbook
+.github/workflows/  test, build and deploy on push to main
 docs/superpowers/ design specs and implementation plans
 .claude/          Claude Code skills and agents used to build this
 ```
