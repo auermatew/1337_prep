@@ -52,8 +52,9 @@
 }
 
 .arc-state {
-  width: 120px;
+  width: 132px;
   letter-spacing: 0.07em;
+  white-space: nowrap;
 }
 
 .arc-mark {
@@ -93,12 +94,20 @@
   margin-top: var(--space-5);
 }
 
+/* Phones: DURATION collapses to a zero-width column instead of
+   `display: none`, so every row (and the colspan=5 detail row) keeps
+   five columns and spans the full table width. */
 @media (max-width: 599px) {
-  .arc-dur {
-    display: none;
+  .arc .arc-dur {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    visibility: hidden;
+    white-space: nowrap;
   }
   .arc-state {
-    width: 116px;
+    width: 120px;
+    letter-spacing: 0.04em;
   }
   .arc-end {
     width: 76px;
