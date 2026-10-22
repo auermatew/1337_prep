@@ -9,6 +9,6 @@ plans in `docs/superpowers/plans/`.
 
 ## Backend commands (run in `backend/`, Node 24)
 
-- Start: `npm run start:dev` (starts Postgres 18 via docker compose, applies migrations, serves on :3000 under `/api`)
+- Start: `npm run start:dev` (creates `backend/.env` from `.env.example` if missing, starts Postgres 18 via docker compose, applies migrations, serves on :3000 under `/api`)
 - Test: `npm run test:e2e` (uses the `tasks_test` database from `.env.test`)
 - Reset the database: `docker compose down -v` (from the repo root; drops the `pgdata` volume)

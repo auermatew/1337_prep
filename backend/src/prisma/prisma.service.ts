@@ -15,6 +15,8 @@ export class PrismaService
 
   async onModuleInit(): Promise<void> {
     await this.$connect();
+    // The pg adapter connects lazily; fail fast on a bad DATABASE_URL.
+    await this.$queryRaw`SELECT 1`;
   }
 
   async onModuleDestroy(): Promise<void> {
