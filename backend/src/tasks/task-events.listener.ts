@@ -113,7 +113,8 @@ export class TaskEventsListener implements OnModuleInit, OnModuleDestroy {
         await client.end().catch(() => undefined);
         return;
       }
-      this.client = client;
+      // A drop between LISTEN and here already ran fail(); don't resurrect it.
+      if (!failed) this.client = client;
       if (initial) await this.setBaseline();
       else await this.catchUp();
     } catch (err) {
@@ -130,6 +131,7 @@ export class TaskEventsListener implements OnModuleInit, OnModuleDestroy {
     }
     if (failed) {
       // The connection dropped while the baseline/catch-up read was running.
+      if (this.client === client) this.client = null;
       this.buffer = null;
       if (this.destroyed) return;
       this.logger.warn('listener connection lost during setup; reconnecting');

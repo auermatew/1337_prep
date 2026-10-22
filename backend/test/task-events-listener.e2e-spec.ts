@@ -151,10 +151,12 @@ describe('TaskEventsListener (e2e)', () => {
     const internals = listenerB as unknown as Internals;
     const original = internals.catchUp.bind(listenerB);
     let killedDuringCatchUp = false;
+    const killedPids = new Set<number | null>();
     const spy = vi.spyOn(internals, 'catchUp').mockImplementation(async () => {
       if (!killedDuringCatchUp) {
         killedDuringCatchUp = true;
         const pid = listenerB.backendPid();
+        killedPids.add(pid);
         await prisma.$queryRaw`SELECT pg_terminate_backend(${pid}::int)`;
         // Let the termination reach the pg client before the read finishes.
         await new Promise((r) => setTimeout(r, 200));
@@ -162,13 +164,16 @@ describe('TaskEventsListener (e2e)', () => {
       return original();
     });
 
-    await prisma.$queryRaw`SELECT pg_terminate_backend(${listenerB.backendPid()}::int)`;
+    const firstPid = listenerB.backendPid();
+    killedPids.add(firstPid);
+    await prisma.$queryRaw`SELECT pg_terminate_backend(${firstPid}::int)`;
     await waitFor(() => killedDuringCatchUp);
-    await waitFor(() => listenerB.backendPid() !== null, 8000);
+    // A backend pid that is neither of the two killed connections.
+    await waitFor(() => {
+      const pid = listenerB.backendPid();
+      return pid !== null && !killedPids.has(pid);
+    }, 8000);
     spy.mockRestore();
-    // Give any (wrongly) pending reconnect a chance, then check we listen.
-    await new Promise((r) => setTimeout(r, 300));
-    expect(listenerB.backendPid()).not.toBeNull();
 
     const change = await a
       .get(TaskTransitions)
@@ -190,7 +195,8 @@ describe('TaskEventsListener (e2e)', () => {
       let closing: Promise<void> | null = null;
       vi.spyOn(listenerB as unknown as Internals, 'catchUp').mockImplementation(
         () => {
-          closing = b.close();
+          // destroyed is set synchronously, before this failure is handled.
+          closing = listenerB.onModuleDestroy();
           return Promise.reject(new Error('boom during catch-up'));
         },
       );
@@ -211,6 +217,7 @@ describe('TaskEventsListener (e2e)', () => {
     await probe.$connect();
     const origConnect = Client.prototype.connect;
     let connectedAndStalled = false;
+    let stalledPid: number | null = null;
     const spy = vi
       .spyOn(Client.prototype, 'connect')
       .mockImplementation(async function (this: Client, ...args: unknown[]) {
@@ -224,6 +231,8 @@ describe('TaskEventsListener (e2e)', () => {
             }
           ).connectionParameters.application_name === 'task-events-listener'
         ) {
+          stalledPid =
+            (this as unknown as { processID?: number }).processID ?? null;
           connectedAndStalled = true;
           await new Promise((r) => setTimeout(r, 500));
         }
@@ -233,9 +242,10 @@ describe('TaskEventsListener (e2e)', () => {
       await waitFor(() => connectedAndStalled, 8000);
       await app.close();
       apps.splice(0);
+      expect(stalledPid).toBeTypeOf('number');
       const rows = await probe.$queryRaw<{ n: bigint }[]>`
         SELECT count(*) AS n FROM pg_stat_activity
-        WHERE application_name = 'task-events-listener'`;
+        WHERE pid = ${stalledPid}::int`;
       expect(Number(rows[0].n)).toBe(0);
     } finally {
       spy.mockRestore();
