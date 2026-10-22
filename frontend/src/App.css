@@ -279,11 +279,6 @@ main {
   color: var(--ink);
 }
 
-.err-line::before {
-  content: '! ';
-  color: var(--orange);
-}
-
 /* Blinking orange block cursor. */
 .cur {
   display: inline-block;
