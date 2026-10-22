@@ -174,7 +174,22 @@
     width: 76px;
   }
   .arc .arc-hist {
-    width: 28px;
+    width: 36px;
+  }
+  /* The arrow alone is the button: a 32px ringed square, ink-filled while
+     open. */
+  .arc-hist .link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    box-shadow: var(--ink-shadow-ring);
+  }
+  .arc-hist .link-btn[aria-expanded='true'] {
+    background: var(--ink);
+    color: var(--paper);
   }
   /* Too narrow for the word: the arrow alone, the word stays for readers. */
   .arc-hist-word {

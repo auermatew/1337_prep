@@ -94,8 +94,14 @@
   .nb-meta {
     display: none;
   }
+  /* The tools fill the footer: PEN/SCROLL on the left, CLEAR and CLOSE
+     stay on the right. */
+  .nb-tools {
+    flex: 1;
+  }
   .nb-mode {
     display: flex;
+    margin-right: auto;
   }
   .nb-paper {
     grid-template-columns: 1fr;
