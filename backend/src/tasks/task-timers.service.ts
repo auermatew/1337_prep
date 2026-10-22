@@ -75,7 +75,7 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
     for (const timer of this.timers.values()) clearTimeout(timer);
     this.timers.clear();
     // Let transitions already running finish, so nothing writes after us.
-    await Promise.allSettled([...this.inFlight]);
+    await Promise.allSettled(this.inFlight);
   }
 
   private onChange({ task }: TaskChange): void {
