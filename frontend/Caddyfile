@@ -1,0 +1,20 @@
+# SITE_ADDRESS is the public hostname; Caddy gets a Let's Encrypt certificate
+# for it. `localhost` makes Caddy use its own local certificate instead.
+{$SITE_ADDRESS} {
+	handle /api* {
+		# Stream bytes as they come: the task stream is Server-Sent Events.
+		reverse_proxy backend:3000 {
+			flush_interval -1
+		}
+	}
+
+	handle {
+		# Compress static files only; never buffer the event stream.
+		encode zstd gzip
+		root * /srv
+		@assets path /assets/*
+		header @assets Cache-Control "public, max-age=31536000, immutable"
+		try_files {path} /index.html
+		file_server
+	}
+}

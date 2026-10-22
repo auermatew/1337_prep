@@ -1,0 +1,70 @@
+# Production stack for the Droplet. The deploy workflow copies this file to
+# /opt/1337/compose.yml and writes /opt/1337/.env next to it; see deploy/README.md.
+# Only Caddy publishes ports: Docker bypasses ufw, so nothing else may be published.
+name: leet
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: 10m
+    max-file: '3'
+
+services:
+  caddy:
+    image: ${IMAGE_PREFIX:?set IMAGE_PREFIX in .env}-web:${IMAGE_TAG:?set IMAGE_TAG in .env}
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env}
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+    logging: *logging
+
+  backend:
+    image: ${IMAGE_PREFIX}-backend:${IMAGE_TAG}
+    restart: unless-stopped
+    init: true
+    # Shutdown waits for in-flight transitions (up to ~20 s), beyond compose's default 10 s.
+    stop_grace_period: 25s
+    environment:
+      # Same origin as the frontend, so FRONTEND_ORIGIN stays unset (no CORS headers).
+      DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      PORT: '3000'
+      STREAM_KEEPALIVE_MS: '15000'
+    healthcheck:
+      test: [CMD, node, -e, "fetch('http://localhost:3000/api').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+      start_period: 15s
+    depends_on:
+      postgres:
+        condition: service_healthy
+    logging: *logging
+
+  postgres:
+    image: postgres:18
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    logging: *logging
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
