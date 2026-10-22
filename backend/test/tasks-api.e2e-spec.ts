@@ -6,6 +6,7 @@ import { createApp } from './helpers/app.js';
 import { resetDb } from './helpers/db.js';
 
 const UNKNOWN_UUID = '00000000-0000-4000-8000-000000000000';
+const ISO = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe('Tasks REST API (e2e)', () => {
@@ -58,6 +59,15 @@ describe('Tasks REST API (e2e)', () => {
     it('creates a running task', async () => {
       const res = await post({ name: 'Tea', durationSeconds: 3 }).expect(201);
       const task = res.body as TaskDto;
+      expect(res.body).toEqual({
+        id: expect.any(String),
+        name: 'Tea',
+        durationSeconds: 3,
+        state: 'running',
+        startedAt: expect.stringMatching(ISO),
+        endsAt: expect.stringMatching(ISO),
+        updatedAt: expect.stringMatching(ISO),
+      });
       expect(task.state).toBe('running');
       expect(task.name).toBe('Tea');
       expect(task.durationSeconds).toBe(3);
@@ -85,6 +95,7 @@ describe('Tasks REST API (e2e)', () => {
       ['missing name', { durationSeconds: 60 }],
       ['numeric name', { name: 5, durationSeconds: 60 }],
       ['null name', { name: null, durationSeconds: 60 }],
+      ['NUL character in name', { name: 'a\u0000b', durationSeconds: 5 }],
       ['extra field foo', { name: 'Tea', durationSeconds: 60, foo: 1 }],
     ])('rejects %s with 400 and creates nothing', async (_label, body) => {
       await post(body).expect(400);
@@ -144,6 +155,12 @@ describe('Tasks REST API (e2e)', () => {
         .get(`/api/tasks/${t.id}/events`)
         .expect(200);
       const events = res.body as TaskEventDto[];
+      expect(events[0]).toEqual({
+        id: expect.any(Number),
+        taskId: t.id,
+        state: 'running',
+        at: expect.stringMatching(ISO),
+      });
       expect(events.map((e) => e.state)).toEqual(['running', 'cancelled']);
       expect(events.every((e) => e.taskId === t.id)).toBe(true);
       expect(events[0].id).toBeLessThan(events[1].id);
