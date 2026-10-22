@@ -183,6 +183,17 @@ html:has(dialog[open]) {
   gap: var(--space-6);
   align-items: start;
   min-width: 0;
+  /* Two rows of timer windows plus a peek of the third (a cue that it
+     scrolls), then scroll inside instead of pushing
+     the archive down. The padding keeps hard shadows and the hover lift
+     from being clipped by the scroll box. */
+  max-height: 540px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 8px 8px 2px;
+  margin: -2px -8px -8px -2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
 }
 
 .desk-log {
