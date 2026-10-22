@@ -13,13 +13,17 @@ export default defineConfig({
         changeOrigin: true,
         // The proxy holds response headers back until the first body bytes,
         // so an idle SSE stream would never "open". Flush them once the
-        // proxy has copied them onto the response.
+        // proxy has copied them onto the response. This ordering relies on
+        // Vite 8's bundled http-proxy-3 emitting `proxyRes` before it copies
+        // the headers onto `res` and pipes.
         configure: (proxy) => {
           proxy.on('proxyRes', (proxyRes, _req, res) => {
             if (
               proxyRes.headers['content-type']?.startsWith('text/event-stream')
             ) {
-              setImmediate(() => res.flushHeaders());
+              setImmediate(() => {
+                if (!res.destroyed && !res.writableEnded) res.flushHeaders();
+              });
             }
           });
         },

@@ -69,12 +69,12 @@ Decisions the tests pin:
 - `change` with `event.id <= lastEventId` is ignored entirely (no task update, no log line). Otherwise the task row replaces the map entry (adding unknown ids), `lastEventId = event.id`, a log line is appended, log trimmed to the last 50.
 - `upsert` replaces the row only if the incoming `updatedAt` is not older than the stored one (so a late create/cancel response can't overwrite a newer stream state); never touches `lastEventId` or the log.
 - `reset` replaces the whole map and `lastEventId` from the list, keeps the log.
-- Hook lifecycle: `listTasks()` → dispatch `reset` → open `EventSource('/api/tasks/stream' + (lastEventId !== null ? '?after=' + lastEventId : ''))` → `addEventListener('task', …)`. `onopen`: status `open`; if this open follows an error, call `listTasks()` again and dispatch `reset` (this is the database-reset resync; stream events with ids above the fresh `lastEventId` still apply). `onerror`: status `reconnecting`; if `readyState === EventSource.CLOSED`, close and recreate after 2000 ms using `?after=` with the current `lastEventId`. If the first `listTasks()` fails, `error` is set, status stays `connecting`, and it retries every 2000 ms. Unmount closes the EventSource and clears timers.
+- Hook lifecycle: `listTasks()` → dispatch `reset` → open `EventSource('/api/tasks/stream?after=' + (lastEventId ?? 0))` → `addEventListener('task', …)`. `onopen`: status `open`; if this open follows an error, call `listTasks()` again and dispatch `reset` (this is the database-reset resync; stream events with ids above the fresh `lastEventId` still apply). `onerror`: status `reconnecting`; if `readyState === EventSource.CLOSED`, close and recreate after 2000 ms using `?after=` with the current `lastEventId`. If the first `listTasks()` fails, `error` is set, status stays `connecting`, and it retries every 2000 ms. Unmount closes the EventSource and clears timers.
 
 - [ ] **Step 1:** Write `fakeEventSource.ts`: a class with static `instances`, `url`, `readyState`, `close()`, `addEventListener`, `onopen`/`onerror`, and test helpers `open()`, `emit(change: TaskChange)` (dispatches a `MessageEvent('task', { data: JSON.stringify(change), lastEventId: String(change.event.id) })`), `fail(closed = false)`. Install with `vi.stubGlobal('EventSource', FakeEventSource)`.
 - [ ] **Step 2: Write failing reducer tests** (`reducer.test.ts`): `reset` fills map and id; `change` with id 5 after lastEventId 4 updates task, sets 5, logs one line; `change` id 5 again → state unchanged (same object); `change` id 3 → unchanged; unknown task id is added; 60 changes → log length 50 ending with id of the last; `upsert` with older `updatedAt` ignored, newer applied, lastEventId untouched.
 - [ ] **Step 3: Write failing hook tests** (`useTaskStream.test.tsx`, `renderHook` + fake timers where needed):
-  - `lastEventId 7` from the list → EventSource URL `/api/tasks/stream?after=7`; `null` → `/api/tasks/stream`.
+  - `lastEventId 7` from the list → EventSource URL `/api/tasks/stream?after=7`; `null` → `/api/tasks/stream?after=0`.
   - status `connecting` → `open` after `open()`; `fail()` → `reconnecting`.
   - after `fail()` then `open()`, `listTasks` called twice and its second result replaces tasks (simulate reset: second list returns `lastEventId 2`, then an emitted change with id 3 is applied).
   - `fail(true)` (CLOSED) → after 2000 ms a second EventSource exists with `?after=<current lastEventId>`; first was closed.
@@ -136,16 +136,18 @@ Copy and behaviour (exact):
 
 > Revised: the backend landed first, so the mock is dropped; this task is the README plus verification against the real backend.
 
-**Files:**
-- Create: `frontend/mock/server.mjs`
-- Create: `frontend/README.md`
-- Test: `frontend/mock/server.test.mjs` (run by Vitest; include `mock/**/*.test.mjs` in config)
+**Revised scope:** create `frontend/README.md` (run against the real backend with `npm run dev`, `BACKEND_URL`, the fonts note), then do the Step 4 browser check against the real backend (restart the backend instead of the mock). Commit `docs(frontend): README for running against the real backend; drop mock`. The original steps below are superseded.
 
-**Interfaces:**
-- Produces: `startMock({ port }): Promise<{ url: string; close(): Promise<void> }>` exported from `server.mjs`; when run directly it listens on `PORT ?? 3000`. Pure `node:http`, no deps. Same routes, status codes and JSON shapes as the backend design (including Nest-style error bodies), SSE exactly per its "SSE stream" section (headers, `id:`/`event: task`/`data:` blocks, `: ping` every 15 s, replay from `Last-Event-ID` header, else `?after=`), in-memory tasks with real `setTimeout` finishing.
+~~**Files:**~~
+~~- Create: `frontend/mock/server.mjs`~~
+~~- Create: `frontend/README.md`~~
+~~- Test: `frontend/mock/server.test.mjs` (run by Vitest; include `mock/**/*.test.mjs` in config)~~
 
-- [ ] **Step 1: Write failing tests** against `startMock({ port: 0 })`: POST valid → 201 running; POST `{name:''}` → 400 with `message` array; `GET /api/tasks` returns `lastEventId`; a 1 s timer emits `running` then `finished` on an open stream with increasing ids; stream with `?after=<id>` replays only later events; cancel twice → 200 then 409; cancel unknown uuid → 404; cancel `abc` → 400.
-- [ ] **Step 2:** Run → FAIL. Implement. Run → PASS.
-- [ ] **Step 3:** `README.md`: how to run (`npm run mock` + `npm run dev`, or the real backend + `npm run dev`), `BACKEND_URL`, and the fonts note from the spec.
-- [ ] **Step 4: Browser check** (`npm run mock` and `npm run dev`, open http://localhost:5173): start a 5 s and a 60 s timer; both windows appear and count down; 5 s one flashes and moves to the archive; live.log shows `running` / `finished` lines with ids; cancel the 60 s one → archive `[ ] CANCELLED`; history shows two rows; stop and restart the mock → footer goes `RECONNECTING…` then `CONNECTED` and the page resyncs (old timers gone, since the mock is in memory: the database-reset case); 375 px width is one column with no horizontal scroll. Capture a screenshot.
-- [ ] **Step 5: Commit** `feat(frontend): mock backend, README`.
+~~**Interfaces:**~~
+~~- Produces: `startMock({ port }): Promise<{ url: string; close(): Promise<void> }>` exported from `server.mjs`; when run directly it listens on `PORT ?? 3000`. Pure `node:http`, no deps. Same routes, status codes and JSON shapes as the backend design (including Nest-style error bodies), SSE exactly per its "SSE stream" section (headers, `id:`/`event: task`/`data:` blocks, `: ping` every 15 s, replay from `Last-Event-ID` header, else `?after=`), in-memory tasks with real `setTimeout` finishing.~~
+
+~~- [ ] **Step 1: Write failing tests** against `startMock({ port: 0 })`: POST valid → 201 running; POST `{name:''}` → 400 with `message` array; `GET /api/tasks` returns `lastEventId`; a 1 s timer emits `running` then `finished` on an open stream with increasing ids; stream with `?after=<id>` replays only later events; cancel twice → 200 then 409; cancel unknown uuid → 404; cancel `abc` → 400.~~
+~~- [ ] **Step 2:** Run → FAIL. Implement. Run → PASS.~~
+~~- [ ] **Step 3:** `README.md`: how to run (`npm run mock` + `npm run dev`, or the real backend + `npm run dev`), `BACKEND_URL`, and the fonts note from the spec.~~
+~~- [ ] **Step 4: Browser check** (`npm run mock` and `npm run dev`, open http://localhost:5173): start a 5 s and a 60 s timer; both windows appear and count down; 5 s one flashes and moves to the archive; live.log shows `running` / `finished` lines with ids; cancel the 60 s one → archive `[ ] CANCELLED`; history shows two rows; stop and restart the mock → footer goes `RECONNECTING…` then `CONNECTED` and the page resyncs (old timers gone, since the mock is in memory: the database-reset case); 375 px width is one column with no horizontal scroll. Capture a screenshot.~~
+~~- [ ] **Step 5: Commit** `feat(frontend): mock backend, README`.~~

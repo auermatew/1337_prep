@@ -16,7 +16,7 @@ Start the backend first. From the repo root:
 cd backend && npm run start:dev
 ```
 
-It serves on `:3000`. Then, in another shell:
+It serves on `:3000`. Until both branches are merged, `backend/` lives on the `feature/backend` branch, not this one. Then, in another shell:
 
 ```bash
 cd frontend

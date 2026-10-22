@@ -117,8 +117,10 @@ State: `tasks: Map<id, TaskDto>`, `lastEventId`, `status`
 (`connecting | open | reconnecting`), `log` (last 50 changes).
 
 1. `GET /api/tasks` → fill the map, remember `lastEventId`.
-2. Open `new EventSource('/api/tasks/stream' + (lastEventId ? '?after=N' : ''))`.
-   Listen for the named event `task`.
+2. Open `new EventSource('/api/tasks/stream?after=' + (lastEventId ?? 0))`
+   (`?after=0` replays everything, so an event committed between the list and
+   the subscribe is not lost on an empty database). Listen for the named event
+   `task`.
 3. For each message: parse `{ event, task }`. If `event.id <= lastEventId`, skip
    (duplicate). Otherwise set `tasks[task.id] = task` (the payload carries the
    task's current row, so a task first seen on the stream is simply added),
@@ -130,6 +132,9 @@ State: `tasks: Map<id, TaskDto>`, `lastEventId`, `status`
    reset with `docker compose down -v`, or a restarted in-memory mock): without
    it every new event would look like a duplicate and old timers would hang at
    `finishing…`. Events with ids above the reloaded `lastEventId` still apply.
+   Events buffered during the reload that it already covers still print to
+   the log, once. A failed reload retries every 2 s (events stay buffered),
+   and only the newest reload is applied when reconnects overlap.
    If the browser gives up (`readyState === CLOSED`), the hook reopens the
    stream itself after a short delay with `?after=lastEventId`.
 5. On unmount: close the EventSource.
@@ -173,14 +178,14 @@ blink, `steps(19)` loader, `leetflash`, swap. Everything honours
 ## Testing
 
 - **Vitest unit tests for `useTaskStream`** with a fake `EventSource` and a
-  mocked `fetch`: initial load then `?after=`; no `after` when `lastEventId` is
+  mocked `fetch`: initial load then `?after=`; `?after=0` when `lastEventId` is
   null; events applied in id order; duplicates and older ids skipped; a task
   first seen on the stream is added; status transitions on error/open; reopen
   after CLOSED; close on unmount.
 - Unit tests for countdown formatting and the progress step calculation.
 - A light component test that the running/archive split follows task state.
 - Manual check in the browser against the real backend (start, watch, cancel, history,
-  reconnect by restarting the mock), then against the real backend once Tasks
+  reconnect by restarting the backend), then against the real backend once Tasks
   5–6 are merged, plus `stream-verifier` since its scope names the frontend
   stream hook.
 
