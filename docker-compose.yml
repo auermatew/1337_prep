@@ -17,8 +17,27 @@ services:
       timeout: 3s
       retries: 30
 
-  # Task 7 adds the backend services under the `multi` profile here
-  # (compose cannot declare an empty profile).
+  # Two backend processes against the same Postgres: `docker compose --profile multi up -d --build`
+  backend-1: &backend
+    profiles: [multi]
+    image: 1337test-backend
+    build: ./backend
+    init: true
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/tasks
+      PORT: '3000'
+      FRONTEND_ORIGIN: http://localhost:5173
+      STREAM_KEEPALIVE_MS: '15000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - '3001:3000'
+
+  backend-2:
+    <<: *backend
+    ports:
+      - '3002:3000'
 
 volumes:
   pgdata:
