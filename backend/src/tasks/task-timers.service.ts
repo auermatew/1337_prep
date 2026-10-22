@@ -75,6 +75,7 @@ export class TaskTimers implements OnApplicationBootstrap, OnModuleDestroy {
     for (const timer of this.timers.values()) clearTimeout(timer);
     this.timers.clear();
     // Let transitions already running finish, so nothing writes after us.
+    // Up to ~20 s (transaction maxWait + timeout); compose's stop_grace_period covers it.
     await Promise.allSettled(this.inFlight);
   }
 

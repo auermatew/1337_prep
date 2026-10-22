@@ -3,6 +3,8 @@ x-backend: &backend
   image: 1337test-backend
   init: true
   restart: on-failure:5
+  # Shutdown waits for in-flight transitions (up to ~20 s), beyond compose's default 10 s.
+  stop_grace_period: 25s
   healthcheck:
     test: [CMD, node, -e, "fetch('http://localhost:3000/api').then(r=>process.exit(r.ok?0:1),()=>process.exit(1))"]
     interval: 3s
