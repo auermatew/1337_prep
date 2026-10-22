@@ -1,0 +1,64 @@
+/* Vertical ink tab on the right edge, purple square on top. */
+.nb-tab {
+  position: fixed;
+  top: 50%;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 9px;
+  border: 0;
+  border-radius: var(--radius-none);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  transform: translateY(-50%);
+  cursor: pointer;
+  transition:
+    transform var(--dur-base) var(--ease-1337),
+    box-shadow var(--dur-base) var(--ease-1337);
+}
+
+.nb-tab::before {
+  content: '';
+  flex: none;
+  width: var(--tag-square);
+  height: var(--tag-square);
+  background: var(--purple);
+}
+
+.nb-tab:hover {
+  transform: translate(-2px, calc(-50% - 2px));
+  box-shadow: var(--ink-shadow-hard-sm);
+}
+
+.nb-tab:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+/* Portrait picture: the dialog hugs the image instead of the wide default. */
+.dlg.dlg-notebook {
+  width: fit-content;
+  max-width: calc(100vw - 32px);
+}
+
+.dlg-notebook .win-body {
+  padding: 0;
+  background: #fff;
+}
+
+.nb-img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100dvh - 160px);
+  margin: 0 auto;
+}

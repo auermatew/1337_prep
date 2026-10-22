@@ -96,4 +96,15 @@ describe('App', () => {
     expect(value('CANCELLED')).toBe('1');
     expect(value('TIME SPENT')).toBe('26M 00S');
   });
+
+  it('links to the GitHub repo in a new tab', () => {
+    withTasks([]);
+    render(<App />);
+    const link = screen.getByRole('link', { name: 'GITHUB ↗' });
+    expect(link.getAttribute('href')).toBe(
+      'https://github.com/auermatew/1337_prep',
+    );
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+  });
 });

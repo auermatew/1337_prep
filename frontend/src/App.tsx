@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { Archive } from './components/Archive';
 import { LiveLog, StreamLabel } from './components/LiveLog';
+import { Notebook } from './components/Notebook';
 import { StartForm } from './components/StartForm';
 import { TimerWindow } from './components/TimerWindow';
 import { Transcripts } from './components/Transcripts';
@@ -35,7 +36,17 @@ export default function App() {
     <div className="wrap">
       <header className="top">
         <span className="wordmark">1337 · TIMERS</span>
-        <StreamLabel status={status} lastEventId={lastEventId} />
+        <div className="top-end">
+          <a
+            className="link-btn top-gh"
+            href="https://github.com/auermatew/1337_prep"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GITHUB ↗
+          </a>
+          <StreamLabel status={status} lastEventId={lastEventId} />
+        </div>
       </header>
       {error && (
         <p className="err-line top-error" role="alert">
@@ -82,6 +93,8 @@ export default function App() {
 
         <Transcripts />
       </main>
+
+      <Notebook />
     </div>
   );
 }
