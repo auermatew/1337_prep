@@ -30,10 +30,10 @@ afterEach(() => {
   vi.clearAllMocks();
 });
 
-function show(now: number, onChanged = vi.fn()) {
+function show(now: number, onChanged = vi.fn(), task = running) {
   render(
     <TimerWindow
-      task={running}
+      task={task}
       now={now}
       onChanged={onChanged}
       newestEventId={null}
@@ -77,5 +77,18 @@ describe('TimerWindow', () => {
       (screen.getByRole('button', { name: 'CANCEL' }) as HTMLButtonElement)
         .disabled,
     ).toBe(true);
+  });
+
+  it.each([
+    ['named 1337', { name: '1337' }],
+    ['set to 1337 seconds', { durationSeconds: 1337 }],
+  ])('glows rainbow when %s', (_label, overrides) => {
+    show(START, vi.fn(), { ...running, ...overrides });
+    expect(document.querySelector('.win.tw-1337')).not.toBeNull();
+  });
+
+  it('does not glow for an ordinary timer', () => {
+    show(START);
+    expect(document.querySelector('.tw-1337')).toBeNull();
   });
 });

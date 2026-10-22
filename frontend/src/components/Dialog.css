@@ -1,0 +1,113 @@
+/* Native modal dialog: no chrome of its own, the Window inside is the frame. */
+.dlg {
+  width: min(960px, calc(100vw - 32px));
+  max-width: none;
+  max-height: none;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  overflow: visible;
+}
+
+.dlg::backdrop {
+  background: rgb(17 17 17 / 0.4);
+}
+
+.dlg .win {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 64px);
+  margin-right: 5px;
+}
+
+.dlg .win-body {
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.dlg[open] .win {
+  animation: dlg-in var(--dur-swap) var(--ease-1337) both;
+}
+
+@keyframes dlg-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dlg[open] .win {
+    animation: none;
+  }
+}
+
+/* Drawer variant: full height, pinned to the left edge beside its tab,
+   slides in from and back out to the left. */
+.dlg.dlg-drawer {
+  width: min(440px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 auto 0 0;
+}
+
+.dlg-drawer .win-body {
+  flex: 1;
+}
+
+.dlg-drawer .win {
+  height: 100%;
+  max-height: none;
+  margin-right: 0;
+  border-left: 0;
+}
+
+.dlg-drawer[open] .win {
+  animation: dlg-drawer-in var(--dur-swap) var(--ease-1337) both;
+}
+
+@keyframes dlg-drawer-in {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+.dlg-drawer[data-closing] .win {
+  animation: dlg-drawer-out var(--dur-swap) var(--ease-1337) both;
+}
+
+.dlg-drawer[data-closing]::backdrop {
+  animation: dlg-backdrop-out var(--dur-swap) ease both;
+}
+
+@keyframes dlg-drawer-out {
+  from {
+    transform: none;
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes dlg-backdrop-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dlg-drawer[open] .win,
+  .dlg-drawer[data-closing] .win,
+  .dlg-drawer[data-closing]::backdrop {
+    animation: none;
+  }
+}

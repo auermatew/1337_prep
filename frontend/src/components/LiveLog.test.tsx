@@ -33,4 +33,13 @@ describe('LiveLog', () => {
     expect(screen.getByText('pasta')).toBeTruthy();
     expect(error).not.toHaveBeenCalled();
   });
+
+  it('shows only the last id in the footer', () => {
+    const { container } = render(
+      <LiveLog log={[]} status="open" lastEventId={7} />,
+    );
+    const foot = container.querySelector('.win-foot')!;
+    expect(foot.textContent).toContain('LAST ID 7');
+    expect(foot.textContent).not.toContain('CONNECTED');
+  });
 });

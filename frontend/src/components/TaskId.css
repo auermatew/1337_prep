@@ -1,0 +1,11 @@
+/* Muted mono id after a task's name; full id on hover. */
+.task-id {
+  color: var(--muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  user-select: none;
+}

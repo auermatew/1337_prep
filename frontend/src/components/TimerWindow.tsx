@@ -8,6 +8,7 @@ import {
   remainingMs,
 } from '../time/format';
 import { History } from './History';
+import { TaskId } from './TaskId';
 import { Window } from './Window';
 import './TimerWindow.css';
 
@@ -34,6 +35,11 @@ function StateLine({ task, remaining }: { task: TaskDto; remaining: number }) {
     </span>
   );
 }
+
+// Easter egg: a timer named 1337, or set to 1337 seconds, glows rainbow.
+// Only here on the desk; the archive row stays plain.
+const isLeet = (task: TaskDto) =>
+  task.name === '1337' || task.durationSeconds === 1337;
 
 export function TimerWindow({
   task,
@@ -118,13 +124,22 @@ export function TimerWindow({
   );
 
   return (
-    <div className="rv" ref={revealRef}>
+    <div className={isLeet(task) ? 'rv tw-egg' : 'rv'} ref={revealRef}>
       <Window
         title={`${task.name}.tmr`}
         footer={footer}
-        className={running ? 'tw' : 'tw leet-flash'}
+        className={[
+          'tw',
+          running ? '' : 'leet-flash',
+          isLeet(task) ? 'tw-1337' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
-        <StateLine task={task} remaining={remaining} />
+        <div className="tw-head">
+          <StateLine task={task} remaining={remaining} />
+          <TaskId id={task.id} />
+        </div>
         {showHistory ? (
           <div className="tw-history">
             <History taskId={task.id} refreshKey={newestEventId} />

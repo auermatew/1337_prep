@@ -9,7 +9,29 @@
 
 /* The shadow tokens hard-code #111; these follow --ink so the hard shadows
    and ghost rings survive the dark theme. Same values in light. */
+/* Label colour: ink-mute in light; in dark ink-mute equals muted, so labels
+   step up toward ink-soft to stay a notch stronger than dimmed data. */
 :root {
+  --label-mute: var(--ink-mute);
+}
+
+[data-theme='dark'] {
+  --label-mute: #bdb6aa;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --label-mute: #bdb6aa;
+  }
+}
+
+/* A modal <dialog> makes the page inert but not still: lock its scroll. */
+html:has(dialog[open]) {
+  overflow: hidden;
+}
+
+:root {
+  --label-weight: 600;
   --ink-shadow-hard: 5px 5px 0 0 var(--ink);
   --ink-shadow-hard-sm: 3px 3px 0 0 var(--ink);
   --ink-shadow-ring: inset 0 0 0 1.5px var(--ink);
@@ -64,13 +86,25 @@
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
 
 .wordmark {
   white-space: nowrap;
+}
+
+.top-end {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.top-gh {
+  font-size: 11.5px;
+  letter-spacing: 0.07em;
 }
 
 .top .stream-label {
@@ -96,7 +130,7 @@
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--ink);
@@ -149,6 +183,17 @@
   gap: var(--space-6);
   align-items: start;
   min-width: 0;
+  /* Two rows of timer windows plus a peek of the third (a cue that it
+     scrolls), then scroll inside instead of pushing
+     the archive down. The padding keeps hard shadows and the hover lift
+     from being clipped by the scroll box. */
+  max-height: 540px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 2px 8px 8px 2px;
+  margin: -2px -8px -8px -2px;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
 }
 
 .desk-log {
@@ -167,7 +212,7 @@
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   color: var(--purple);
 }
@@ -202,7 +247,7 @@ main {
   font-family: var(--font-mono);
   font-size: 12px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   cursor: pointer;
@@ -255,9 +300,10 @@ main {
   font-family: var(--font-mono);
   font-size: 11px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   text-transform: uppercase;
+  text-decoration: none;
   white-space: nowrap;
   cursor: pointer;
   transition: background-size 0.3s var(--ease-1337);
@@ -273,7 +319,7 @@ main {
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1.6;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   text-transform: uppercase;
   color: var(--ink);

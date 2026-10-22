@@ -1,10 +1,23 @@
 import { useState, type FormEvent } from 'react';
 import { ApiError, createTask } from '../api/client';
 import type { TaskDto } from '../api/types';
+import { formatDuration } from '../time/format';
 import './StartForm.css';
 
 const NAME_MAX = 100;
 const SECONDS_MAX = 86400;
+
+// Only worth a hint once there is at least a minute in it; past the
+// 24-hour limit it just says no.
+function secondsHint(seconds: string): string | null {
+  const trimmed = seconds.trim();
+  if (!/^\d+$/.test(trimmed)) return null;
+  const n = Number(trimmed);
+  if (n > SECONDS_MAX) return 'HELL NAW';
+  if (n === 1337) return '= LEET';
+  if (n < 60) return null;
+  return `= ${formatDuration(n)}`;
+}
 
 function validate(name: string, seconds: string): string[] {
   const errors: string[] = [];
@@ -27,6 +40,8 @@ export function StartForm({
   const [seconds, setSeconds] = useState('180');
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<string[]>([]);
+  const [secondsFocused, setSecondsFocused] = useState(false);
+  const hint = secondsHint(seconds);
 
   const submit = async (e: FormEvent) => {
     e.preventDefault();
@@ -79,9 +94,18 @@ export function StartForm({
             className="start-input"
             value={seconds}
             onChange={(e) => setSeconds(e.target.value)}
+            onFocus={() => setSecondsFocused(true)}
+            onBlur={() => setSecondsFocused(false)}
             inputMode="numeric"
             autoComplete="off"
+            aria-describedby="start-seconds-hint"
           />
+          <span
+            id="start-seconds-hint"
+            className={secondsFocused && hint ? 'start-hint on' : 'start-hint'}
+          >
+            {hint}
+          </span>
         </div>
         <button type="submit" className="btn" disabled={submitting}>
           START TIMER →

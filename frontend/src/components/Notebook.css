@@ -1,0 +1,111 @@
+/* Two-page spread. The pages are transparent, so they sit on fixed notebook
+   paper (dot grid, centre fold) that stays paper even in the dark theme. */
+.dlg.dlg-notebook {
+  width: min(1100px, calc(100vw - 32px));
+}
+
+.dlg-notebook .win-body {
+  padding: 0;
+}
+
+.nb-paper {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 24px 20px;
+  background:
+    linear-gradient(
+      90deg,
+      transparent calc(50% - 14px),
+      rgb(0 0 0 / 0.045) calc(50% - 1px),
+      #cfc6b3 calc(50% - 0.5px) calc(50% + 0.5px),
+      rgb(0 0 0 / 0.045) calc(50% + 1px),
+      transparent calc(50% + 14px)
+    ),
+    radial-gradient(#d6cebd 1px, transparent 1.3px) 0 0 / 18px 18px,
+    #f7f3ea;
+}
+
+.nb-page {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: calc(100dvh - 180px);
+  object-fit: contain;
+}
+
+/* Draw layer: covers both pages; in scroll mode it lets touches through. */
+.nb-draw {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}
+
+.nb-paper[data-mode='scroll'] .nb-draw {
+  pointer-events: none;
+}
+
+.nb-tools {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+/* Two-cell segmented control, ink fill on the active cell (phones only:
+   desktop is always pen). */
+.nb-mode {
+  display: none;
+  box-shadow: var(--ink-shadow-ring);
+}
+
+.nb-mode button {
+  padding: 7px 9px;
+  border: 0;
+  border-radius: var(--radius-none);
+  background: transparent;
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: var(--label-weight);
+  letter-spacing: 0.07em;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
+}
+
+.nb-mode button[aria-pressed='true'] {
+  background: var(--ink);
+  color: var(--paper);
+}
+
+.nb-mode button:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+@media (max-width: 599px) {
+  .nb-meta {
+    display: none;
+  }
+  .nb-mode {
+    display: flex;
+  }
+  .nb-paper {
+    grid-template-columns: 1fr;
+    gap: 24px;
+    padding: 16px 12px;
+    background:
+      radial-gradient(#d6cebd 1px, transparent 1.3px) 0 0 / 18px 18px,
+      #f7f3ea;
+  }
+  .nb-page {
+    max-height: none;
+  }
+}

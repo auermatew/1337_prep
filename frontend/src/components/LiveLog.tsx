@@ -3,20 +3,14 @@ import type { LogLine, StreamStatus } from '../stream/useTaskStream';
 import { Window } from './Window';
 import './LiveLog.css';
 
-export function StreamLabel({
-  status,
-  lastEventId,
-}: {
-  status: StreamStatus;
-  lastEventId: number | null;
-}) {
+export function StreamLabel({ status }: { status: StreamStatus }) {
   if (status === 'open') {
     return (
       <span className="stream-label">
         <span className="stream-dot" aria-hidden="true">
           ●
         </span>{' '}
-        CONNECTED · LAST ID {lastEventId ?? '—'}
+        CONNECTED
       </span>
     );
   }
@@ -45,7 +39,7 @@ export const LiveLog = memo(function LiveLog({
 
   const footer = (
     <>
-      <StreamLabel status={status} lastEventId={lastEventId} />
+      <span>LAST ID {lastEventId ?? '—'}</span>
       {status !== 'open' && <span className="ll-ld" aria-hidden="true" />}
     </>
   );

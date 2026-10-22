@@ -26,3 +26,30 @@ export function progressStep(task: TaskDto, now: number, steps = 19): number {
 export function formatClock(iso: string): string {
   return new Date(iso).toLocaleTimeString('en-GB');
 }
+
+export function formatSpent(ms: number): string {
+  const totalSeconds = Math.round(Math.max(0, ms) / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  if (hours > 0) return `${hours}H ${pad(minutes)}M ${pad(seconds)}S`;
+  if (minutes > 0) return `${minutes}M ${pad(seconds)}S`;
+  return `${seconds}S`;
+}
+
+// Like formatSpent but leaves out zero parts: 7200 → '2H', 3605 → '1H 05S'.
+export function formatDuration(totalSeconds: number): string {
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const parts: string[] = [];
+  const add = (n: number, unit: string) => {
+    if (n === 0) return;
+    parts.push(`${parts.length > 0 ? String(n).padStart(2, '0') : n}${unit}`);
+  };
+  add(hours, 'H');
+  add(minutes, 'M');
+  add(seconds, 'S');
+  return parts.join(' ');
+}

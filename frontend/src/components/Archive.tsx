@@ -1,7 +1,9 @@
 import { Fragment, memo, useMemo, useState } from 'react';
 import type { TaskDto } from '../api/types';
-import { formatClock, formatCountdown } from '../time/format';
+import { formatClock, formatCountdown, formatSpent } from '../time/format';
+import { archiveStats } from '../time/stats';
 import { History } from './History';
+import { TaskId } from './TaskId';
 import './Archive.css';
 
 const PAGE = 20;
@@ -23,6 +25,7 @@ export const Archive = memo(function Archive({
       ),
     [tasks],
   );
+  const stats = useMemo(() => archiveStats(tasks), [tasks]);
 
   if (sorted.length === 0) return null;
 
@@ -37,7 +40,21 @@ export const Archive = memo(function Archive({
 
   return (
     <section className="archive">
-      <p className="tag">02 · ARCHIVE</p>
+      <p className="tag">ARCHIVE</p>
+      <dl className="arc-stats" aria-label="ARCHIVE STATS">
+        <div className="arc-stat">
+          <dt>FINISHED</dt>
+          <dd className="arc-stat-on">{stats.finished}</dd>
+        </div>
+        <div className="arc-stat">
+          <dt>CANCELLED</dt>
+          <dd>{stats.cancelled}</dd>
+        </div>
+        <div className="arc-stat">
+          <dt>TIME SPENT</dt>
+          <dd>{formatSpent(stats.spentMs)}</dd>
+        </div>
+      </dl>
       <table className="arc">
         <thead>
           <tr>
@@ -56,8 +73,11 @@ export const Archive = memo(function Archive({
             return (
               <Fragment key={t.id}>
                 <tr className={isOpen ? 'arc-row open' : 'arc-row'}>
-                  <td className="arc-name" title={t.name}>
-                    {t.name}
+                  <td className="arc-name">
+                    <span className="arc-name-text" title={t.name}>
+                      {t.name}
+                    </span>
+                    <TaskId id={t.id} />
                   </td>
                   <td className="arc-state">
                     {t.state === 'finished' ? (

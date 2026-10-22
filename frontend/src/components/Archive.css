@@ -6,6 +6,49 @@
   margin-bottom: var(--space-6);
 }
 
+/* Stat columns split by hairlines: mono key, serif figure. */
+.arc-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0 0 var(--space-6);
+}
+
+.arc-stat {
+  min-width: 0;
+  padding: 0 var(--space-4);
+  border-left: var(--rule-hair) solid var(--line);
+}
+
+.arc-stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.arc-stat dt {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1;
+  font-weight: var(--label-weight);
+  letter-spacing: 0.06em;
+  color: var(--label-mute);
+}
+
+.arc-stat dd {
+  margin: 10px 0 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-display);
+  font-size: 40px;
+  line-height: 1;
+  font-weight: 200;
+  letter-spacing: -0.02em;
+}
+
+.arc-stat dd.arc-stat-on {
+  color: var(--purple);
+}
+
 .arc {
   width: 100%;
   table-layout: fixed;
@@ -20,9 +63,9 @@
   padding: 10px 12px 10px 0;
   text-align: left;
   font-size: 9.5px;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.06em;
-  color: var(--muted);
+  color: var(--label-mute);
   border-bottom: var(--rule-hair) solid var(--line);
 }
 
@@ -44,11 +87,22 @@
 }
 
 .arc td.arc-name {
-  overflow: hidden;
   white-space: nowrap;
-  text-overflow: ellipsis;
   font-size: 13px;
-  font-weight: 500;
+  font-weight: var(--label-weight);
+}
+
+.arc td.arc-name > * {
+  vertical-align: middle;
+}
+
+/* Name truncates; the short id after it always stays visible. */
+.arc-name-text {
+  display: inline-block;
+  max-width: calc(100% - 9ch - 10px);
+  margin-right: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .arc-state {
@@ -98,6 +152,13 @@
    `display: none`, so every row (and the colspan=5 detail row) keeps
    five columns and spans the full table width. */
 @media (max-width: 599px) {
+  .arc-stat {
+    padding: 0 var(--space-3);
+  }
+  .arc-stat dd {
+    font-size: 24px;
+    white-space: normal;
+  }
   .arc .arc-dur {
     width: 0;
     padding: 0;

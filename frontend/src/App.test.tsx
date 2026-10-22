@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TaskDto, TaskState } from './api/types';
@@ -59,14 +59,14 @@ describe('App', () => {
     ]);
     render(<App />);
     expect(screen.getAllByText(/\.tmr$/)).toHaveLength(2);
-    expect(screen.getByText('02 · ARCHIVE')).toBeTruthy();
+    expect(screen.getByText('ARCHIVE')).toBeTruthy();
     expect(archiveRows()).toHaveLength(2);
   });
 
   it('hides the archive when nothing has ended', () => {
     withTasks([task('a', 'running')]);
     render(<App />);
-    expect(screen.queryByText('02 · ARCHIVE')).toBeNull();
+    expect(screen.queryByText('ARCHIVE')).toBeNull();
   });
 
   it('shows 20 archive rows until SHOW ALL is clicked', async () => {
@@ -80,5 +80,74 @@ describe('App', () => {
       .click(screen.getByRole('button', { name: 'SHOW ALL (25)' }));
     expect(archiveRows()).toHaveLength(25);
     expect(screen.getByRole('button', { name: 'SHOW LESS' })).toBeTruthy();
+  });
+
+  it('shows archive stats over all ended tasks', () => {
+    withTasks([
+      ...Array.from({ length: 25 }, (_, i) => task(`f${i}`, 'finished', i)),
+      task('c', 'cancelled', 30),
+      task('r', 'running', 31),
+    ]);
+    render(<App />);
+    const stats = within(screen.getByLabelText('ARCHIVE STATS'));
+    const value = (label: string) =>
+      stats.getByText(label).nextElementSibling?.textContent;
+    expect(value('FINISHED')).toBe('25');
+    expect(value('CANCELLED')).toBe('1');
+    expect(value('TIME SPENT')).toBe('26M 00S');
+  });
+
+  it('links to the GitHub repo in a new tab', () => {
+    withTasks([]);
+    render(<App />);
+    const link = screen.getByRole('link', { name: 'GITHUB ↗' });
+    expect(link.getAttribute('href')).toBe(
+      'https://github.com/auermatew/1337_prep',
+    );
+    expect(link.getAttribute('target')).toBe('_blank');
+    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+  });
+
+  it('labels sections without numbers', () => {
+    withTasks([task('a', 'finished')]);
+    render(<App />);
+    expect(screen.getByText('TIMERS')).toBeTruthy();
+    expect(screen.getByText('ARCHIVE')).toBeTruthy();
+    expect(screen.queryByText(/^\d\d · /)).toBeNull();
+  });
+
+  it('keeps transcripts in a side tab, not on the page', () => {
+    withTasks([]);
+    render(<App />);
+    expect(screen.queryByText('TRANSCRIPTS', { selector: 'p' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'TRANSCRIPTS' })).toBeTruthy();
+  });
+
+  it('shows only the connection status in the header', () => {
+    withTasks([]);
+    const { container } = render(<App />);
+    const top = container.querySelector('.top')!;
+    expect(top.textContent).toContain('CONNECTED');
+    expect(top.textContent).not.toContain('LAST ID');
+  });
+
+  it('shows the short task id in archive rows and timer windows', () => {
+    withTasks([
+      { ...task('x', 'running'), id: 'aaaa1111-2222-4333-8444-555566667777' },
+      { ...task('y', 'finished'), id: 'bbbb1111-2222-4333-8444-555566667777' },
+    ]);
+    render(<App />);
+    expect(screen.getByText('aaaa1111').getAttribute('title')).toBe(
+      'aaaa1111-2222-4333-8444-555566667777',
+    );
+    const row = archiveRows()[0];
+    expect(row.textContent).toContain('bbbb1111');
+  });
+
+  it('keeps a 1337 task plain in the archive', () => {
+    withTasks([{ ...task('l', 'finished'), name: '1337' }]);
+    render(<App />);
+    expect(archiveRows()[0].className).toBe('arc-row');
+    expect(document.querySelector('.tw-1337')).toBeNull();
   });
 });

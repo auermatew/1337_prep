@@ -3,6 +3,8 @@ import type { TaskDto } from '../api/types';
 import {
   formatClock,
   formatCountdown,
+  formatDuration,
+  formatSpent,
   progressStep,
   remainingMs,
 } from './format';
@@ -73,5 +75,54 @@ describe('formatClock', () => {
   it('formats as local 24h HH:MM:SS', () => {
     const iso = '2026-10-22T11:37:00.000Z';
     expect(formatClock(iso)).toBe(new Date(iso).toLocaleTimeString('en-GB'));
+  });
+});
+
+describe('formatSpent', () => {
+  it('formats zero as 0S', () => {
+    expect(formatSpent(0)).toBe('0S');
+  });
+
+  it('shows seconds alone under a minute', () => {
+    expect(formatSpent(42_000)).toBe('42S');
+  });
+
+  it('pads seconds after minutes', () => {
+    expect(formatSpent(61_000)).toBe('1M 01S');
+  });
+
+  it('shows hours, minutes and seconds', () => {
+    expect(formatSpent(3_852_000)).toBe('1H 04M 12S');
+  });
+
+  it('rounds to the nearest second', () => {
+    expect(formatSpent(1_400)).toBe('1S');
+  });
+
+  it('clamps negatives to 0S', () => {
+    expect(formatSpent(-5)).toBe('0S');
+  });
+});
+
+describe('formatDuration', () => {
+  it('shows whole minutes alone', () => {
+    expect(formatDuration(1500)).toBe('25M');
+  });
+
+  it('shows hours, padded minutes and seconds', () => {
+    expect(formatDuration(3725)).toBe('1H 02M 05S');
+  });
+
+  it('leaves out zero parts', () => {
+    expect(formatDuration(7200)).toBe('2H');
+    expect(formatDuration(3605)).toBe('1H 05S');
+  });
+
+  it('pads leftover seconds after minutes', () => {
+    expect(formatDuration(1505)).toBe('25M 05S');
+  });
+
+  it('shows seconds alone under a minute', () => {
+    expect(formatDuration(45)).toBe('45S');
   });
 });

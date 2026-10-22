@@ -84,4 +84,39 @@ describe('StartForm', () => {
     expect(screen.getByText('NAME TOO FANCY')).toBeTruthy();
     expect(screen.getByText('SECONDS TOO LONG')).toBeTruthy();
   });
+
+  it('hints minutes and hours while typing seconds', async () => {
+    const { seconds, name, user } = setup();
+    const hint = document.getElementById('start-seconds-hint')!;
+    expect(seconds.getAttribute('aria-describedby')).toBe('start-seconds-hint');
+    const typeSeconds = async (value: string) => {
+      await user.clear(seconds);
+      await user.type(seconds, value);
+    };
+
+    await typeSeconds('1500');
+    expect(hint.classList.contains('on')).toBe(true);
+    expect(hint.textContent).toBe('= 25M');
+
+    await typeSeconds('45');
+    expect(hint.classList.contains('on')).toBe(false);
+
+    await typeSeconds(' 3725 ');
+    expect(hint.classList.contains('on')).toBe(true);
+    expect(hint.textContent).toBe('= 1H 02M 05S');
+
+    await typeSeconds('1337');
+    expect(hint.classList.contains('on')).toBe(true);
+    expect(hint.textContent).toBe('= LEET');
+
+    await typeSeconds('86401');
+    expect(hint.classList.contains('on')).toBe(true);
+    expect(hint.textContent).toBe('HELL NAW');
+    await typeSeconds('abc');
+    expect(hint.classList.contains('on')).toBe(false);
+
+    await typeSeconds('1500');
+    await user.click(name);
+    expect(hint.classList.contains('on')).toBe(false);
+  });
 });

@@ -1,8 +1,11 @@
 import { useMemo } from 'react';
 import { Archive } from './components/Archive';
+import { LeetWord } from './components/LeetWord';
 import { LiveLog, StreamLabel } from './components/LiveLog';
+import { Notebook } from './components/Notebook';
 import { StartForm } from './components/StartForm';
 import { TimerWindow } from './components/TimerWindow';
+import { Transcripts } from './components/Transcripts';
 import { useDeparting } from './stream/useDeparting';
 import { useTaskStream } from './stream/useTaskStream';
 import { useNow } from './time/useNow';
@@ -34,7 +37,17 @@ export default function App() {
     <div className="wrap">
       <header className="top">
         <span className="wordmark">1337 · TIMERS</span>
-        <StreamLabel status={status} lastEventId={lastEventId} />
+        <div className="top-end">
+          <a
+            className="link-btn top-gh"
+            href="https://github.com/auermatew/1337_prep"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GITHUB ↗
+          </a>
+          <StreamLabel status={status} />
+        </div>
       </header>
       {error && (
         <p className="err-line top-error" role="alert">
@@ -44,9 +57,10 @@ export default function App() {
 
       <main>
         <section className="opener">
-          <p className="tag">01 · TIMERS</p>
+          <p className="tag">TIMERS</p>
           <h1 className="headline">
-            Start a <em>timer.</em>
+            Start a <LeetWord />
+            <em>.</em>
           </h1>
           <p className="lead">
             Every timer is shared with everyone watching. Start one, watch it
@@ -79,6 +93,11 @@ export default function App() {
 
         <Archive tasks={ended} newestEventIds={newestEventIds} />
       </main>
+
+      <div className="side-tabs">
+        <Transcripts />
+        <Notebook />
+      </div>
     </div>
   );
 }

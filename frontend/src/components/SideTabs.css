@@ -1,0 +1,68 @@
+/* Vertical ink tabs stacked on the left edge (the right edge is where the
+   scrollbar lives), purple square on top.
+   Narrower than the page gutter (24px desktop, 16px phones) so they never
+   cover content. */
+.side-tabs {
+  position: fixed;
+  top: 50%;
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  transform: translateY(-50%);
+}
+
+.side-tab {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 6px;
+  border: 0;
+  border-radius: var(--radius-none);
+  background: var(--ink);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1;
+  font-weight: var(--label-weight);
+  letter-spacing: 0.08em;
+  writing-mode: vertical-rl;
+  cursor: pointer;
+  transition:
+    transform var(--dur-base) var(--ease-1337),
+    box-shadow var(--dur-base) var(--ease-1337);
+}
+
+.side-tab::before {
+  content: '';
+  flex: none;
+  width: var(--tag-square);
+  height: var(--tag-square);
+  background: var(--purple);
+}
+
+.side-tab:hover {
+  transform: translate(2px, -2px);
+  box-shadow: var(--ink-shadow-hard-sm);
+}
+
+.side-tab:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 2px;
+}
+
+/* Phones: the gutter is 16px, so the tabs stay inside it instead of
+   covering the left edge of rows. */
+@media (max-width: 599px) {
+  .side-tab {
+    gap: 8px;
+    padding: 10px 3px;
+    font-size: 10px;
+  }
+  .side-tab::before {
+    width: 8px;
+    height: 8px;
+  }
+}

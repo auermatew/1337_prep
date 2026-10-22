@@ -2,12 +2,19 @@
   padding: 16px 16px 18px;
 }
 
+.tw-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .tw-state {
   display: block;
   font-family: var(--font-mono);
   font-size: 11.5px;
   line-height: 1;
-  font-weight: 500;
+  font-weight: var(--label-weight);
   letter-spacing: 0.07em;
   text-transform: uppercase;
 }
@@ -82,4 +89,60 @@
 
 .win.leet-flash.tw .tw-count {
   color: var(--ink-mute);
+}
+
+/* Easter egg (1337 name or 1337 s): a rainbow loops sideways behind a
+   translucent wash, and a blurred copy glows around the window. */
+.tw-egg {
+  --leet-rainbow: linear-gradient(
+    90deg,
+    #ff4d4d,
+    #ffa31a,
+    #ffe14d,
+    #3fd27a,
+    #3cb9ff,
+    #7941f2,
+    #ff4dd8,
+    #ff4d4d
+  );
+  position: relative;
+  isolation: isolate;
+}
+
+.tw-egg::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  z-index: -1;
+  background: var(--leet-rainbow) 0 0 / 200% 100%;
+  filter: blur(16px);
+  opacity: 0.8;
+  animation: leet-rainbow-glow 4s linear infinite;
+  pointer-events: none;
+}
+
+.win.tw-1337 {
+  background:
+    linear-gradient(
+      color-mix(in srgb, var(--paper-raised) 74%, transparent),
+      color-mix(in srgb, var(--paper-raised) 74%, transparent)
+    ),
+    var(--leet-rainbow) 0 0 / 200% 100%;
+  animation: leet-rainbow 4s linear infinite;
+}
+
+/* Shifting by one full tile (200% of a 200%-wide image) loops seamlessly
+   because the gradient ends on its starting colour. */
+@keyframes leet-rainbow {
+  to {
+    background-position:
+      0 0,
+      200% 0;
+  }
+}
+
+@keyframes leet-rainbow-glow {
+  to {
+    background-position: 200% 0;
+  }
 }

@@ -7,6 +7,34 @@ body {
   line-height: 1.7;
 }
 
+/* Page atmosphere, fixed behind everything: a soft moon-like glow rising
+   from the bottom-left corner, and fine grayscale grain over the whole page.
+   The glow is mixed from --ink, so it is a faint grey on light paper and a
+   pale haze in the dark theme. */
+body::before,
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+body::before {
+  background: radial-gradient(
+    circle at 4% 104%,
+    color-mix(in srgb, var(--ink) 9%, transparent) 0,
+    color-mix(in srgb, var(--ink) 5%, transparent) 22vmax,
+    color-mix(in srgb, var(--ink) 1.5%, transparent) 42vmax,
+    transparent 62vmax
+  );
+}
+
+body::after {
+  opacity: 0.07;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
 .wrap {
   max-width: var(--wrap);
   margin: 0 auto;
