@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
-import { TaskDto, TaskEventDto, toEventDto, toTaskDto } from './task.types.js';
+import {
+  TaskChange,
+  TaskDto,
+  TaskEventDto,
+  toEventDto,
+  toTaskDto,
+} from './task.types.js';
 
 @Injectable()
 export class TasksQuery {
@@ -22,6 +28,39 @@ export class TasksQuery {
     return {
       tasks: tasks.map(toTaskDto),
       lastEventId: last._max.id === null ? null : Number(last._max.id),
+    };
+  }
+
+  /**
+   * Events with id > `after`, oldest first, each with its task's current row,
+   * plus the resume point to dedupe against. Both reads share one snapshot.
+   * An `after` beyond the newest event id is stale or bogus: it comes back as
+   * `resume: null` with nothing replayed, so it can't later suppress live
+   * events that are numerically below it.
+   */
+  async replay(
+    after: number,
+  ): Promise<{ resume: number | null; changes: TaskChange[] }> {
+    const [events, last] = await this.prisma.$transaction(
+      async (tx) =>
+        Promise.all([
+          tx.taskEvent.findMany({
+            where: { id: { gt: BigInt(after) } },
+            orderBy: { id: 'asc' },
+            include: { task: true },
+          }),
+          tx.taskEvent.aggregate({ _max: { id: true } }),
+        ]),
+      { isolationLevel: 'RepeatableRead' },
+    );
+    const max = Number(last._max.id ?? 0);
+    if (after > max) return { resume: null, changes: [] };
+    return {
+      resume: after,
+      changes: events.map(({ task, ...event }) => ({
+        event: toEventDto(event),
+        task: toTaskDto(task),
+      })),
     };
   }
 
