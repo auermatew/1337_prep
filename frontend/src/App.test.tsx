@@ -143,4 +143,11 @@ describe('App', () => {
     const row = archiveRows()[0];
     expect(row.textContent).toContain('bbbb1111');
   });
+
+  it('keeps a 1337 task plain in the archive', () => {
+    withTasks([{ ...task('l', 'finished'), name: '1337' }]);
+    render(<App />);
+    expect(archiveRows()[0].className).toBe('arc-row');
+    expect(document.querySelector('.tw-1337')).toBeNull();
+  });
 });

@@ -36,6 +36,11 @@ function StateLine({ task, remaining }: { task: TaskDto; remaining: number }) {
   );
 }
 
+// Easter egg: a timer named 1337, or set to 1337 seconds, glows rainbow.
+// Only here on the desk; the archive row stays plain.
+const isLeet = (task: TaskDto) =>
+  task.name === '1337' || task.durationSeconds === 1337;
+
 export function TimerWindow({
   task,
   now,
@@ -119,11 +124,17 @@ export function TimerWindow({
   );
 
   return (
-    <div className="rv" ref={revealRef}>
+    <div className={isLeet(task) ? 'rv tw-egg' : 'rv'} ref={revealRef}>
       <Window
         title={`${task.name}.tmr`}
         footer={footer}
-        className={running ? 'tw' : 'tw leet-flash'}
+        className={[
+          'tw',
+          running ? '' : 'leet-flash',
+          isLeet(task) ? 'tw-1337' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
       >
         <div className="tw-head">
           <StateLine task={task} remaining={remaining} />
