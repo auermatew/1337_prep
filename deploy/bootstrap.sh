@@ -69,7 +69,9 @@ PermitRootLogin no
 PasswordAuthentication no
 KbdInteractiveAuthentication no
 EOF
+# Ubuntu 24.04 socket-activates sshd, so its runtime dir may not exist yet; `sshd -t` needs it.
+install -d -m 0755 /run/sshd
 sshd -t
-systemctl reload ssh
+systemctl try-reload-or-restart ssh.service
 
 echo "bootstrap: done. In a new terminal check: ssh deploy@<IP> 'docker ps'"
