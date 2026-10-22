@@ -49,4 +49,14 @@ describe('LeetWord', () => {
     });
     expect(word().textContent).toBe('timer');
   });
+
+  it('hits half the time', () => {
+    const { unmount } = render(<LeetWord random={() => 0.49} />);
+    fireEvent.pointerEnter(word());
+    expect(word().textContent).toBe('1337');
+    unmount();
+    render(<LeetWord random={() => 0.5} />);
+    fireEvent.pointerEnter(word());
+    expect(word().textContent).toBe('timer');
+  });
 });

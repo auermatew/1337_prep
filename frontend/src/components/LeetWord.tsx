@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import './LeetWord.css';
 
-const CHANCE = 0.2;
+const CHANCE = 0.5;
 const GLITCH_MS = 500;
 
 // The headline's purple "timer": hovering it (or tapping it on a phone,
-// where pointerenter fires on touch) has a 1 in 5 chance of glitching into
+// where pointerenter fires on touch) has a 1 in 2 chance of glitching into
 // "1337" for half a second.
 export function LeetWord({ random = Math.random }: { random?: () => number }) {
   const [glitch, setGlitch] = useState(false);
