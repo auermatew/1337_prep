@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # One-time Droplet setup, run as root on a fresh Ubuntu 24.04 Droplet:
 #
-#   ssh root@IP "CI_PUBKEY='$(cat ci_key.pub)' bash -s" < deploy/bootstrap.sh
+#   ssh root@IP "CI_PUBKEY='$(cat /tmp/1337-ci/ci_key.pub)' bash -s" < deploy/bootstrap.sh
+#
+# (from the repo root; the CI key is made in deploy/README.md step 1)
 #
 # Installs Docker, adds swap, creates the `deploy` user (your login key from
 # root's authorized_keys plus the CI key), then turns off root and password
