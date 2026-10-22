@@ -12,6 +12,8 @@ and across backend processes. The UI follows a design system modelled on
   log, an archive and per-task history. See [frontend/README.md](frontend/README.md).
 - **`design-system/`**: tokens (`tokens.css`, `tokens.json`), motion notes and
   HTML previews of the 1337 style. See [design-system/README.md](design-system/README.md).
+- **`deploy/`**: production on one DigitalOcean Droplet behind Caddy, deployed
+  by GitHub Actions on every push to `main`. See [deploy/README.md](deploy/README.md).
 
 ## Requirements
 
