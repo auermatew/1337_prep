@@ -1,4 +1,6 @@
-/* Vertical ink tabs stacked on the right edge, purple square on top. */
+/* Vertical ink tabs stacked on the right edge, purple square on top.
+   Narrower than the page gutter (24px desktop, 16px phones) so they never
+   cover content. */
 .side-tabs {
   position: fixed;
   top: 50%;
@@ -15,7 +17,7 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 9px;
+  padding: 14px 6px;
   border: 0;
   border-radius: var(--radius-none);
   background: var(--ink);

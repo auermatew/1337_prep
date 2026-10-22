@@ -55,6 +55,10 @@
   margin: 0 0 0 auto;
 }
 
+.dlg-drawer .win-body {
+  flex: 1;
+}
+
 .dlg-drawer .win {
   height: 100%;
   max-height: none;
