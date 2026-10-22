@@ -132,9 +132,15 @@ State: `tasks: Map<id, TaskDto>`, `lastEventId`, `status`
    reset with `docker compose down -v`, or a restarted in-memory mock): without
    it every new event would look like a duplicate and old timers would hang at
    `finishing…`. Events with ids above the reloaded `lastEventId` still apply.
-   Events buffered during the reload that it already covers still print to
-   the log, once. A failed reload retries every 2 s (events stay buffered),
-   and only the newest reload is applied when reconnects overlap.
+   Holding is per attempt: each reload attempt holds stream events until it
+   lands and then replays them; held events it already covers still print to
+   the log, once. A failed attempt applies what it held and retries every
+   2 s, with events applied directly between attempts. An attempt that holds
+   500 events is abandoned the same way (its eventual result is ignored) and
+   a fresh one starts after 2 s. Only the newest attempt is applied when
+   reconnects overlap. Trade-off: after a database reset, events applied
+   between failed attempts are judged against the old, higher `lastEventId`
+   and dropped until a reload succeeds.
    If the browser gives up (`readyState === CLOSED`), the hook reopens the
    stream itself after a short delay with `?after=lastEventId`.
 5. On unmount: close the EventSource.

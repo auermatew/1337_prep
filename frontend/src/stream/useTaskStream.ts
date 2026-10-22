@@ -14,6 +14,8 @@ export type StreamStatus = 'connecting' | 'open' | 'reconnecting';
 export type { LogLine };
 
 const RETRY_MS = 2000;
+/** A resync attempt holding this many stream events is abandoned. */
+export const RESYNC_HOLD_LIMIT = 500;
 
 function describe(err: unknown): string {
   return err instanceof ApiError ? err.message : 'Could not reach the server';
@@ -43,27 +45,45 @@ export function useTaskStream(): {
     let resyncTimer: ReturnType<typeof setTimeout> | null = null;
     let hadError = false;
     let resyncing = false;
-    // Bumped by each resync; a resolve or reject from an older one is ignored.
+    // Bumped by each resync attempt; a resolve or reject from an older one is
+    // ignored.
     let resyncGen = 0;
     let buffered: TaskChange[] = [];
 
-    // Reload the list after a reconnect, buffering stream events until it
-    // lands, then replay the buffer on top: the reducer applies what is newer
-    // than the list and logs what has not been logged yet.
+    // Stop holding: apply the held events (the reducer's dedup decides).
+    const release = () => {
+      resyncing = false;
+      for (const change of buffered) dispatch({ type: 'change', change });
+      buffered = [];
+    };
+
+    const retry = (gen: number) => {
+      resyncTimer = setTimeout(() => resync(gen), RETRY_MS);
+    };
+
+    // Reload the list after a reconnect. Each attempt holds stream events
+    // until it lands, then replays them on top: the reducer applies what is
+    // newer than the list and logs what has not been logged yet. A failed
+    // attempt applies what it held and retries after RETRY_MS; events between
+    // attempts go straight to the reducer. An attempt that holds
+    // RESYNC_HOLD_LIMIT events is abandoned the same way, under a new gen.
+    // Trade-off: after a database reset, events applied directly between
+    // failed attempts are judged against the old, higher lastEventId and
+    // dropped until a list reload succeeds.
     const resync = (gen: number) => {
+      resyncing = true;
       listTasks().then(
         (list) => {
           if (disposed || gen !== resyncGen) return;
-          resyncing = false;
           dispatch({ type: 'reset', list });
-          for (const change of buffered) dispatch({ type: 'change', change });
-          buffered = [];
+          release();
           setError(null);
         },
         (err) => {
           if (disposed || gen !== resyncGen) return;
           setError(describe(err));
-          resyncTimer = setTimeout(() => resync(gen), RETRY_MS);
+          release();
+          retry(gen);
         },
       );
     };
@@ -75,14 +95,20 @@ export function useTaskStream(): {
       source = es;
       es.addEventListener('task', (e) => {
         const change = JSON.parse((e as MessageEvent).data) as TaskChange;
-        if (resyncing) buffered.push(change);
-        else dispatch({ type: 'change', change });
+        if (!resyncing) {
+          dispatch({ type: 'change', change });
+          return;
+        }
+        buffered.push(change);
+        if (buffered.length >= RESYNC_HOLD_LIMIT) {
+          release();
+          retry(++resyncGen);
+        }
       });
       es.onopen = () => {
         setStatus('open');
         if (!hadError) return;
         hadError = false;
-        resyncing = true;
         if (resyncTimer) clearTimeout(resyncTimer);
         resync(++resyncGen);
       };
