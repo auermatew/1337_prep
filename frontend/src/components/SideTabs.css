@@ -1,7 +1,7 @@
 /* Vertical ink tabs stacked on the left edge (the right edge is where the
    scrollbar lives), purple square on top.
-   Narrower than the page gutter (24px desktop, 16px phones) so they never
-   cover content. */
+   Narrower than the page gutter (24px desktop) so they never cover
+   content. */
 .side-tabs {
   position: fixed;
   top: 50%;
@@ -53,9 +53,12 @@
   outline-offset: 2px;
 }
 
-/* Phones: the gutter is 16px, so the tabs stay inside it instead of
-   covering the left edge of rows. */
+/* Phones: the tabs are 16px wide, so the left gutter grows from 16px to
+   28px to leave a gap between them and the content. */
 @media (max-width: 599px) {
+  .wrap {
+    padding-left: 28px;
+  }
   .side-tab {
     gap: 8px;
     padding: 10px 3px;

@@ -99,7 +99,8 @@ export const Archive = memo(function Archive({
                       aria-expanded={isOpen}
                       onClick={() => toggle(t.id)}
                     >
-                      {isOpen ? 'HISTORY ↑' : 'HISTORY ↓'}
+                      <span className="arc-hist-word">HISTORY </span>
+                      {isOpen ? '↑' : '↓'}
                     </button>
                   </td>
                 </tr>

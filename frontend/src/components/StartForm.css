@@ -105,4 +105,9 @@
   .start-seconds {
     flex: 1 1 0;
   }
+  /* Stacked fields leave no room above this one: sit on the label's line. */
+  .start-hint {
+    top: 0;
+    bottom: auto;
+  }
 }
