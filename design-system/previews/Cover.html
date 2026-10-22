@@ -1,0 +1,24 @@
+<!-- @dsCard height=288 -->
+<!doctype html><html><head><link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&display=swap"><style>
+html,body{margin:0;background:var(--paper)}
+.c{position:relative;width:960px;height:288px;overflow:hidden;background:var(--paper)}
+svg{position:absolute;inset:0}
+.ink{fill:var(--ink)}.pur{fill:var(--purple)}.org{fill:var(--orange)}.tint{fill:var(--purple-soft)}.tick{fill:var(--paper)}.tick.on{fill:var(--purple-light)}
+.t{position:absolute;left:40px;bottom:32px;max-width:440px;display:flex;flex-direction:column;gap:16px}
+.n{margin:0;font-family:var(--font-display);font-weight:200;font-size:72px;line-height:.95;letter-spacing:-.03em;color:var(--ink)}
+.g{margin:0;font-family:var(--font-sans);font-size:13px;line-height:1.5;color:var(--muted)}
+</style></head><body><div class="c">
+<svg viewBox="0 0 960 288" width="960" height="288" aria-hidden="true">
+<!-- blocks: ink slab 232×288 (bleeds top+bottom), purple 136×200 (bleeds top+right), orange cursor 40×56 (the blink block, .4em×.72em ratio ≈ 0.7), purple-soft tint 112×56; radius-none everywhere
+     arrangement: one tall slab with satellites, right of x=480
+     pattern: 19 square ticks = the steps(19) loader — "stepped motion for anything that should feel like a machine" (README, Motion); the first 11 are filled, like a loader mid-run
+     scales: tick 8px with a 4px gap (space-2 / 2), slab and blocks on 8px multiples, radius-none -->
+<rect class="tint" x="480" y="232" width="112" height="56"/>
+<rect class="ink" x="592" y="0" width="232" height="288"/>
+<rect class="pur" x="824" y="0" width="136" height="200"/>
+<rect class="org" x="536" y="160" width="40" height="56"/>
+<g transform="translate(596 252)">
+<rect class="tick on" x="0" width="8" height="8"/><rect class="tick on" x="12" width="8" height="8"/><rect class="tick on" x="24" width="8" height="8"/><rect class="tick on" x="36" width="8" height="8"/><rect class="tick on" x="48" width="8" height="8"/><rect class="tick on" x="60" width="8" height="8"/><rect class="tick on" x="72" width="8" height="8"/><rect class="tick on" x="84" width="8" height="8"/><rect class="tick on" x="96" width="8" height="8"/><rect class="tick on" x="108" width="8" height="8"/><rect class="tick on" x="120" width="8" height="8"/><rect class="tick" x="132" width="8" height="8"/><rect class="tick" x="144" width="8" height="8"/><rect class="tick" x="156" width="8" height="8"/><rect class="tick" x="168" width="8" height="8"/><rect class="tick" x="180" width="8" height="8"/><rect class="tick" x="192" width="8" height="8"/><rect class="tick" x="204" width="8" height="8"/><rect class="tick" x="216" width="8" height="8"/>
+</g></svg>
+<div class="t"><p class="n">1337 Design<br>System</p><p class="g">Editorial serif, terminal mono, one purple.</p></div>
+</div></body></html>

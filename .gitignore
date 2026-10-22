@@ -3,4 +3,5 @@ node_modules
 dist
 .superpowers/
 backend/src/generated/
+.DS_Store
 *.tsbuildinfo

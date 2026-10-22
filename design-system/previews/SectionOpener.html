@@ -1,0 +1,11 @@
+<!-- @dsCard group="Style" height=300 subtitle="Tag with purple square, serif headline with one purple phrase, lead in ink-soft" -->
+<!doctype html><html><head><link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"><style>
+html,body{margin:0;background:var(--paper);color:var(--ink)}
+.o{padding:28px 32px;display:flex;flex-direction:column;gap:18px;max-width:720px}
+.tag{display:flex;align-items:center;gap:10px;margin:0;font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--ink)}
+.tag::before{content:"";width:9px;height:9px;background:var(--purple)}
+h2{margin:0;font-family:var(--font-display);font-weight:200;font-size:64px;line-height:1.02;letter-spacing:-.03em;text-wrap:balance}
+h2 em{font-style:normal;color:var(--purple)}
+p{margin:0;font-family:var(--font-sans);font-size:19px;line-height:1.55;letter-spacing:-.1px;color:var(--ink-soft);max-width:620px}
+@media (max-width:600px){h2{font-size:36px}p{font-size:16px}}
+</style></head><body><div class="o"><p class="tag">02 · Rollout</p><h2>AI adoption is 20% technology and <em>80% people</em>.</h2><p>That is why the platform comes with engineers: they sit in your team, work on live data, and stay until the system runs in production.</p></div></body></html>

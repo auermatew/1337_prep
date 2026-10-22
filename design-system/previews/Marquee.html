@@ -1,0 +1,10 @@
+<!-- @dsCard group="Motion" height=150 subtitle="translateX(-50%), 42s linear infinite, paused on hover" -->
+<!doctype html><html><head><link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=DM+Mono:wght@400;500&family=Inter:wght@400;500;600;700&display=swap"><style>html,body{margin:0;background:var(--paper);color:var(--ink)}.wrap{padding:20px 24px;font-family:var(--font-sans)}.tag{font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted)}button.replay{font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;background:none;border:1.5px solid var(--ink);color:var(--ink);padding:9px 12px;border-radius:0;cursor:pointer}button.replay:focus-visible{outline:2px solid var(--purple);outline-offset:2px}.row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+.mq{margin-top:18px;overflow:hidden;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mq-track{display:flex;width:max-content;animation:mq 42s linear infinite}.mq:hover .mq-track{animation-play-state:paused}
+.mq-i{padding:22px 40px;font:500 12px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.mq-i.you{color:var(--purple);border:1.5px dashed;margin:10px 24px;padding:12px 16px}
+@keyframes mq{to{transform:translateX(-50%)}}
+</style></head><body><div class="wrap"><span class="tag">Logo strip (hover to pause)</span>
+<div class="mq"><div class="mq-track" id="t"></div></div></div>
+<script>const w=['Chat','Knowledge','Agents','Workflows','Data guard','Admin','Audit'];const h=w.map(x=>'<span class="mq-i">'+x+'</span>').join('')+'<span class="mq-i you">Your logo here</span>';document.getElementById('t').innerHTML=h+h</script></body></html>

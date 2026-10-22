@@ -1,0 +1,56 @@
+/* Mono meta table, entering with the 0.35s swap motion. */
+@keyframes hist-swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.hist {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.3;
+  animation: hist-swap var(--dur-swap) var(--ease-1337) both;
+}
+
+.hist-row {
+  display: grid;
+  grid-template-columns: 5ch 1fr auto;
+  gap: 12px;
+  padding: 7px 0;
+  border-bottom: var(--rule-hair) solid var(--line);
+}
+
+.hist-row:first-child {
+  border-top: var(--rule-hair) solid var(--line);
+}
+
+.hist-id,
+.hist-at {
+  color: var(--muted);
+}
+
+.hist-state {
+  letter-spacing: 0.07em;
+}
+
+.hist-state.on {
+  color: var(--purple);
+}
+
+.hist-note {
+  margin: 0;
+  padding: 7px 0;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.3;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+}

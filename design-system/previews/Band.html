@@ -1,0 +1,16 @@
+<!-- @dsCard group="Style" height=280 subtitle="Warm stone band with grain and scanlines; tag, headline and buttons flipped for dark" -->
+<!doctype html><html><head><link rel="stylesheet" href="../tokens.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400&family=DM+Mono:wght@400;500&family=Inter:wght@400&display=swap"><style>
+html,body{margin:0;background:var(--band)}
+.band{position:relative;overflow:hidden;background:var(--band);color:var(--on-band);padding:32px}
+.band::before{content:"";position:absolute;inset:0;opacity:.42;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 .98  0 0 0 0 .95  0 0 0 .75 -.32'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.band::after{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,transparent 0 2px,rgba(255,255,255,.01) 2px 4px)}
+.in{position:relative;z-index:1;display:flex;flex-direction:column;gap:16px;max-width:700px}
+.tag{display:flex;align-items:center;gap:10px;margin:0;font:500 11.5px/1 var(--font-mono);letter-spacing:.07em;text-transform:uppercase;color:var(--on-band-tag)}
+.tag::before{content:"";width:9px;height:9px;background:var(--purple-on-band)}
+h2{margin:0;font-family:var(--font-display);font-weight:200;font-size:44px;line-height:1.05;letter-spacing:-.022em}
+h2 em{font-style:normal;color:var(--purple-on-band)}
+p{margin:0;font-family:var(--font-sans);font-size:15px;line-height:1.7;color:var(--on-band-mute)}
+.btns{display:flex;gap:14px;flex-wrap:wrap}
+.btn{font:500 12px/1 var(--font-mono);letter-spacing:.08em;text-transform:uppercase;padding:15px 20px;border:0;border-radius:0;text-decoration:none}
+.solid{background:var(--on-band);color:#111}.ghost{background:transparent;color:var(--on-band);box-shadow:inset 0 0 0 1.5px rgba(251,250,244,.45)}
+</style></head><body><section class="band"><div class="in"><p class="tag">Why 1337</p><h2>In hacker slang, <em>1337</em> is someone with a deep understanding of the system they use.</h2><p>That's the level we bring out in our clients' teams.</p><div class="btns"><a class="btn solid" href="#">Book an intro call</a><a class="btn ghost" href="#">Open roles</a></div></div></section></body></html>
