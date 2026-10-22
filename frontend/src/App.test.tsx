@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from '@testing-library/react';
+import { cleanup, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TaskDto, TaskState } from './api/types';
@@ -80,5 +80,20 @@ describe('App', () => {
       .click(screen.getByRole('button', { name: 'SHOW ALL (25)' }));
     expect(archiveRows()).toHaveLength(25);
     expect(screen.getByRole('button', { name: 'SHOW LESS' })).toBeTruthy();
+  });
+
+  it('shows archive stats over all ended tasks', () => {
+    withTasks([
+      ...Array.from({ length: 25 }, (_, i) => task(`f${i}`, 'finished', i)),
+      task('c', 'cancelled', 30),
+      task('r', 'running', 31),
+    ]);
+    render(<App />);
+    const stats = within(screen.getByLabelText('ARCHIVE STATS'));
+    const value = (label: string) =>
+      stats.getByText(label).nextElementSibling?.textContent;
+    expect(value('FINISHED')).toBe('25');
+    expect(value('CANCELLED')).toBe('1');
+    expect(value('TIME SPENT')).toBe('26M 00S');
   });
 });

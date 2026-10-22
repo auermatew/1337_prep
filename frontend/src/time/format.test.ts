@@ -3,6 +3,7 @@ import type { TaskDto } from '../api/types';
 import {
   formatClock,
   formatCountdown,
+  formatSpent,
   progressStep,
   remainingMs,
 } from './format';
@@ -73,5 +74,31 @@ describe('formatClock', () => {
   it('formats as local 24h HH:MM:SS', () => {
     const iso = '2026-10-22T11:37:00.000Z';
     expect(formatClock(iso)).toBe(new Date(iso).toLocaleTimeString('en-GB'));
+  });
+});
+
+describe('formatSpent', () => {
+  it('formats zero as 0S', () => {
+    expect(formatSpent(0)).toBe('0S');
+  });
+
+  it('shows seconds alone under a minute', () => {
+    expect(formatSpent(42_000)).toBe('42S');
+  });
+
+  it('pads seconds after minutes', () => {
+    expect(formatSpent(61_000)).toBe('1M 01S');
+  });
+
+  it('shows hours, minutes and seconds', () => {
+    expect(formatSpent(3_852_000)).toBe('1H 04M 12S');
+  });
+
+  it('rounds to the nearest second', () => {
+    expect(formatSpent(1_400)).toBe('1S');
+  });
+
+  it('clamps negatives to 0S', () => {
+    expect(formatSpent(-5)).toBe('0S');
   });
 });
