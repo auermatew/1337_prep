@@ -5,3 +5,4 @@ dist
 backend/src/generated/
 .DS_Store
 *.tsbuildinfo
+.env.test

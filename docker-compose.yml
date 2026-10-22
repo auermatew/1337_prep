@@ -12,7 +12,8 @@ x-backend: &backend
     retries: 10
     start_period: 15s
   environment:
-    DATABASE_URL: postgresql://postgres:postgres@postgres:5432/tasks
+    # Built from the root .env; URL-encode the password if it has reserved characters.
+    DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     PORT: '3000'
     FRONTEND_ORIGIN: http://localhost:5173
     STREAM_KEEPALIVE_MS: '15000'
@@ -24,17 +25,18 @@ name: 1337test
 services:
   postgres:
     image: postgres:18
+    # Credentials come from the gitignored root .env (template: .env.example).
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: tasks
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env (see .env.example)}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env (see .env.example)}
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB in .env (see .env.example)}
     ports:
       - '5432:5432'
     volumes:
       - pgdata:/var/lib/postgresql
       - ./docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U postgres -d tasks']
+      test: ['CMD-SHELL', 'pg_isready -U "$$POSTGRES_USER" -d "$$POSTGRES_DB"']
       interval: 2s
       timeout: 3s
       retries: 30

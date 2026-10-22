@@ -22,7 +22,8 @@ npm install
 npm run start:dev
 ```
 
-`prestart:dev` copies `.env.example` to `.env` if there is none, starts
+`prestart:dev` copies `.env.example` to `.env` (here and in the repo root) if
+there is none, starts
 Postgres 18 with `docker compose up -d --wait postgres`, and runs
 `prisma migrate deploy`. The API is then served on `:3000` under `/api`.
 
@@ -36,8 +37,8 @@ npm test          # unit tests (vitest)
 npm run test:e2e  # e2e tests against the tasks_test database from .env.test
 ```
 
-`pretest:e2e` starts Postgres and migrates `tasks_test`; the tests reset it
-themselves.
+`pretest:e2e` copies `.env.test.example` to `.env.test` if there is none,
+starts Postgres and migrates `tasks_test`; the tests reset it themselves.
 
 ## Two processes (`multi` profile)
 
@@ -55,9 +56,19 @@ with `docker compose --profile multi rm -f backend-1 backend-2`.
 
 ## Environment
 
+Credentials live only in gitignored files, never in the repo. The repo-root
+`.env` (template `.env.example`) sets `POSTGRES_USER`, `POSTGRES_PASSWORD` and
+`POSTGRES_DB` for `docker-compose.yml`; `docker compose` refuses to start
+without them. `backend/.env` and `backend/.env.test` must use the same
+credentials in `DATABASE_URL`. Postgres applies the password only when the
+`pgdata` volume is first created, so after changing it run `npm run db:reset`
+(drops the dev data) or `ALTER USER` inside the container.
+
+`backend/.env` (template `.env.example`):
+
 | Variable | Example | Meaning |
 |---|---|---|
-| `DATABASE_URL` | `postgresql://postgres:postgres@localhost:5432/tasks` | Postgres connection |
+| `DATABASE_URL` | `postgresql://postgres:change-me@localhost:5432/tasks` | Postgres connection |
 | `PORT` | `3000` | HTTP port |
 | `FRONTEND_ORIGIN` | `http://localhost:5173` | Allowed CORS origin; unset sends no CORS headers |
 | `STREAM_KEEPALIVE_MS` | `15000` | Interval of `: ping` comments on the stream |
