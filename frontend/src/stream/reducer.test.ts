@@ -56,6 +56,7 @@ describe('reducer', () => {
     expect(s.lastEventId).toBe(5);
     expect(s.log).toEqual([
       {
+        seq: 1,
         id: 5,
         taskId: 'a',
         name: 'task a',
@@ -87,6 +88,61 @@ describe('reducer', () => {
     expect(reducer(s, { type: 'change', change: change(3, task('a')) })).toBe(
       s,
     );
+  });
+
+  it('logs a change the reset already covers without applying it, once', () => {
+    let s = reducer(initialState, {
+      type: 'reset',
+      list: { tasks: [task('a')], lastEventId: 4 },
+    });
+    s = reducer(s, {
+      type: 'reset',
+      list: { tasks: [task('a', { state: 'finished' })], lastEventId: 5 },
+    });
+    const stale = change(5, task('a', { state: 'running' }));
+    s = reducer(s, { type: 'change', change: stale });
+    expect(s.log.map((l) => l.id)).toEqual([5]);
+    expect(s.tasks.get('a')?.state).toBe('finished');
+    expect(s.lastEventId).toBe(5);
+    expect(reducer(s, { type: 'change', change: stale })).toBe(s);
+  });
+
+  it('does not log events the first list already covers', () => {
+    const s = reducer(initialState, {
+      type: 'reset',
+      list: { tasks: [task('a')], lastEventId: 4 },
+    });
+    expect(reducer(s, { type: 'change', change: change(4, task('a')) })).toBe(
+      s,
+    );
+  });
+
+  it('logs low ids again after a reset whose ids went backwards', () => {
+    let s = reducer(initialState, {
+      type: 'reset',
+      list: { tasks: [task('a')], lastEventId: 4 },
+    });
+    s = reducer(s, { type: 'change', change: change(5, task('a')) });
+    s = reducer(s, { type: 'reset', list: { tasks: [], lastEventId: null } });
+    s = reducer(s, { type: 'change', change: change(1, task('b')) });
+    s = reducer(s, { type: 'change', change: change(5, task('b')) });
+    expect(s.log.map((l) => l.id)).toEqual([5, 1, 5]);
+    expect(s.tasks.has('b')).toBe(true);
+  });
+
+  it('gives every log line a unique increasing seq', () => {
+    let s = reducer(initialState, {
+      type: 'change',
+      change: change(1, task('a')),
+    });
+    s = reducer(s, { type: 'change', change: change(2, task('a')) });
+    s = reducer(s, { type: 'reset', list: { tasks: [], lastEventId: null } });
+    s = reducer(s, { type: 'change', change: change(1, task('b')) });
+    expect(s.log.map((l) => [l.id, l.seq])).toEqual([
+      [1, 1],
+      [2, 2],
+      [1, 3],
+    ]);
   });
 
   it('adds unknown tasks', () => {

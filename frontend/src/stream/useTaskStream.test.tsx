@@ -67,11 +67,11 @@ describe('useTaskStream', () => {
     expect(es().url).toBe('/api/tasks/stream?after=7');
   });
 
-  it('opens without after when there are no events', async () => {
+  it('opens with after=0 when there are no events', async () => {
     mockList.mockResolvedValue(list([], null));
     renderHook(() => useTaskStream());
     await flush();
-    expect(es().url).toBe('/api/tasks/stream');
+    expect(es().url).toBe('/api/tasks/stream?after=0');
   });
 
   it('tracks status', async () => {
@@ -131,6 +131,101 @@ describe('useTaskStream', () => {
     await act(async () => resolve(list([task('b')], 2)));
     expect(result.current.tasks.map((t) => t.state)).toEqual(['finished']);
     expect(result.current.lastEventId).toBe(3);
+  });
+
+  it('logs a replayed event the resync list already covers', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    let resolve!: (l: TaskList) => void;
+    mockList.mockReturnValueOnce(new Promise((r) => (resolve = r)));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    act(() => es().emit(change(5, task('a', { state: 'finished' }))));
+    await act(async () => resolve(list([task('a', { state: 'finished' })], 5)));
+    expect(result.current.log.map((l) => l.id)).toEqual([5]);
+    expect(result.current.lastEventId).toBe(5);
+    expect(result.current.tasks[0].state).toBe('finished');
+  });
+
+  it('logs a replayed event that arrives after the resync list', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    mockList.mockResolvedValueOnce(list([task('a', { state: 'finished' })], 5));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    await flush();
+    act(() => es().emit(change(5, task('a', { state: 'finished' }))));
+    act(() => es().emit(change(5, task('a', { state: 'finished' }))));
+    expect(result.current.log.map((l) => l.id)).toEqual([5]);
+    expect(result.current.lastEventId).toBe(5);
+  });
+
+  it('ignores a stale resync that resolves while a newer one is pending', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    let resolveA!: (l: TaskList) => void;
+    let resolveB!: (l: TaskList) => void;
+    mockList.mockReturnValueOnce(new Promise((r) => (resolveA = r)));
+    mockList.mockReturnValueOnce(new Promise((r) => (resolveB = r)));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    await act(async () => resolveA(list([task('a')], 4)));
+    act(() => es().emit(change(5, task('a', { state: 'finished' }))));
+    expect(result.current.lastEventId).toBe(4);
+    await act(async () => resolveB(list([task('a')], 4)));
+    expect(result.current.tasks[0].state).toBe('finished');
+    expect(result.current.lastEventId).toBe(5);
+    expect(result.current.log.map((l) => l.id)).toEqual([5]);
+  });
+
+  it('retries a failed resync every 2s, buffering events meanwhile', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    mockList.mockRejectedValueOnce(new Error('boom'));
+    mockList.mockRejectedValueOnce(new Error('boom'));
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    const { result } = renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    await flush();
+    expect(result.current.error).toBe('Could not reach the server');
+    act(() => es().emit(change(5, task('a', { state: 'finished' }))));
+    expect(result.current.lastEventId).toBe(4);
+    await advance(2000);
+    expect(mockList).toHaveBeenCalledTimes(3);
+    expect(result.current.lastEventId).toBe(4);
+    await advance(2000);
+    expect(mockList).toHaveBeenCalledTimes(4);
+    expect(result.current.error).toBeNull();
+    expect(result.current.tasks[0].state).toBe('finished');
+    expect(result.current.lastEventId).toBe(5);
+  });
+
+  it('stops retrying a failed resync once a newer one supersedes it', async () => {
+    mockList.mockResolvedValueOnce(list([task('a')], 4));
+    mockList.mockRejectedValueOnce(new Error('boom'));
+    mockList.mockResolvedValue(list([task('a')], 4));
+    renderHook(() => useTaskStream());
+    await flush();
+    act(() => es().open());
+    act(() => es().fail());
+    act(() => es().open());
+    await flush();
+    act(() => es().fail());
+    act(() => es().open());
+    await flush();
+    expect(mockList).toHaveBeenCalledTimes(3);
+    await advance(5000);
+    expect(mockList).toHaveBeenCalledTimes(3);
   });
 
   it('recreates a closed source after 2s using the current lastEventId', async () => {

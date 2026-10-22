@@ -52,9 +52,9 @@ export const LiveLog = memo(function LiveLog({
 
   return (
     <Window title="live.log" footer={footer} className="ll">
-      <div className="ll-body" ref={bodyRef} aria-live="polite">
+      <div className="ll-body" ref={bodyRef} role="log">
         {log.map((line) => (
-          <div key={line.id} className="ll-line">
+          <div key={line.seq} className="ll-line">
             <span className="ll-id">#{line.id}</span>
             <span className="ll-name">{line.name}</span>
             <span

@@ -40,14 +40,37 @@ export function useTaskStream(): {
     let disposed = false;
     let source: EventSource | null = null;
     let timer: ReturnType<typeof setTimeout> | null = null;
+    let resyncTimer: ReturnType<typeof setTimeout> | null = null;
     let hadError = false;
     let resyncing = false;
+    // Bumped by each resync; a resolve or reject from an older one is ignored.
+    let resyncGen = 0;
     let buffered: TaskChange[] = [];
 
+    // Reload the list after a reconnect, buffering stream events until it
+    // lands, then replay the buffer on top: the reducer applies what is newer
+    // than the list and logs what has not been logged yet.
+    const resync = (gen: number) => {
+      listTasks().then(
+        (list) => {
+          if (disposed || gen !== resyncGen) return;
+          resyncing = false;
+          dispatch({ type: 'reset', list });
+          for (const change of buffered) dispatch({ type: 'change', change });
+          buffered = [];
+          setError(null);
+        },
+        (err) => {
+          if (disposed || gen !== resyncGen) return;
+          setError(describe(err));
+          resyncTimer = setTimeout(() => resync(gen), RETRY_MS);
+        },
+      );
+    };
+
     const connect = () => {
-      const after = lastIdRef.current;
       const es = new EventSource(
-        '/api/tasks/stream' + (after !== null ? `?after=${after}` : ''),
+        `/api/tasks/stream?after=${lastIdRef.current ?? 0}`,
       );
       source = es;
       es.addEventListener('task', (e) => {
@@ -60,31 +83,8 @@ export function useTaskStream(): {
         if (!hadError) return;
         hadError = false;
         resyncing = true;
-        buffered = [];
-        listTasks().then(
-          (list) => {
-            if (disposed) return;
-            resyncing = false;
-            dispatch({ type: 'reset', list });
-            for (const change of buffered) {
-              if (
-                list.lastEventId === null ||
-                change.event.id > list.lastEventId
-              ) {
-                dispatch({ type: 'change', change });
-              }
-            }
-            buffered = [];
-            setError(null);
-          },
-          (err) => {
-            if (disposed) return;
-            resyncing = false;
-            for (const change of buffered) dispatch({ type: 'change', change });
-            buffered = [];
-            setError(describe(err));
-          },
-        );
+        if (resyncTimer) clearTimeout(resyncTimer);
+        resync(++resyncGen);
       };
       es.onerror = () => {
         hadError = true;
@@ -118,6 +118,7 @@ export function useTaskStream(): {
     return () => {
       disposed = true;
       if (timer) clearTimeout(timer);
+      if (resyncTimer) clearTimeout(resyncTimer);
       source?.close();
     };
   }, []);
