@@ -154,10 +154,7 @@ string[]), which the UI shows in mono.
   backend already defaults to `http://localhost:5173`.
 - The proxy must not buffer SSE (Vite's http-proxy streams by default; checked
   in verification).
-- `npm run mock` starts a small dependency-free Node mock of the four endpoints
-  and the stream (in memory, real timers, real SSE ids, honours `?after=` and
-  `Last-Event-ID`) on :3000, so the UI works before backend Task 6 lands.
-  Only one of mock or backend runs on :3000 at a time.
+- The mock was dropped because the backend was finished first, so there is no `npm run mock`.
 
 ## Fonts
 
@@ -182,7 +179,7 @@ blink, `steps(19)` loader, `leetflash`, swap. Everything honours
   after CLOSED; close on unmount.
 - Unit tests for countdown formatting and the progress step calculation.
 - A light component test that the running/archive split follows task state.
-- Manual check in the browser against the mock (start, watch, cancel, history,
+- Manual check in the browser against the real backend (start, watch, cancel, history,
   reconnect by restarting the mock), then against the real backend once Tasks
   5–6 are merged, plus `stream-verifier` since its scope names the frontend
   stream hook.

@@ -134,6 +134,8 @@ Copy and behaviour (exact):
 
 ### Task 5: Mock backend and browser verification
 
+> Revised: the backend landed first, so the mock is dropped; this task is the README plus verification against the real backend.
+
 **Files:**
 - Create: `frontend/mock/server.mjs`
 - Create: `frontend/README.md`
