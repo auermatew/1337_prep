@@ -7,12 +7,14 @@ import './StartForm.css';
 const NAME_MAX = 100;
 const SECONDS_MAX = 86400;
 
-// Only worth a hint once there is at least a minute in it.
+// Only worth a hint once there is at least a minute in it; past the
+// 24-hour limit it just says no.
 function secondsHint(seconds: string): string | null {
   const trimmed = seconds.trim();
   if (!/^\d+$/.test(trimmed)) return null;
   const n = Number(trimmed);
-  if (n < 60 || n > SECONDS_MAX) return null;
+  if (n > SECONDS_MAX) return 'HELL NAW';
+  if (n < 60) return null;
   return `= ${formatDuration(n)}`;
 }
 

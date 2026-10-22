@@ -106,7 +106,8 @@ describe('StartForm', () => {
     expect(hint.textContent).toBe('= 1H 02M 05S');
 
     await typeSeconds('86401');
-    expect(hint.classList.contains('on')).toBe(false);
+    expect(hint.classList.contains('on')).toBe(true);
+    expect(hint.textContent).toBe('HELL NAW');
     await typeSeconds('abc');
     expect(hint.classList.contains('on')).toBe(false);
 
