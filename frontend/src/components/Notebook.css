@@ -62,3 +62,17 @@
   max-height: calc(100dvh - 160px);
   margin: 0 auto;
 }
+
+/* Phones: the gutter is 16px, so the tab stays inside it instead of
+   covering the right edge of rows (DOWNLOAD ↓, HISTORY ↓). */
+@media (max-width: 599px) {
+  .nb-tab {
+    gap: 8px;
+    padding: 10px 3px;
+    font-size: 10px;
+  }
+  .nb-tab::before {
+    width: 8px;
+    height: 8px;
+  }
+}

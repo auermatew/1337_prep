@@ -67,4 +67,35 @@ describe('Transcripts', () => {
       .click(within(dialog).getByRole('button', { name: 'CLOSE' }));
     expect(dialog.hasAttribute('open')).toBe(false);
   });
+
+  it('stays open when a click lands on the dialog itself', async () => {
+    stubFetch(() => new Response('text'));
+    render(<Transcripts />);
+    await openPreview(0);
+    const dialog = screen.getByRole('dialog', {
+      name: '1337-design-system.md',
+    });
+    await userEvent.setup().click(dialog);
+    expect(dialog.hasAttribute('open')).toBe(true);
+  });
+
+  it('does not show a previous failure while retrying', async () => {
+    let fail = true;
+    const fetch = vi.fn(() =>
+      fail
+        ? Promise.resolve(new Response('', { status: 404 }))
+        : new Promise<Response>(() => {}),
+    );
+    vi.stubGlobal('fetch', fetch);
+    render(<Transcripts />);
+    await openPreview(0);
+    expect(await screen.findByText('COULD NOT LOAD TRANSCRIPT')).toBeTruthy();
+    await userEvent
+      .setup()
+      .click(screen.getByRole('button', { name: 'CLOSE' }));
+    fail = false;
+    await openPreview(0);
+    expect(screen.queryByText('COULD NOT LOAD TRANSCRIPT')).toBeNull();
+    expect(screen.getByText('LOADING…')).toBeTruthy();
+  });
 });

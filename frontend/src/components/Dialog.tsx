@@ -1,10 +1,11 @@
 import { useEffect, useRef } from 'react';
-import type { MouseEvent, ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { Window } from './Window';
 import './Dialog.css';
 
 // A native modal <dialog> framed as a design-system Window. Esc, focus
-// trapping and focus return come from the browser.
+// trapping and focus return come from the browser. No backdrop-click close:
+// a text-selection drag that ends outside the Window would close it.
 export function Dialog({
   title,
   open,
@@ -29,18 +30,12 @@ export function Dialog({
     if (!open && dialog.open) dialog.close();
   }, [open]);
 
-  const onBackdrop = (e: MouseEvent<HTMLDialogElement>) => {
-    if (e.target === e.currentTarget) e.currentTarget.close();
-  };
-
   return (
-    // oxlint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions -- backdrop click; Esc is native
     <dialog
       ref={ref}
       className={className ? `dlg ${className}` : 'dlg'}
       aria-label={title}
       onClose={onClose}
-      onClick={onBackdrop}
     >
       <Window title={title} footer={footer}>
         {children}

@@ -56,7 +56,10 @@ export function Transcripts() {
             <button
               type="button"
               className="link-btn"
-              onClick={() => setSelected(t)}
+              onClick={() => {
+                setLoaded(null);
+                setSelected(t);
+              }}
             >
               PREVIEW
             </button>
