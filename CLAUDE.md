@@ -9,7 +9,7 @@ plans in `docs/superpowers/plans/`.
 
 ## Backend commands (run in `backend/`, Node 24)
 
-- Start: `npm run start:dev` (creates `backend/.env` from `.env.example` if missing, starts Postgres 18 via docker compose, applies migrations, serves on :3000 under `/api`)
-- Test: `npm run test:e2e` (uses the `tasks_test` database from `.env.test`)
+- Start: `npm run start:dev` (creates `.env` and `backend/.env` from their `.env.example` if missing, starts Postgres 18 via docker compose, applies migrations, serves on :3000 under `/api`)
+- Test: `npm run test:e2e` (uses the `tasks_test` database from `.env.test`, created from `.env.test.example` if missing; Postgres credentials live in gitignored `.env` files, see `backend/README.md`)
 - Reset the database: `docker compose down -v` (from the repo root; drops the `pgdata` volume)
 - Two processes (cross-process streaming check): `docker compose --profile multi up -d --build --wait` from the repo root (backend-1 on :3001, backend-2 on :3002, same Postgres, both run `prisma migrate deploy` first). Stop with `docker compose --profile multi stop backend-1 backend-2`, remove with `docker compose --profile multi rm -f backend-1 backend-2`. Inside a git worktree, when Postgres is already running, append `--no-deps backend-1 backend-2` to avoid recreating the postgres container (its bind-mount path differs per checkout). Never use `docker compose down` unless you mean to.

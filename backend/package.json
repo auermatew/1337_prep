@@ -21,8 +21,8 @@
     "test:debug": "vitest --inspect-brk --",
     "test:e2e": "dotenv run -q --override -f .env.test -- vitest run --config ./vitest.config.e2e.ts",
     "postinstall": "prisma generate",
-    "prestart:dev": "node -e \"const fs=require('fs');if(!fs.existsSync('.env'))fs.copyFileSync('.env.example','.env')\" && docker compose -f ../docker-compose.yml up -d --wait postgres && prisma migrate deploy",
-    "pretest:e2e": "docker compose -f ../docker-compose.yml up -d --wait postgres && dotenv run -q --override -f .env.test -- prisma migrate deploy",
+    "prestart:dev": "node -e \"const fs=require('fs');for(const f of ['.env','../.env'])if(!fs.existsSync(f))fs.copyFileSync(f+'.example',f)\" && docker compose -f ../docker-compose.yml up -d --wait postgres && prisma migrate deploy",
+    "pretest:e2e": "node -e \"const fs=require('fs');for(const f of ['.env.test','../.env'])if(!fs.existsSync(f))fs.copyFileSync(f+'.example',f)\" && docker compose -f ../docker-compose.yml up -d --wait postgres && dotenv run -q --override -f .env.test -- prisma migrate deploy",
     "db:reset": "docker compose -f ../docker-compose.yml down -v"
   },
   "dependencies": {

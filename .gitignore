@@ -4,3 +4,4 @@ dist
 .superpowers/
 backend/src/generated/
 *.tsbuildinfo
+.env.test
