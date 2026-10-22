@@ -1,9 +1,14 @@
-.transcripts {
-  margin-top: var(--space-section);
-}
-
-.transcripts .tag {
-  margin-bottom: var(--space-6);
+/* The note is an aside: dashed purple "open slot" outline. */
+.tr-note {
+  margin: 0 0 var(--space-5);
+  padding: 12px;
+  outline: 1px dashed var(--purple);
+  outline-offset: -1px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  font-weight: var(--label-weight);
+  color: var(--ink);
 }
 
 .tr-list {

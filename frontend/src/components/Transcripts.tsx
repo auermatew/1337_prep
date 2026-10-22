@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Dialog } from './Dialog';
+import './SideTabs.css';
 import './Transcripts.css';
 
 const TRANSCRIPTS = [
@@ -22,6 +23,7 @@ function Download({ t }: { t: Transcript }) {
 }
 
 export function Transcripts() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [selected, setSelected] = useState<Transcript | null>(null);
   const [loaded, setLoaded] = useState<Text | null>(null);
 
@@ -44,33 +46,68 @@ export function Transcripts() {
 
   // Only show text that belongs to the transcript currently open.
   const current = loaded && loaded.file === selected?.file ? loaded : null;
+  const closePreview = () => setSelected(null);
+  const closeDrawer = () => {
+    setSelected(null);
+    setDrawerOpen(false);
+  };
 
   return (
-    <section className="transcripts">
-      <p className="tag">TRANSCRIPTS</p>
-      <ul className="tr-list">
-        {TRANSCRIPTS.map((t) => (
-          <li key={t.file} className="tr-row">
-            <span className="tr-title">{t.title}</span>
-            <span className="tr-size">{Math.round(t.bytes / 1024)} KB</span>
+    <>
+      <button
+        type="button"
+        className="side-tab"
+        onClick={() => setDrawerOpen(true)}
+      >
+        TRANSCRIPTS
+      </button>
+      <Dialog
+        title="transcripts/"
+        className="dlg-drawer"
+        open={drawerOpen}
+        onClose={closeDrawer}
+        footer={
+          <>
+            <span>{TRANSCRIPTS.length} FILES</span>
             <button
               type="button"
-              className="link-btn"
-              onClick={() => {
-                setLoaded(null);
-                setSelected(t);
-              }}
+              className="btn btn-ghost btn-sm"
+              onClick={closeDrawer}
             >
-              PREVIEW
+              CLOSE
             </button>
-            <Download t={t} />
-          </li>
-        ))}
-      </ul>
+          </>
+        }
+      >
+        <p className="tr-note">
+          heads up: these aren&apos;t all my sessions, and not every prompt I
+          sent is in here either. exporting everything got a bit much lol. happy
+          to show you the rest in person though :)
+        </p>
+        <ul className="tr-list">
+          {TRANSCRIPTS.map((t) => (
+            <li key={t.file} className="tr-row">
+              <span className="tr-title">{t.title}</span>
+              <span className="tr-size">{Math.round(t.bytes / 1024)} KB</span>
+              <button
+                type="button"
+                className="link-btn"
+                onClick={() => {
+                  setLoaded(null);
+                  setSelected(t);
+                }}
+              >
+                PREVIEW
+              </button>
+              <Download t={t} />
+            </li>
+          ))}
+        </ul>
+      </Dialog>
       <Dialog
         title={selected?.file ?? ''}
         open={selected !== null}
-        onClose={() => setSelected(null)}
+        onClose={closePreview}
         footer={
           selected && (
             <>
@@ -78,7 +115,7 @@ export function Transcripts() {
               <button
                 type="button"
                 className="btn btn-ghost btn-sm"
-                onClick={() => setSelected(null)}
+                onClick={closePreview}
               >
                 CLOSE
               </button>
@@ -94,6 +131,6 @@ export function Transcripts() {
           <pre className="tr-text">{current.text}</pre>
         )}
       </Dialog>
-    </section>
+    </>
   );
 }

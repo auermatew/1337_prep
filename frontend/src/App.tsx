@@ -90,11 +90,12 @@ export default function App() {
         </div>
 
         <Archive tasks={ended} newestEventIds={newestEventIds} />
-
-        <Transcripts />
       </main>
 
-      <Notebook />
+      <div className="side-tabs">
+        <Transcripts />
+        <Notebook />
+      </div>
     </div>
   );
 }

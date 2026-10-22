@@ -115,4 +115,11 @@ describe('App', () => {
     expect(screen.getByText('ARCHIVE')).toBeTruthy();
     expect(screen.queryByText(/^\d\d · /)).toBeNull();
   });
+
+  it('keeps transcripts in a side tab, not on the page', () => {
+    withTasks([]);
+    render(<App />);
+    expect(screen.queryByText('TRANSCRIPTS', { selector: 'p' })).toBeNull();
+    expect(screen.getByRole('button', { name: 'TRANSCRIPTS' })).toBeTruthy();
+  });
 });

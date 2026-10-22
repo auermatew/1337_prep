@@ -3,6 +3,9 @@ import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { Transcripts } from './Transcripts';
 
+const NOTE =
+  "heads up: these aren't all my sessions, and not every prompt I sent is in here either. exporting everything got a bit much lol. happy to show you the rest in person though :)";
+
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
@@ -14,16 +17,38 @@ function stubFetch(res: () => Response) {
   return fetch;
 }
 
-const openPreview = async (row: number) => {
-  await userEvent
-    .setup()
-    .click(screen.getAllByRole('button', { name: 'PREVIEW' })[row]);
+const user = () => userEvent.setup();
+// A closed <dialog> has no dialog role, so find it by its label.
+const drawer = () => {
+  const el = document.querySelector<HTMLElement>(
+    'dialog[aria-label="transcripts/"]',
+  );
+  if (!el) throw new Error('drawer not rendered');
+  return el;
 };
+const openDrawer = () =>
+  user().click(screen.getByRole('button', { name: 'TRANSCRIPTS' }));
+const openPreview = (row: number) =>
+  user().click(
+    within(drawer()).getAllByRole('button', { name: 'PREVIEW' })[row],
+  );
+const closeIn = (dialog: HTMLElement) =>
+  user().click(within(dialog).getByRole('button', { name: 'CLOSE' }));
 
 describe('Transcripts', () => {
-  it('lists the three transcripts with download links', () => {
+  it('opens the drawer from the side tab', async () => {
     render(<Transcripts />);
-    const items = screen.getAllByRole('listitem');
+    expect(drawer().hasAttribute('open')).toBe(false);
+    await openDrawer();
+    expect(drawer().hasAttribute('open')).toBe(true);
+    expect(within(drawer()).getByText(NOTE)).toBeTruthy();
+    expect(within(drawer()).getAllByRole('listitem')).toHaveLength(3);
+  });
+
+  it('lists the three transcripts with download links', async () => {
+    render(<Transcripts />);
+    await openDrawer();
+    const items = within(drawer()).getAllByRole('listitem');
     expect(
       items.map((li) => li.querySelector('.tr-title')?.textContent),
     ).toEqual([
@@ -39,6 +64,7 @@ describe('Transcripts', () => {
   it('previews a transcript as plain text', async () => {
     const fetch = stubFetch(() => new Response('# Title\n**bold**'));
     render(<Transcripts />);
+    await openDrawer();
     await openPreview(0);
     const dialog = screen.getByRole('dialog', {
       name: '1337-design-system.md',
@@ -53,29 +79,53 @@ describe('Transcripts', () => {
   it('shows an error when the transcript cannot load', async () => {
     stubFetch(() => new Response('', { status: 404 }));
     render(<Transcripts />);
+    await openDrawer();
     await openPreview(2);
     expect(await screen.findByText('COULD NOT LOAD TRANSCRIPT')).toBeTruthy();
   });
 
-  it('closes with CLOSE', async () => {
+  it('keeps the drawer open when the preview closes', async () => {
     stubFetch(() => new Response('text'));
     render(<Transcripts />);
+    await openDrawer();
     await openPreview(1);
-    const dialog = screen.getByRole('dialog', { name: 'backend-planning.md' });
-    await userEvent
-      .setup()
-      .click(within(dialog).getByRole('button', { name: 'CLOSE' }));
-    expect(dialog.hasAttribute('open')).toBe(false);
+    const preview = screen.getByRole('dialog', { name: 'backend-planning.md' });
+    await closeIn(preview);
+    expect(preview.hasAttribute('open')).toBe(false);
+    expect(drawer().hasAttribute('open')).toBe(true);
+  });
+
+  it('closes the drawer with CLOSE', async () => {
+    render(<Transcripts />);
+    await openDrawer();
+    await closeIn(drawer());
+    expect(drawer().hasAttribute('open')).toBe(false);
+  });
+
+  it('shows the list again after reopening', async () => {
+    stubFetch(() => new Response('text'));
+    render(<Transcripts />);
+    await openDrawer();
+    await openPreview(0);
+    await closeIn(
+      screen.getByRole('dialog', { name: '1337-design-system.md' }),
+    );
+    await closeIn(drawer());
+    await openDrawer();
+    expect(drawer().hasAttribute('open')).toBe(true);
+    const open = document.querySelectorAll('dialog[open]');
+    expect(open).toHaveLength(1);
   });
 
   it('stays open when a click lands on the dialog itself', async () => {
     stubFetch(() => new Response('text'));
     render(<Transcripts />);
+    await openDrawer();
     await openPreview(0);
     const dialog = screen.getByRole('dialog', {
       name: '1337-design-system.md',
     });
-    await userEvent.setup().click(dialog);
+    await user().click(dialog);
     expect(dialog.hasAttribute('open')).toBe(true);
   });
 
@@ -88,11 +138,12 @@ describe('Transcripts', () => {
     );
     vi.stubGlobal('fetch', fetch);
     render(<Transcripts />);
+    await openDrawer();
     await openPreview(0);
     expect(await screen.findByText('COULD NOT LOAD TRANSCRIPT')).toBeTruthy();
-    await userEvent
-      .setup()
-      .click(screen.getByRole('button', { name: 'CLOSE' }));
+    await closeIn(
+      screen.getByRole('dialog', { name: '1337-design-system.md' }),
+    );
     fail = false;
     await openPreview(0);
     expect(screen.queryByText('COULD NOT LOAD TRANSCRIPT')).toBeNull();

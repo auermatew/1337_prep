@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Dialog } from './Dialog';
+import './SideTabs.css';
 import './Notebook.css';
 
 // A tab pinned to the right edge that opens the handwritten planning notes.
@@ -9,7 +10,7 @@ export function Notebook() {
 
   return (
     <>
-      <button type="button" className="nb-tab" onClick={() => setOpen(true)}>
+      <button type="button" className="side-tab" onClick={() => setOpen(true)}>
         NOTES
       </button>
       <Dialog

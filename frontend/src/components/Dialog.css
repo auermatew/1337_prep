@@ -46,3 +46,37 @@
     animation: none;
   }
 }
+
+/* Drawer variant: full height, pinned to the right edge, slides in. */
+.dlg.dlg-drawer {
+  width: min(440px, 100vw);
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0 0 0 auto;
+}
+
+.dlg-drawer .win {
+  height: 100%;
+  max-height: none;
+  margin-right: 0;
+  border-right: 0;
+}
+
+.dlg-drawer[open] .win {
+  animation: dlg-drawer-in var(--dur-swap) var(--ease-1337) both;
+}
+
+@keyframes dlg-drawer-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dlg-drawer[open] .win {
+    animation: none;
+  }
+}
