@@ -1,0 +1,85 @@
+.tw .win-body {
+  padding: 16px 16px 18px;
+}
+
+.tw-state {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.tw-live {
+  color: var(--purple);
+}
+
+.tw-dot {
+  display: inline-block;
+  animation: blink 1.6s var(--ease-blink) infinite;
+}
+
+.tw-mark {
+  color: var(--purple);
+}
+
+.tw-off {
+  color: var(--muted);
+}
+
+.tw-count {
+  margin: 10px 0 16px;
+  font-family: var(--font-display);
+  font-size: 58px;
+  line-height: 1;
+  font-weight: 200;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Stepped loader: 19 cells, filled one step at a time. */
+.tw-ld {
+  display: grid;
+  grid-template-columns: repeat(19, 1fr);
+  gap: 2px;
+  height: 14px;
+  padding: 2px;
+  box-sizing: border-box;
+  border: var(--rule-mid) solid var(--ink);
+}
+
+.tw-ld i {
+  display: block;
+}
+
+.tw-ld i.on {
+  background: var(--ink);
+}
+
+.tw-history {
+  margin-top: 14px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.tw-errors {
+  margin-top: 12px;
+}
+
+.tw-actions {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* A task that just left `running` flashes for its last 1.2s on the desk. */
+.win.leet-flash {
+  animation: leetflash 1.2s ease;
+}
+
+.win.leet-flash.tw .tw-count {
+  color: var(--ink-mute);
+}

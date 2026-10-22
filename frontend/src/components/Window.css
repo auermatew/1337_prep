@@ -1,0 +1,83 @@
+/* The design-system Window motif: 1px ink frame, hard shadow,
+   28px pinstriped title bar, mono meta footer. */
+.win {
+  min-width: 0;
+  border: var(--rule-hair) solid var(--ink);
+  border-radius: var(--radius-none);
+  background: var(--paper-raised);
+  box-shadow: var(--ink-shadow-hard);
+}
+
+.win-bar {
+  height: 28px;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 6px;
+  border-bottom: var(--rule-hair) solid var(--ink);
+}
+
+.win-menu {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  background: repeating-linear-gradient(
+    var(--ink) 0 1.5px,
+    transparent 1.5px 3.5px
+  );
+}
+
+.win-box {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  box-sizing: border-box;
+  border: var(--rule-mid) solid var(--ink);
+}
+
+.win-stripe {
+  flex: 1 1 0;
+  min-width: 12px;
+  height: 11px;
+  background: repeating-linear-gradient(
+    var(--ink) 0 1px,
+    transparent 1px 2.5px
+  );
+}
+
+.win-title {
+  margin: 0;
+  min-width: 0;
+  max-width: 70%;
+  padding: 0 8px;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  line-height: 1.3;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.win-body {
+  padding: 16px;
+}
+
+.win-foot {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 9px 12px;
+  border-top: var(--rule-hair) solid var(--ink);
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  line-height: 1;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
