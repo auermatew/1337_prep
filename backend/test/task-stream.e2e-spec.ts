@@ -463,7 +463,7 @@ describe('Task SSE stream (e2e)', () => {
     const { app, url } = await start();
     const svc = app.get(TaskStreamService);
     let stall = true;
-    spyWrites(() => (stall ? 'stall' : 'ok'));
+    const spy = spyWrites(() => (stall ? 'stall' : 'ok'));
     const s = await open(url);
     // The first frame is written, then the writer waits forever for drain.
     await create(url, 'first');
@@ -483,6 +483,8 @@ describe('Task SSE stream (e2e)', () => {
       true,
     );
     expect(s.messages).toHaveLength(1);
+    // The stalled response is torn down, not left to a graceful end.
+    expect([...spy.reses].every((r) => r.destroyed)).toBe(true);
 
     stall = false;
     const rows = await db.taskEvent.findMany({
@@ -495,6 +497,55 @@ describe('Task SSE stream (e2e)', () => {
     await sleep(200);
     expect(ids(again)).toEqual(rows.map((r) => Number(r.id)));
   }, 60000);
+
+  it('destroys the socket of an overflowing client that never reads and frees its queue', async () => {
+    vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
+    const { app, url } = await start();
+    const svc = app.get(TaskStreamService);
+    const feed = (
+      app.get(TaskEventsListener) as unknown as { subject: Subject<unknown> }
+    ).subject;
+    // The server socket never drains, and the client never reads.
+    const spy = spyWrites(() => 'stall');
+    let clientClosed = false;
+    const req = http.get(`${url}/api/tasks/stream`, (res) => res.pause());
+    req.on('error', () => {});
+    req.on('socket', (socket) =>
+      socket.on('close', () => {
+        clientClosed = true;
+      }),
+    );
+    const deadline = Date.now() + 5000;
+    while (svc.subscriberCount() === 0 && Date.now() < deadline)
+      await sleep(10);
+    const [sub] = (
+      svc as unknown as {
+        subscribers: Set<{ queue: unknown[]; liveQueued: number }>;
+      }
+    ).subscribers;
+    const change = (id: number) => ({
+      event: { id, taskId: 't', state: 'running', at: '' },
+      task: { id: 't', name: 'x'.repeat(200), state: 'running' },
+    });
+    // The first frame is written, the writer then waits for drain; the
+    // remaining ones fill the queue until it overflows.
+    for (let id = 1; id <= MAX_QUEUED_LIVE + 2; id++) feed.next(change(id));
+
+    expect(svc.subscriberCount()).toBe(0);
+    expect(sub.queue).toHaveLength(0);
+    expect(sub.liveQueued).toBe(0);
+    expect(spy.reses.size).toBe(1);
+    const [res] = spy.reses;
+    expect(res.destroyed).toBe(true);
+    expect(res.socket?.destroyed ?? true).toBe(true);
+    while (!clientClosed && Date.now() < deadline + 5000) await sleep(10);
+    expect(clientClosed).toBe(true);
+    await sleep(100);
+    // The writer left its drain wait and wrote nothing more.
+    expect(res.listenerCount('drain')).toBe(0);
+    expect(spy.writesAfterEnd).toBe(0);
+    expect(unhandled).toEqual([]);
+  });
 
   it('answers 503 to a stream that arrives after shutdown began, and closes promptly', async () => {
     const { app, url } = await start();

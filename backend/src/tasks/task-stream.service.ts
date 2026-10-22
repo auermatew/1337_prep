@@ -182,13 +182,17 @@ export class TaskStreamService implements OnModuleDestroy {
     });
   }
 
-  /** A client too slow to keep up: end it; it resumes via Last-Event-ID. */
+  /**
+   * A client too slow to keep up: drop it; it resumes via Last-Event-ID.
+   * Destroyed rather than ended, since a graceful end would wait behind the
+   * data its socket is not draining.
+   */
   private overflow(sub: Subscriber): void {
     this.logger.warn(
       `stream overflow: more than ${MAX_QUEUED_LIVE} live changes queued; ending stream`,
     );
     this.dispose(sub);
-    if (!sub.res.writableEnded) sub.res.end();
+    sub.res.destroy();
   }
 
   private dispose(sub: Subscriber): void {
@@ -197,6 +201,9 @@ export class TaskStreamService implements OnModuleDestroy {
     sub.subscription?.unsubscribe();
     if (sub.keepAlive) clearInterval(sub.keepAlive);
     sub.buffer = null;
+    // Free the held frames; the writer sees `closed` and stops.
+    sub.queue.length = 0;
+    sub.liveQueued = 0;
     this.subscribers.delete(sub);
     this.logger.log(`stream subscribers: ${this.subscribers.size}`);
   }
