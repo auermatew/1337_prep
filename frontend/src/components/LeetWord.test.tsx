@@ -50,12 +50,12 @@ describe('LeetWord', () => {
     expect(word().textContent).toBe('timer');
   });
 
-  it('hits half the time', () => {
-    const { unmount } = render(<LeetWord random={() => 0.49} />);
+  it('hits a quarter of the time', () => {
+    const { unmount } = render(<LeetWord random={() => 0.24} />);
     fireEvent.pointerEnter(word());
     expect(word().textContent).toBe('1337');
     unmount();
-    render(<LeetWord random={() => 0.5} />);
+    render(<LeetWord random={() => 0.25} />);
     fireEvent.pointerEnter(word());
     expect(word().textContent).toBe('timer');
   });
