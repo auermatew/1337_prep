@@ -1,0 +1,75 @@
+/* 1337 Moonrise — generated from tokens.json */
+:root, [data-theme="night"] {
+  --sky-0: #050505;
+  --sky-1: #0f0f10;
+  --sky-2: #1d1d1f;
+  --steel: #3c3d40;
+  --silver: #b8babe;
+  --cloud-floor: #4a4a4b;
+  --glass: rgba(22, 22, 24, 0.5);
+  --glass-strong: rgba(14, 14, 15, 0.82);
+  --silver-hi: #fbfbfc;
+  --silver-mid: #d3d5d9;
+  --silver-lo: #9fa2a8;
+  --glass-liquid-hi: rgba(255, 255, 255, 0.15);
+  --glass-liquid-lo: rgba(255, 255, 255, 0.05);
+  --glass-edge: rgba(255, 255, 255, 0.24);
+  --line: rgba(255, 255, 255, 0.08);
+  --line-strong: rgba(255, 255, 255, 0.42);
+  --ink: #ecedef;
+  --ink-2: rgba(236, 237, 239, 0.72);
+  --ink-3: rgba(236, 237, 239, 0.56);
+  --ink-fade: rgba(236, 237, 239, 0);
+  --on-ink: #0b0d12;
+  --signal: #ff2a1f;
+  --signal-ink: #ff5a4e;
+  --signal-dim: #7a120d;
+  --signal-ghost: rgba(255, 42, 31, 0.07);
+  --signal-haze: rgba(255, 42, 31, 0.45);
+  --moon: #cfcfca;
+  --moon-mid: #9a9b97;
+  --moon-shade: #4b4d50;
+  --moon-shadow: #2a2a2c;
+  --cloud: #9c9da0;
+  --cloud-haze: rgba(170, 171, 175, 0.16);
+  --alert: #f2b84b;
+  --glow-card: inset 0 -1px 0 rgba(255, 42, 31, 0.5), 0 30px 80px -40px rgba(255, 42, 31, 0.35);
+  --glow-pip: 0 0 6px rgba(255, 42, 31, 0.9), 0 0 16px rgba(255, 42, 31, 0.5);
+  --rim-signal: 0 -2px 0 rgba(255, 42, 31, 0.35), 0 -40px 120px -30px rgba(255, 42, 31, 0.3);
+}
+:root {
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-18: 72px;
+  --space-30: 120px;
+  --radius-s: 12px;
+  --radius-m: 20px;
+  --radius-l: 28px;
+  --radius-full: 9999px;
+  --blur-glass: 24px;
+  --dur-fast: 200ms;
+  --dur-base: 400ms;
+  --dur-slow: 800ms;
+  --dur-boot: 1200ms;
+  --ease-drift: cubic-bezier(0.22, 1, 0.36, 1);
+  --grain-opacity: 0.16;
+  --font-display: Archivo, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: Geist, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, Menlo, monospace;
+}
+.display-xl { font-family: var(--font-display); font-size: 160px; line-height: 0.85; font-weight: 800; letter-spacing: -0.04em; }
+.display-l { font-family: var(--font-display); font-size: 104px; line-height: 0.95; font-weight: 800; letter-spacing: -0.03em; }
+.display-m { font-family: var(--font-display); font-size: 64px; line-height: 0.95; font-weight: 700; letter-spacing: -0.02em; }
+.stat { font-family: var(--font-display); font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; }
+.display-s { font-family: var(--font-display); font-size: 32px; line-height: 1.05; font-weight: 700; letter-spacing: -0.01em; }
+.title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 500; }
+.body-l { font-family: var(--font-sans); font-size: 17px; line-height: 26px; font-weight: 400; }
+.body { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 400; }
+.label { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
+.label-strong { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 500; }
+.readout { font-family: var(--font-mono); font-size: 13px; line-height: 21px; font-weight: 400; }

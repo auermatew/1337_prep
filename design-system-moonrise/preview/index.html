@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1337 · Moonrise test page</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Geist:wght@100..900&display=swap">
+<link rel="stylesheet" href="../tokens.css">
+<link rel="stylesheet" href="../components/bundle.css">
+<style>
+  body { margin: 0; background: var(--sky-0); color: var(--ink); font-family: var(--font-sans); }
+  .wrap { max-width: 1280px; margin: 0 auto; padding-left: 48px; padding-right: 48px; box-sizing: border-box; }
+  .desk { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: stretch; }
+  .desk-cards { max-height: 724px; align-content: start; padding-left: 4px; padding-right: 12px; margin-left: -4px; margin-right: -12px; }
+  .desk-feed { height: 660px; display: flex; flex-direction: column; gap: 12px; }
+  .desk-feed .ms-feed { flex: 1; min-height: 0; }
+  .desk-feed .ms-live { align-self: flex-end; }
+  .cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+  @media (max-width: 1000px) { .desk { grid-template-columns: minmax(0, 1fr); } .desk-feed { height: 440px; } }
+  .nb-overlay { position: fixed; inset: 0; z-index: 50; overscroll-behavior: contain; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(5, 5, 5, 0.76); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+  .nb-sheet { max-width: 100%; }
+  .tr-sheet { width: min(880px, 100%); }
+  .page-foot { margin-top: 48px; }
+  @media (max-width: 640px) {
+    .wrap { padding-left: 16px; padding-right: 16px; }
+    .cards { grid-template-columns: minmax(0, 1fr); }
+    .desk-cards { max-height: 584px; }
+    .sec { padding-top: 48px !important; padding-bottom: 48px !important; }
+    .display-m { font-size: 40px; }
+  }
+</style>
+</head>
+<body>
+<div id="root" class="ms-noise"></div>
+<script src="https://cdn.jsdelivr.net/npm/react@18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/react-dom@18.3.1/umd/react-dom.production.min.js"></script>
+<script src="../components/bundle.js"></script>
+<script>
+  // Test page for the Moonrise design: real page scroll, so the TIMER rise and the
+  // moon / cloud parallax run here (they cannot on the design canvas).
+  var M = window.Moonrise, h = React.createElement;
+
+  var cards = [
+    { name: 'pasta', id: 'aa6e5cde-7f1b-4c2a-9d3e-1b2c3d4e5f60', base: 72000, dur: 180000, endsAt: '13:39:12' },
+    { name: 'Deployment CI', id: 'b323319d-41a8-4f0e-9c55-0d7e3a6b2c11', base: 412000, dur: 900000, endsAt: '13:44:12', history: [{ id: 61, state: 'running', at: '13:29:12' }] },
+    { name: 'tea', id: '02167a15-9b3c-4d2e-8f10-6a5b4c3d2e1f', base: 9000, dur: 240000, endsAt: '13:37:09' },
+    { name: 'sourdough proof', id: 'c7d81e02-5a6b-4c3d-9e8f-1a2b3c4d5e6f', base: 0, dur: 3600000, endsAt: '13:37:00', state: 'finishing' },
+    { name: 'focus block', id: '9d0e1f2a-6b7c-4d8e-9f0a-1b2c3d4e5f6a', base: 1214000, dur: 1500000, endsAt: '13:57:24' },
+    { name: 'oven', id: '3b4c5d6e-7f8a-4b9c-8d0e-1f2a3b4c5d6e', base: 498000, dur: 720000, endsAt: '13:45:30' },
+    { name: 'laundry', id: 'e19c40aa-1b2c-4d3e-8f4a-5b6c7d8e9f0a', base: 2210000, dur: 2700000, endsAt: '14:13:20' }
+  ];
+  var feed = [
+    { id: 57, name: '1337', state: 'finished', at: '13:33:12' },
+    { id: 58, name: 'Test CI', state: 'cancelled', at: '13:35:02' },
+    { id: 59, name: 'sourdough proof', state: 'running', at: '12:37:00' },
+    { id: 60, name: 'tea', state: 'running', at: '13:33:09' },
+    { id: 61, name: 'Deployment CI', state: 'running', at: '13:29:12' },
+    { id: 62, name: 'stand-up', state: 'finished', at: '13:35:40' },
+    { id: 63, name: 'laundry', state: 'cancelled', at: '13:36:01' },
+    { id: 64, name: 'pasta', state: 'running', at: '13:36:12' }
+  ];
+  var archive = [
+    { id: 'e19c40aa-1b2c-4d3e-8f4a-5b6c7d8e9f0a', name: 'laundry', state: 'cancelled', duration: '45:00', ended: '13:36:01' },
+    { id: 'f2a7b913-3c4d-4e5f-9a0b-1c2d3e4f5a6b', name: 'stand-up', state: 'finished', duration: '15:00', ended: '13:35:40' },
+    { id: '24cc2be6-5d6e-4f70-8a1b-2c3d4e5f6a7b', name: 'Test CI', state: 'cancelled', duration: '00:18', ended: '13:35:02' },
+    { id: 'a64bb360-2c1d-4e5f-8a9b-0c1d2e3f4a5b', name: '1337', state: 'finished', duration: '00:18', ended: '13:33:12', history: [{ id: 55, state: 'running', at: '13:32:54' }, { id: 57, state: 'finished', at: '13:33:12' }] },
+    { id: '9d0e1f2a-6b7c-4d8e-9f0a-1b2c3d4e5f6a', name: 'focus block', state: 'finished', duration: '25:00', ended: '13:05:44' },
+    { id: '3b4c5d6e-7f8a-4b9c-8d0e-1f2a3b4c5d6e', name: 'oven', state: 'finished', duration: '12:00', ended: '12:51:30' }
+  ];
+
+  var TRANSCRIPT = "# Chat transcript \u2014 1337_prep planning session\n\nSession 2026-10-22. User and assistant messages only; tool calls, tool output and subagent reports are left out.\n\n---\n\n## You\n\nI'm making a simple project, frontend + backend.\n\n- **Backend:** long running tasks (for example timers), list them, can connect to their updates with streaming (that's the biggest question mark for me).\n- **Frontend:** a frontend for it.\n\nBefore doing anything I need the brainstorming, implementation and planning from https://github.com/obra/superpowers/ for my project.\n\n---\n\n## Claude\n\nUsing writing-plans to create the implementation plan. I'll check the skill's current text in the project first, in case it differs from the copy I read earlier.\n\nThe skill text is unchanged. Writing the plan now.\n\nThe implementation plan is written and saved to `2026-10-22-task-streaming-backend.md`. Please review it. No code exists yet, and neither the design nor the plan is committed.\n\nIt has 7 tasks, each with its tests written before the code:\n\n1. **Setup:** the backend project, Postgres in Docker, the Prisma database layout and the test setup.\n2. **Single write path:** the one place where state changes are saved. It covers the lock, the \"only if still running\" check, the history entry and the notification to other processes.\n3. **Listener:** the connection that hears other processes, including reconnecting and catching up on anything missed.\n4. **Timers:** setting them, finishing, recovery after a restart, and other processes taking over when one dies.\n5. **REST API:** create, list, history and cancel, with input checks.\n6. **SSE stream:** replay after a reconnect, keep-alives and disconnect cleanup. Your `stream-verifier` runs at the end of this task.\n7. **Two processes:** two backend processes side by side in Docker Compose, checked by hand.\n\n**Things I added or decided while planning:**\n- **Keep-alive setting:** a setting for the keep-alive interval (`STREAM_KEEPALIVE_MS`, 15 s by default), so tests don't wait 15 seconds for each ping.\n- **Five risky inputs** the design never mentions, each with its own test:\n  - garbage `Last-Event-ID` values;\n  - a viewer leaving in the middle of a replay;\n  - malformed request bodies like `\"180\"` or `1.5`;\n  - a timer accidentally set twice at startup;\n  - shutting down while streams are open.";
+
+  function nbWidth() { return Math.max(150, Math.min(400, Math.floor((window.innerWidth - 120) / 2), Math.floor((window.innerHeight - 260) / 1.5))); }
+
+  function Page() {
+    var started = React.useRef(Date.now());
+    var nowState = React.useState(Date.now()), now = nowState[0], setNow = nowState[1];
+    var openState = React.useState('a64bb360-2c1d-4e5f-8a9b-0c1d2e3f4a5b'), openId = openState[0], setOpenId = openState[1];
+    var nbState = React.useState(false), notebook = nbState[0], setNotebook = nbState[1];
+    var nbKey = React.useState(0), nbRun = nbKey[0], setNbRun = nbKey[1];
+    var trState = React.useState(false), transcript = trState[0], setTranscript = trState[1];
+    var closingState = React.useState(false), nbClosing = closingState[0], setNbClosing = closingState[1];
+    // The notebook only closes from its Close button: the cover swings shut and rests a moment, then the dialog goes.
+    function closeNotebook() { setNbClosing(true); setTimeout(function () { setNotebook(false); setNbClosing(false); }, 2300); }
+    function showTranscript(e) { e.preventDefault(); setTranscript(true); }
+    M.util.useScrollLock(transcript || notebook);
+    function showNotebook(e) { e.preventDefault(); setNbRun(nbRun + 1); setNotebook(true); }
+    React.useEffect(function () { var t = setInterval(function () { setNow(Date.now()); }, 250); return function () { clearInterval(t); }; }, []);
+    var elapsed = now - started.current;
+    function left(base, dur) { var r = base - elapsed; return r > 0 ? r : dur + (r % dur); }
+
+    return h(React.Fragment, null,
+      h(M.Scene, { moonSrc: '../../frontend/public/moonrise/moon.webp', word: 'TIMER', label: '1337' },
+        h(M.SegmentClock, { value: '1337', fluid: true, opticalCenter: true, boot: true, flicker: true })),
+      h(M.CloudFloor, { cloudSrc: '../../frontend/public/moonrise/clouds.webp' },
+        h('section', { className: 'wrap sec', style: { paddingTop: 48, paddingBottom: 96, display: 'flex', flexDirection: 'column', gap: 40 } },
+          h(M.StartForm, { idPrefix: 'desk' }),
+          h('div', { className: 'desk' },
+            h('div', { className: 'cards ms-scroll ms-scroll-fade desk-cards' }, cards.map(function (c) {
+              return h(M.TimerCard, { key: c.id, name: c.name, id: c.id, remainingMs: c.state === 'finishing' ? 0 : left(c.base, c.dur), durationMs: c.dur, endsAt: c.endsAt, state: c.state || 'running', historyOpen: !!c.history, history: c.history });
+            })),
+            h('div', { className: 'desk-feed' },
+              h(M.LiveFeed, { lines: feed, lastId: 64, highlightLast: true, className: 'ms-feed-fill' }),
+              h(M.LiveIndicator, { status: 'live', size: 'lg' }))))),
+      h('section', { className: 'wrap sec', style: { paddingTop: 72, paddingBottom: 72, display: 'flex', flexDirection: 'column', gap: 48 } },
+        h('h2', { className: 'display-m', style: { margin: 0 } }, 'Archive'),
+        h(M.Stats, { items: [{ label: 'Finished', value: '12' }, { label: 'Cancelled', value: '7' }, { label: 'Time spent', value: '1h 04m' }] }),
+        h(M.ArchiveTable, { rows: archive, total: 24, openId: openId, onToggleHistory: function (id) { setOpenId(openId === id ? null : id); } })),
+      h(M.Footer, { className: 'page-foot', links: [
+        { label: 'GitHub ↗', href: 'https://github.com/auermatew/1337_prep', external: true },
+        { label: 'Transcripts', href: '#transcripts', onClick: showTranscript },
+        { label: 'Notebook', href: '#notebook', onClick: showNotebook }] }),
+      transcript ? h('div', { className: 'nb-overlay', role: 'dialog', 'aria-label': 'Backend planning', onClick: function (e) { if (e.target === e.currentTarget) setTranscript(false); } },
+        h(M.Sheet, { title: 'Backend planning', className: 'tr-sheet' },
+          h('div', { style: { display: 'flex', flexDirection: 'column', gap: 24, height: 'min(620px, 70vh)' } },
+            h('div', { className: 'ms-crt', style: { flex: 1 } },
+              h('div', { className: 'ms-crt-head' }, h('span', null, 'backend-planning.md · 15 KB · 186 lines')),
+              h('pre', { className: 'ms-crt-text' }, TRANSCRIPT, h('span', { className: 'ms-crt-cursor' }))),
+            h('div', { className: 'ms-sheet-foot' },
+              h('span', { className: 'ms-num' }, '15 KB'),
+              h('span', { style: { display: 'flex', gap: 24 } },
+                h('a', { className: 'ms-link', href: '#download' }, 'Download ↓'),
+                h(M.Button, { variant: 'text', onClick: function () { setTranscript(false); } }, 'Close')))))) : null,
+      notebook ? h('div', { className: 'nb-overlay', role: 'dialog', 'aria-label': 'Notebook' },
+        h(M.Sheet, { title: 'Notebook', className: 'nb-sheet' },
+          h('div', { style: { display: 'flex', flexDirection: 'column', gap: 24 } },
+            h(M.Notebook, { key: nbRun, coverSrc: '../../frontend/public/moonrise/cover.webp', paperSrc: '../../frontend/public/moonrise/paper.webp', leftSrc: '../../frontend/public/notes-1.webp', rightSrc: '../../frontend/public/notes-2.png', leftAlt: 'Handwritten notes, page 1', rightAlt: 'Handwritten notes, page 2', pageWidth: nbWidth(), autoOpen: true, open: nbClosing ? false : undefined }),
+            h('div', { className: 'ms-sheet-foot' },
+              h('span', null, 'Handwritten · 22 Oct 2026'),
+              h('span', { style: { display: 'flex', gap: 24 } },
+                h(M.Button, { variant: 'text' }, 'Clear'),
+                h(M.Button, { variant: 'glass', style: { height: 36, padding: '0 16px' }, onClick: closeNotebook }, 'Close')))))) : null,
+      null);
+  }
+
+  ReactDOM.createRoot(document.getElementById('root')).render(h(Page));
+</script>
+</body>
+</html>
