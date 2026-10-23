@@ -8,11 +8,32 @@ const LINE_WIDTH = 3;
 // same spot of the page when the notebook is resized or reflows.
 type Point = [x: number, y: number];
 
+/**
+ * Draws the shape strokes may show in, in canvas units (CSS px). It runs with
+ * destination-in, so anything drawn outside the shape is wiped.
+ */
+export type DrawClip = (
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+) => void;
+
 // A transparent canvas over the notebook paper. Mouse, touch and pen all
 // arrive as pointer events. Strokes live only as long as this component:
 // remount it (a new key) to wipe the page.
-export function DrawLayer({ ink = INK }: { ink?: string }) {
+export function DrawLayer({
+  ink = INK,
+  clip,
+}: {
+  ink?: string;
+  /** Keep the ink inside this shape (the Moonrise pages). */
+  clip?: DrawClip;
+}) {
   const ref = useRef<HTMLCanvasElement>(null);
+  const clipRef = useRef(clip);
+  useEffect(() => {
+    clipRef.current = clip;
+  }, [clip]);
   const strokes = useRef<Point[][]>([]);
   const active = useRef<{ id: number; stroke: Point[] } | null>(null);
   const [count, setCount] = useState(0);
@@ -34,6 +55,13 @@ export function DrawLayer({ ink = INK }: { ink?: string }) {
       ctx.moveTo(from[0] * width, from[1] * height);
       ctx.lineTo(to[0] * width, to[1] * height);
       ctx.stroke();
+      const keep = clipRef.current;
+      if (keep) {
+        ctx.save();
+        ctx.globalCompositeOperation = 'destination-in';
+        keep(ctx, width, height);
+        ctx.restore();
+      }
     },
     [context],
   );

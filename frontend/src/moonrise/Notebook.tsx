@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { DrawLayer } from '../components/DrawLayer';
 import { reducedMotion } from './clock/motion';
 import { pageWidth } from './pageWidth';
+import { paperClip } from './paperMask';
 import { Sheet } from './Sheet';
 
 export const COVER_SRC = '/moonrise/cover.webp';
@@ -32,6 +33,9 @@ export function MoonNotebook({
   const [width, setWidth] = useState(() => pageWidth());
   const leafRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
+  const [paper, setPaper] = useState<HTMLImageElement | null>(null);
+  // Ink shows only on the paper, both pages and their tabs.
+  const clip = useMemo(() => paperClip(paper, width), [paper, width]);
 
   // Every opening starts on the closed cover with a blank page.
   const [prevOpen, setPrevOpen] = useState(open);
@@ -118,6 +122,7 @@ export function MoonNotebook({
         <div className="ms-nb-book">
           <div className="ms-nb-page ms-nb-right">
             <img
+              ref={setPaper}
               className="ms-nb-paper"
               src={PAPER_SRC}
               alt=""
@@ -163,7 +168,7 @@ export function MoonNotebook({
         <div
           className={inking ? 'ms-nb-drawzone ms-nb-inking' : 'ms-nb-drawzone'}
         >
-          <DrawLayer key={page} ink={INK} />
+          <DrawLayer key={page} ink={INK} clip={clip} />
         </div>
       </div>
     </Sheet>

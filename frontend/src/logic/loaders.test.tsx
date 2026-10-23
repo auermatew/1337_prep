@@ -1,4 +1,10 @@
-import { act, render, renderHook, waitFor } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  renderHook,
+  waitFor,
+} from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { TaskDto } from '../api/types';
 import { DrawLayer } from '../components/DrawLayer';
@@ -136,6 +142,35 @@ describe('useTranscript', () => {
     rerender({ t: null });
     rerender({ t: TRANSCRIPTS[0] });
     expect(result.current).toEqual({ status: 'loading' });
+  });
+});
+
+describe('DrawLayer clip', () => {
+  it('clips every stroke to the given shape', () => {
+    const ctx = {
+      setTransform: vi.fn(),
+      beginPath: vi.fn(),
+      moveTo: vi.fn(),
+      lineTo: vi.fn(),
+      stroke: vi.fn(),
+      save: vi.fn(),
+      restore: vi.fn(),
+      strokeStyle: '',
+      globalCompositeOperation: 'source-over',
+    };
+    vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(
+      ctx as unknown as CanvasRenderingContext2D,
+    );
+    const modes: string[] = [];
+    const clip = vi.fn(() => modes.push(ctx.globalCompositeOperation));
+    const { getByLabelText } = render(<DrawLayer clip={clip} />);
+    clip.mockClear();
+    modes.length = 0;
+    const canvas = getByLabelText('Drawing layer');
+    fireEvent.pointerDown(canvas, { pointerId: 1, button: 0 });
+    expect(clip).toHaveBeenCalled();
+    expect(modes.every((m) => m === 'destination-in')).toBe(true);
+    expect(ctx.restore).toHaveBeenCalled();
   });
 });
 

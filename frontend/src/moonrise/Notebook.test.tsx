@@ -9,15 +9,20 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MoonNotebook } from './Notebook';
 import { pageWidth } from './pageWidth';
 
+const ctx = {
+  setTransform: vi.fn(),
+  beginPath: vi.fn(),
+  moveTo: vi.fn(),
+  lineTo: vi.fn(),
+  stroke: vi.fn(),
+  save: vi.fn(),
+  restore: vi.fn(),
+  drawImage: vi.fn(),
+} as unknown as CanvasRenderingContext2D;
+
 beforeEach(() => {
   vi.useFakeTimers();
-  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
-    setTransform: vi.fn(),
-    beginPath: vi.fn(),
-    moveTo: vi.fn(),
-    lineTo: vi.fn(),
-    stroke: vi.fn(),
-  } as unknown as CanvasRenderingContext2D);
+  vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue(ctx);
 });
 
 afterEach(() => {
@@ -115,6 +120,15 @@ describe('MoonNotebook', () => {
     ).toBe(true);
     draw();
     expect(canvas().getAttribute('data-strokes')).toBe('1');
+  });
+
+  it('keeps the ink on the paper', () => {
+    render(<MoonNotebook open onClose={vi.fn()} />);
+    act(() => vi.advanceTimersByTime(1800));
+    act(() => vi.advanceTimersByTime(1100));
+    vi.mocked(ctx.save).mockClear();
+    draw();
+    expect(ctx.save).toHaveBeenCalled();
   });
 
   it('clears the drawing', () => {
