@@ -48,10 +48,27 @@ Timers started in one desk appear in the other.
 
 Free stand-ins (Playfair Display, Inter, DM Mono) load from Google Fonts. The font stacks list PP Editorial Old and General Sans first, so licensed files added with `@font-face` take over with no other change. Playfair only goes down to 400, so headlines look slightly heavier than the real site.
 
+## Looks
+
+The page has two looks: the classic 1337 desk and Moonrise, a black and silver night ([design](../docs/superpowers/specs/2026-10-23-moonrise-look-switch-design.md), [design system](../design-system-moonrise/README.md)). The button in the bottom-right corner switches between them. On the classic side it is a moon, and in the night it is a sun.
+
+- The choice is saved in `localStorage['1337.look']`. `?look=moon` or `?look=classic` in the URL wins for that visit, but only a click on the button is remembered.
+- `App` keeps the one task stream, so switching never reconnects or empties the feed.
+- Moonrise (its code, styles, fonts and photos) downloads only on the first switch. Hovering or focusing the moon button starts that download early.
+- While it loads, the red `1337` display scrambles over the night. Once Moonrise is cached, later switches are quicker.
+- `src/moonrise/moonrise.generated.css` comes from the design system. After changing `design-system-moonrise/tokens.css` or `components/bundle.css`, regenerate it from the repo root:
+
+```bash
+python3 frontend/scripts/scope-moonrise-css.py design-system-moonrise/tokens.css design-system-moonrise/components/bundle.css > frontend/src/moonrise/moonrise.generated.css
+```
+
 ## Layout of `src/`
 
 - `api/`: REST client and the shared types for the backend's task endpoints.
 - `stream/`: the task stream hook with replay, dedup and resync, plus its reducer.
 - `time/`: countdown and progress helpers, and the clock hook.
-- `components/`: the timer windows, start form, live log, archive and history.
+- `logic/`: what both looks share: start, cancel, history, archive and transcript hooks, with problems as kinds that each look words itself.
+- `look/`: which look is shown, the corner switch, and the transition between looks.
+- `components/` and `ClassicLook.tsx`: the classic look.
+- `moonrise/`: the Moonrise look, loaded lazily. `moonrise/clock/` holds the seven-segment display, which the transition uses too, so it lives in the main bundle.
 - `styles/`: design tokens and base styles.

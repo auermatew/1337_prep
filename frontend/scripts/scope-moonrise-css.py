@@ -1,6 +1,9 @@
 """Scope the Moonrise tokens + bundle CSS under .moonrise.
 
-usage: scope_css.py tokens.css bundle.css > moonrise.css
+usage (from the repo root):
+  python3 frontend/scripts/scope-moonrise-css.py \
+    design-system-moonrise/tokens.css design-system-moonrise/components/bundle.css \
+    > frontend/src/moonrise/moonrise.generated.css
 """
 import re, sys
 

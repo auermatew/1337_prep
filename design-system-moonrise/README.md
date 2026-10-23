@@ -23,26 +23,7 @@ Open `preview/index.html` in a browser (double-click is enough). It loads React 
 
 ## Building it into the frontend
 
-The reference build is for previews and design tools. In the app, port it to TypeScript and keep the data layer you already have.
-
-1. **Styles.** Turn `tokens.css` and `components/bundle.css` into one stylesheet under `frontend/src/themes/moonrise/`, scoped to a `.moonrise` root element so it cannot clash with the current design's tokens or the global `body` background. Load the fonts from that stylesheet only.
-2. **Components.** Port each component from `components/bundle.js` to a `.tsx` file in the same folder, using `index.d.ts` for the props and the per-component READMEs for behaviour. Keep the class names so `bundle.css` works unchanged.
-3. **Shell.** Add `MoonriseApp.tsx`: `Scene` (with the `1337` `SegmentClock`), `CloudFloor` holding the `StartForm`, the scrolling card list and the `LiveFeed` with the large `LiveIndicator` under it, then the archive (`Stats`, `ArchiveTable`) and the `Footer`.
-4. **Data.** Both looks use the same hooks and API:
-   - `useTaskStream()` gives tasks, log, status and `upsert`. Running tasks go to `TimerCard`, `log` goes to `LiveFeed`, `status` goes to `LiveIndicator`, ended tasks go to `ArchiveTable`.
-   - `useNow()` and `endsAt` give each card's `remainingMs`. `archiveStats()` gives the `Stats` figures.
-   - `StartForm` `onStart` calls `createTask`. `TimerCard` `onCancel` calls `cancelTask`, and a 409 becomes the card's `error`. History opens with `taskEvents`.
-   - Change the hero clock's `pulseKey` on every new stream event so it flashes.
-   - Transcripts reuse the existing files in `public/transcripts/`; the preview shows them in the `ms-crt` console readout.
-   - The notebook uses the `Notebook` component with the existing `DrawLayer` as its child, so drawing keeps working.
-5. **Switch.** `App.tsx` picks the look from a theme value (`classic` or `moon`), remembered in `localStorage` and overridable with `?theme=moon`. Load `MoonriseApp` with `React.lazy` so its code, fonts and images only download when someone picks it. A small fixed moon button, in a corner of both looks, flips the value.
-6. **Behaviour to keep.**
-   - Lock page scroll while the transcripts or the notebook are open (`useScrollLock`).
-   - The notebook closes only from its Close button.
-   - History opens as a popover, never pushing cards or rows.
-   - The card list and the feed scroll inside fixed heights.
-   - Scroll effects (TIMER rise, moon and cloud parallax) use CSS scroll-driven animations. Browsers without them show a still page.
-7. **Tests.** Keep the existing tests passing (they cover the classic look). Add tests for the switch and its persistence, and for the Moonrise shell rendering on a mocked stream.
+It is built in: `frontend/src/moonrise/` holds the look, behind the corner switch (see the frontend README's "Looks" section and [the design](../docs/superpowers/specs/2026-10-23-moonrise-look-switch-design.md)). The app's own logic hooks drive it, so where the reference build's behaviour differs from the app's (validation, cancel, history, paging), the app wins. Moonrise decides how things look and how you interact with them: history popovers, the notebook's cover and Close-only closing, the console screen for transcripts. The stylesheet is generated from `tokens.css` and `components/bundle.css` by `frontend/scripts/scope-moonrise-css.py`.
 
 ## Performance notes
 
