@@ -300,3 +300,26 @@
 .moonrise .ms-floor {
   overflow-x: clip;
 }
+
+/* The hero fills the first screen. svh, where supported, is the screen with
+   the phone's address bar showing, so the hero does not jump as it hides. */
+.moonrise .ms-scene-full {
+  height: 100vh;
+  height: 100svh;
+}
+
+@media (max-width: 560px) {
+  /* Sheets keep more of a phone's width for their content. */
+  .moonrise .ms-sheet {
+    padding: 20px;
+  }
+
+  /* Transcripts: the title on its own line, its actions under it. */
+  .moonrise .ms-files li {
+    flex-wrap: wrap;
+    gap: var(--space-2) var(--space-6);
+  }
+  .moonrise .ms-files li > :first-child {
+    flex-basis: 100%;
+  }
+}

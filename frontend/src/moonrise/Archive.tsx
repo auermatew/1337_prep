@@ -2,7 +2,7 @@ import { memo, useState } from 'react';
 import type { TaskDto } from '../api/types';
 import { ARCHIVE_PAGE, useArchive } from '../logic/useArchive';
 import { formatClock, formatCountdown } from '../time/format';
-import { humanize } from './copy';
+import { humanizeShort } from './copy';
 import { HistoryPopover } from './HistoryPopover';
 
 const cap = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -21,7 +21,7 @@ export const MoonArchive = memo(function MoonArchive({
 
   if (total === 0) return null;
 
-  const spent = humanize(Math.round(stats.spentMs / 1000)) || '0s';
+  const spent = humanizeShort(Math.round(stats.spentMs / 1000)) || '0s';
 
   return (
     <section className="ms-wrap ms-sec-archive" aria-label="Archive">

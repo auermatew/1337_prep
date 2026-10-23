@@ -22,9 +22,9 @@ export function Scene({
   );
   return (
     <section
-      className="ms-scene"
+      className="ms-scene ms-scene-full"
       aria-label="1337"
-      style={{ height: '100vh', '--ms-horizon': '68' } as React.CSSProperties}
+      style={{ '--ms-horizon': '68' } as React.CSSProperties}
     >
       <div className="ms-stars" aria-hidden="true">
         {stars.map((st, i) => (

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { DrawLayer } from '../components/DrawLayer';
 import { reducedMotion } from './clock/motion';
+import { pageWidth } from './pageWidth';
 import { Sheet } from './Sheet';
 
 export const COVER_SRC = '/moonrise/cover.webp';
@@ -12,18 +13,6 @@ const HOLD_MS = 1800;
 const TURN_MS = 1100;
 /** Close: the cover swings shut, rests, then the sheet goes. */
 const SHUT_MS = 2300;
-
-// One page's width: the spread fits the viewport, phones included.
-function pageWidth(): number {
-  return Math.max(
-    150,
-    Math.min(
-      400,
-      Math.floor((window.innerWidth - 120) / 2),
-      Math.floor((window.innerHeight - 260) / 1.5),
-    ),
-  );
-}
 
 // The handwritten notebook: closed on its cover, then the cover swings open
 // on the spine into a two-page spread you can draw on in red, across both
@@ -40,7 +29,7 @@ export function MoonNotebook({
   const [inking, setInking] = useState(false);
   // A new key remounts the draw layer, which wipes it.
   const [page, setPage] = useState(0);
-  const [width, setWidth] = useState(pageWidth);
+  const [width, setWidth] = useState(() => pageWidth());
   const leafRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
 

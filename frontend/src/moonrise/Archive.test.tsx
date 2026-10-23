@@ -56,6 +56,22 @@ describe('MoonArchive', () => {
     expect(value('Time spent')).toBe('26m');
   });
 
+  it('keeps a long time spent short enough to stay on one line', () => {
+    archive([
+      {
+        ...task('l', 'finished'),
+        durationSeconds: 186326,
+        updatedAt: new Date(
+          Date.UTC(2026, 0, 1, 0, 0) + 186326 * 1000,
+        ).toISOString(),
+      },
+    ]);
+    const stats = within(screen.getByLabelText('Archive stats'));
+    expect(stats.getByText('Time spent').nextElementSibling?.textContent).toBe(
+      '51h 45m',
+    );
+  });
+
   it('names the state with a word and strikes cancelled durations', () => {
     archive([task('c', 'cancelled')]);
     expect(within(rows()[0]).getByText('Cancelled')).toBeTruthy();

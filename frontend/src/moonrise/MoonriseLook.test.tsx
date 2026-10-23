@@ -1,7 +1,7 @@
 import { cleanup, render, screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { deskProps } from '../test/desk';
-import { humanize, problemText } from './copy';
+import { humanize, humanizeShort, problemText } from './copy';
 import MoonriseLook from './MoonriseLook';
 
 beforeEach(() => {
@@ -113,6 +113,13 @@ describe('copy', () => {
     expect(humanize(180)).toBe('3m');
     expect(humanize(3725)).toBe('1h 2m 5s');
     expect(humanize(0)).toBe('');
+  });
+
+  it('keeps big figures to their two largest units', () => {
+    expect(humanizeShort(186326)).toBe('51h 45m');
+    expect(humanizeShort(3725)).toBe('1h 2m');
+    expect(humanizeShort(125)).toBe('2m 5s');
+    expect(humanizeShort(0)).toBe('');
   });
 
   it('says what went wrong in sentence case', () => {

@@ -7,6 +7,7 @@ import {
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MoonNotebook } from './Notebook';
+import { pageWidth } from './pageWidth';
 
 beforeEach(() => {
   vi.useFakeTimers();
@@ -37,6 +38,22 @@ function draw() {
   });
   fireEvent.pointerUp(canvas(), { pointerId: 1 });
 }
+
+describe('pageWidth', () => {
+  it('fills a phone-wide sheet with the spread', () => {
+    expect(pageWidth(375, 812)).toBe(156);
+  });
+
+  it('stays within the screen height and 400px on big screens', () => {
+    expect(pageWidth(1440, 900)).toBe(400);
+    expect(pageWidth(1024, 600)).toBe(226);
+  });
+
+  it('fits a small phone, and never goes below 120px', () => {
+    expect(pageWidth(320, 568)).toBe(128);
+    expect(pageWidth(260, 500)).toBe(120);
+  });
+});
 
 describe('MoonNotebook', () => {
   it('opens on the cover, then swings open by itself', () => {

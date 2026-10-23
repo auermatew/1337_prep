@@ -32,6 +32,11 @@ export function humanize(seconds: number): string {
     .join(' ');
 }
 
+// The two largest units only, for big figures: 186326 → "51h 45m".
+export function humanizeShort(seconds: number): string {
+  return humanize(seconds).split(' ').slice(0, 2).join(' ');
+}
+
 export const STATUS_WORD: Record<StreamStatus, string> = {
   open: 'Live',
   connecting: 'Connecting…',

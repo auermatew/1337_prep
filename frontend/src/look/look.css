@@ -56,9 +56,13 @@
   outline-color: #ecedef;
 }
 
+/* On phones the cards' and rows' buttons sit on the right (Cancel,
+   History, Start timer): the switch moves to the left corner, where there
+   is mostly text. */
 @media (max-width: 599px) {
   .look-switch {
-    right: 16px;
+    right: auto;
+    left: 16px;
     bottom: 16px;
   }
 }
