@@ -546,3 +546,66 @@
 .moonrise .ms-scene-rimshade {
   --mw: var(--ms-moon-w);
 }
+
+/* One flicker for the display and the moon it lights. The design ran two
+   separate 6.5 s animations (one on the digits, one on the shade over the
+   moon's red top); a flash on every stream event and every dip restarted
+   the digits' one, so they drifted seconds apart. Now the hero animates one
+   value and both read it, so the moon darkens exactly when the digits do. */
+@property --ms-flick {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 1;
+}
+
+.moonrise .ms-scene:has(.ms-clock-flicker) {
+  animation: ms-flick 6.5s steps(1) infinite;
+}
+
+@keyframes ms-flick {
+  0%,
+  100% {
+    --ms-flick: 1;
+  }
+  31% {
+    --ms-flick: 0.82;
+  }
+  31.6% {
+    --ms-flick: 1;
+  }
+  58% {
+    --ms-flick: 0.9;
+  }
+  58.4% {
+    --ms-flick: 0.7;
+  }
+  59% {
+    --ms-flick: 1;
+  }
+  83% {
+    --ms-flick: 0.86;
+  }
+  83.5% {
+    --ms-flick: 1;
+  }
+}
+
+.moonrise .ms-scene .ms-clock-flicker svg {
+  animation: none;
+  opacity: var(--ms-flick);
+}
+
+.moonrise .ms-scene .ms-clock-flicker.ms-clock-dip svg {
+  opacity: calc(var(--ms-flick) * 0.55);
+}
+
+.moonrise .ms-scene .ms-clock-flicker.ms-clock-flash svg {
+  animation: ms-flash 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* The shade over the moon's top darkens as the display dims: 0.82 → 0.25,
+   0.7 → 0.42, the design's pairs. */
+.moonrise .ms-scene:has(.ms-clock-flicker) .ms-scene-rimshade-k {
+  animation: none;
+  opacity: calc((1 - var(--ms-flick)) * 1.4);
+}
