@@ -328,11 +328,11 @@
 
 /* ---- Phones ---- */
 @media (max-width: 640px) {
-  /* More of the clouds in the first screen: a wider bank, pulled up over the
-     moon's lower half. */
-  .moonrise .ms-floor-clouds {
-    width: max(100%, 1000px);
-    margin-top: calc(max(100%, 1000px) * -0.36);
+  /* More of the clouds in the first screen: the hero ends a little short of
+     the screen, so the cloud bank sits higher. */
+  .moonrise .ms-scene-full {
+    height: 86vh;
+    height: 86svh;
   }
 
   /* TIMER spans most of the width, and rises from higher up: the bigger
@@ -417,5 +417,38 @@
   }
   .moonrise .ms-row-name {
     overflow-wrap: anywhere;
+  }
+}
+
+/* Where the cloud bank meets the section below. The bank has a dip in the
+   middle that is see-through down to 65% of its height, and its bottom
+   fades out; the seam (where the hero, and the moon, end) has to stay in the
+   solid band between, or it shows as a straight edge across the moon. So:
+   the seam sits at 76% of the bank's height, the fade starts at 86%, and the
+   bank drifts only -4%…+6% on scroll (the design had 72%, 76% and -10%…+14%,
+   which let the seam slip out at some scroll positions). */
+.moonrise .ms-floor-clouds {
+  margin-top: calc(max(100%, 900px) * -0.2533);
+  -webkit-mask-image: linear-gradient(
+    180deg,
+    #000 0%,
+    #000 86%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(180deg, #000 0%, #000 86%, transparent 100%);
+}
+
+@supports (animation-timeline: view()) {
+  .moonrise .ms-floor-clouds {
+    animation-name: ms-cloud-drift;
+  }
+}
+
+@keyframes ms-cloud-drift {
+  from {
+    transform: translateX(-50%) translateY(6%);
+  }
+  to {
+    transform: translateX(-50%) translateY(-4%);
   }
 }
