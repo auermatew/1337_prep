@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import { ApiError, cancelTask } from '../api/client';
 import type { TaskDto } from '../api/types';
+import { useCancelTask } from '../logic/useCancelTask';
 import {
   formatClock,
   formatCountdown,
   progressStep,
   remainingMs,
 } from '../time/format';
+import { problemLines } from './classicCopy';
 import { History } from './History';
 import { TaskId } from './TaskId';
 import { Window } from './Window';
@@ -52,11 +53,12 @@ export function TimerWindow({
   onChanged: (task: TaskDto) => void;
   newestEventId: number | null;
 }) {
-  const [cancelling, setCancelling] = useState(false);
-  const [locked, setLocked] = useState(false);
-  const [error, setError] = useState<string[]>([]);
+  const { cancel, cancelling, locked, problem } = useCancelTask(
+    task,
+    onChanged,
+  );
+  const error = problem ? problemLines(problem) : [];
   const [showHistory, setShowHistory] = useState(false);
-  const inFlight = useRef(false);
   const revealRef = useRef<HTMLDivElement>(null);
 
   // Scroll-reveal on mount: add `.in` on the next frame. The wrapper's
@@ -72,32 +74,6 @@ export function TimerWindow({
   const at = running ? now : Date.parse(task.updatedAt);
   const remaining = task.state === 'finished' ? 0 : remainingMs(task, at);
   const step = task.state === 'finished' ? STEPS : progressStep(task, at);
-
-  const cancel = () => {
-    if (inFlight.current) return;
-    inFlight.current = true;
-    setCancelling(true);
-    setError([]);
-    cancelTask(task.id).then(
-      (updated) => {
-        inFlight.current = false;
-        setCancelling(false);
-        onChanged(updated);
-      },
-      (err: unknown) => {
-        inFlight.current = false;
-        setCancelling(false);
-        if (err instanceof ApiError && err.status === 409) {
-          setLocked(true);
-          setError(['TASK IS NOT RUNNING']);
-        } else if (err instanceof ApiError) {
-          setError(err.messages.map((m) => m.toUpperCase()));
-        } else {
-          setError(['COULD NOT REACH THE SERVER']);
-        }
-      },
-    );
-  };
 
   const footer = (
     <>
@@ -115,7 +91,7 @@ export function TimerWindow({
           type="button"
           className="btn btn-ghost btn-sm"
           disabled={!running || cancelling || locked}
-          onClick={cancel}
+          onClick={() => void cancel()}
         >
           CANCEL
         </button>

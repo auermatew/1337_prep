@@ -1,34 +1,19 @@
-import { useState, type FormEvent } from 'react';
-import { ApiError, createTask } from '../api/client';
+import { useState } from 'react';
 import type { TaskDto } from '../api/types';
+import { secondsEgg } from '../logic/problems';
+import { useStartTask } from '../logic/useStartTask';
 import { formatDuration } from '../time/format';
+import { problemLines } from './classicCopy';
 import './StartForm.css';
-
-const NAME_MAX = 100;
-const SECONDS_MAX = 86400;
 
 // Only worth a hint once there is at least a minute in it; past the
 // 24-hour limit it just says no.
-function secondsHint(seconds: string): string | null {
-  const trimmed = seconds.trim();
-  if (!/^\d+$/.test(trimmed)) return null;
-  const n = Number(trimmed);
-  if (n > SECONDS_MAX) return 'HELL NAW';
-  if (n === 1337) return '= LEET';
-  if (n < 60) return null;
+function secondsHint(n: number | null): string | null {
+  const egg = secondsEgg(n);
+  if (egg === 'hell-naw') return 'HELL NAW';
+  if (egg === 'leet') return '= LEET';
+  if (n === null || n < 60) return null;
   return `= ${formatDuration(n)}`;
-}
-
-function validate(name: string, seconds: string): string[] {
-  const errors: string[] = [];
-  if (name.length === 0) errors.push('NAME IS REQUIRED');
-  else if (name.length > NAME_MAX)
-    errors.push('NAME IS 100 CHARACTERS AT MOST');
-  const n = Number(seconds);
-  if (!/^\d+$/.test(seconds.trim()) || n < 1 || n > SECONDS_MAX) {
-    errors.push('SECONDS MUST BE A WHOLE NUMBER FROM 1 TO 86400');
-  }
-  return errors;
 }
 
 export function StartForm({
@@ -36,38 +21,19 @@ export function StartForm({
 }: {
   onCreated: (task: TaskDto) => void;
 }) {
-  const [name, setName] = useState('');
-  const [seconds, setSeconds] = useState('180');
-  const [submitting, setSubmitting] = useState(false);
-  const [errors, setErrors] = useState<string[]>([]);
+  const {
+    name,
+    setName,
+    seconds,
+    setSeconds,
+    secondsValue,
+    submitting,
+    problems,
+    submit,
+  } = useStartTask(onCreated);
   const [secondsFocused, setSecondsFocused] = useState(false);
-  const hint = secondsHint(seconds);
-
-  const submit = async (e: FormEvent) => {
-    e.preventDefault();
-    if (submitting) return;
-    const trimmed = name.trim();
-    const problems = validate(trimmed, seconds);
-    setErrors(problems);
-    if (problems.length > 0) return;
-    setSubmitting(true);
-    try {
-      const task = await createTask({
-        name: trimmed,
-        durationSeconds: Number(seconds),
-      });
-      setName('');
-      onCreated(task);
-    } catch (err) {
-      setErrors(
-        err instanceof ApiError
-          ? err.messages.map((m) => m.toUpperCase())
-          : ['COULD NOT REACH THE SERVER'],
-      );
-    } finally {
-      setSubmitting(false);
-    }
-  };
+  const hint = secondsHint(secondsValue);
+  const errors = problems.flatMap(problemLines);
 
   return (
     <form className="start" onSubmit={submit} noValidate>
