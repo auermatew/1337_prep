@@ -36,12 +36,9 @@
   --cloud: #9c9da0;
   --cloud-haze: rgba(170, 171, 175, 0.16);
   --alert: #f2b84b;
-  --glow-card:
-    inset 0 -1px 0 rgba(255, 42, 31, 0.5),
-    0 30px 80px -40px rgba(255, 42, 31, 0.35);
+  --glow-card: inset 0 -1px 0 rgba(255, 42, 31, 0.5), 0 30px 80px -40px rgba(255, 42, 31, 0.35);
   --glow-pip: 0 0 6px rgba(255, 42, 31, 0.9), 0 0 16px rgba(255, 42, 31, 0.5);
-  --rim-signal:
-    0 -2px 0 rgba(255, 42, 31, 0.35), 0 -40px 120px -30px rgba(255, 42, 31, 0.3);
+  --rim-signal: 0 -2px 0 rgba(255, 42, 31, 0.35), 0 -40px 120px -30px rgba(255, 42, 31, 0.3);
 }
 .moonrise {
   --space-1: 4px;
@@ -64,1176 +61,308 @@
   --dur-boot: 1200ms;
   --ease-drift: cubic-bezier(0.22, 1, 0.36, 1);
   --grain-opacity: 0.16;
-  --font-display: Archivo, 'Helvetica Neue', Arial, sans-serif;
-  --font-sans: Geist, 'Helvetica Neue', Arial, sans-serif;
-  --font-mono: 'Space Mono', ui-monospace, Menlo, monospace;
+  --font-display: Archivo, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: Geist, "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "Space Mono", ui-monospace, Menlo, monospace;
 }
-.moonrise .display-xl {
-  font-family: var(--font-display);
-  font-size: 160px;
-  line-height: 0.85;
-  font-weight: 800;
-  letter-spacing: -0.04em;
-}
-.moonrise .display-l {
-  font-family: var(--font-display);
-  font-size: 104px;
-  line-height: 0.95;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-}
-.moonrise .display-m {
-  font-family: var(--font-display);
-  font-size: 64px;
-  line-height: 0.95;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-.moonrise .stat {
-  font-family: var(--font-display);
-  font-size: 56px;
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-.moonrise .display-s {
-  font-family: var(--font-display);
-  font-size: 32px;
-  line-height: 1.05;
-  font-weight: 700;
-  letter-spacing: -0.01em;
-}
-.moonrise .title {
-  font-family: var(--font-sans);
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 500;
-}
-.moonrise .body-l {
-  font-family: var(--font-sans);
-  font-size: 17px;
-  line-height: 26px;
-  font-weight: 400;
-}
-.moonrise .body {
-  font-family: var(--font-sans);
-  font-size: 15px;
-  line-height: 22px;
-  font-weight: 400;
-}
-.moonrise .label {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 400;
-}
-.moonrise .label-strong {
-  font-family: var(--font-sans);
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 500;
-}
-.moonrise .readout {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 21px;
-  font-weight: 400;
-}
+.moonrise .display-xl { font-family: var(--font-display); font-size: 160px; line-height: 0.85; font-weight: 800; letter-spacing: -0.04em; }
+.moonrise .display-l { font-family: var(--font-display); font-size: 104px; line-height: 0.95; font-weight: 800; letter-spacing: -0.03em; }
+.moonrise .display-m { font-family: var(--font-display); font-size: 64px; line-height: 0.95; font-weight: 700; letter-spacing: -0.02em; }
+.moonrise .stat { font-family: var(--font-display); font-size: 56px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; }
+.moonrise .display-s { font-family: var(--font-display); font-size: 32px; line-height: 1.05; font-weight: 700; letter-spacing: -0.01em; }
+.moonrise .title { font-family: var(--font-sans); font-size: 20px; line-height: 28px; font-weight: 500; }
+.moonrise .body-l { font-family: var(--font-sans); font-size: 17px; line-height: 26px; font-weight: 400; }
+.moonrise .body { font-family: var(--font-sans); font-size: 15px; line-height: 22px; font-weight: 400; }
+.moonrise .label { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 400; }
+.moonrise .label-strong { font-family: var(--font-sans); font-size: 13px; line-height: 18px; font-weight: 500; }
+.moonrise .readout { font-family: var(--font-mono); font-size: 13px; line-height: 21px; font-weight: 400; }
 /* ---- Ground ---- */
 .moonrise .display-xl,
 .moonrise .display-l,
 .moonrise .display-m,
 .moonrise .display-s,
-.moonrise .stat {
-  font-stretch: 125%;
-}
-.moonrise .ms-num {
-  font-variant-numeric: tabular-nums;
-}
-.moonrise .ms-muted {
-  color: var(--ink-2);
-}
-.moonrise .ms-title {
-  margin: 0;
-  font-size: 17px;
-  line-height: 24px;
-  font-weight: 500;
-}
-.moonrise .ms-error {
-  margin: var(--space-2) 0 0;
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--alert);
-}
-.moonrise .ms-state-running {
-  color: var(--signal-ink);
-}
-.moonrise .ms-state-finished {
-  color: var(--moon);
-}
-.moonrise .ms-state-cancelled {
-  color: var(--ink-3);
-}
+.moonrise .stat { font-stretch: 125%; }
+.moonrise .ms-num { font-variant-numeric: tabular-nums; }
+.moonrise .ms-muted { color: var(--ink-2); }
+.moonrise .ms-title { margin: 0; font-size: 17px; line-height: 24px; font-weight: 500; }
+.moonrise .ms-error { margin: var(--space-2) 0 0; font-size: 13px; line-height: 18px; color: var(--alert); }
+.moonrise .ms-state-running { color: var(--signal-ink); }
+.moonrise .ms-state-finished { color: var(--moon); }
+.moonrise .ms-state-cancelled { color: var(--ink-3); }
 /* ---- Seven-segment clock ---- */
 /* ---- Moon phase ---- */
-.moonrise .ms-phase {
-  flex: none;
-  display: block;
-}
-.moonrise .ms-phase-dark {
-  fill: var(--moon-shadow);
-}
-.moonrise .ms-phase-lit {
-  fill: var(--moon);
-}
-.moonrise .ms-phase-ring {
-  fill: none;
-  stroke: var(--line-strong);
-  stroke-width: 1;
-}
+.moonrise .ms-phase { flex: none; display: block; }
+.moonrise .ms-phase-dark { fill: var(--moon-shadow); }
+.moonrise .ms-phase-lit { fill: var(--moon); }
+.moonrise .ms-phase-ring { fill: none; stroke: var(--line-strong); stroke-width: 1; }
 /* ---- Live indicator: one lit segment, not a dot ---- */
-.moonrise .ms-live {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-2);
-  white-space: nowrap;
-}
-.moonrise .ms-live-pip {
-  width: 14px;
-  height: 4px;
-  border-radius: 1px;
-  background: var(--signal);
-  box-shadow: var(--glow-pip);
-}
+.moonrise .ms-live { display: inline-flex; align-items: center; gap: var(--space-2); font-size: 13px; line-height: 18px; color: var(--ink-2); white-space: nowrap; }
+.moonrise .ms-live-pip { width: 14px; height: 4px; border-radius: 1px; background: var(--signal); box-shadow: var(--glow-pip); }
 /* The page-level connection state (under the live feed): large enough to read at a glance. */
-.moonrise .ms-live-lg {
-  gap: var(--space-3);
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 700;
-  font-size: 20px;
-  line-height: 24px;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-}
-.moonrise .ms-live-lg .ms-live-pip {
-  width: 28px;
-  height: 7px;
-  border-radius: 2px;
-  box-shadow:
-    0 0 10px rgba(255, 42, 31, 0.9),
-    0 0 28px rgba(255, 42, 31, 0.55);
-  animation: ms-live-breathe 2.4s ease-in-out infinite;
-}
-.moonrise .ms-live-lg.ms-live-connecting .ms-live-pip {
-  animation: none;
-  box-shadow: none;
-}
-.moonrise .ms-live-lg.ms-live-reconnecting .ms-live-pip {
-  animation: ms-blink 1s steps(1) infinite;
-}
-.moonrise .ms-live-connecting .ms-live-pip {
-  background: var(--signal-dim);
-  box-shadow: none;
-}
-.moonrise .ms-live-reconnecting .ms-live-pip {
-  animation: ms-blink 1s steps(1) infinite;
-}
+.moonrise .ms-live-lg { gap: var(--space-3); font-family: var(--font-display); font-stretch: 125%; font-weight: 700; font-size: 20px; line-height: 24px; letter-spacing: -0.01em; color: var(--ink); }
+.moonrise .ms-live-lg .ms-live-pip { width: 28px; height: 7px; border-radius: 2px; box-shadow: 0 0 10px rgba(255, 42, 31, 0.9), 0 0 28px rgba(255, 42, 31, 0.55); animation: ms-live-breathe 2.4s ease-in-out infinite; }
+.moonrise .ms-live-lg.ms-live-connecting .ms-live-pip { animation: none; box-shadow: none; }
+.moonrise .ms-live-lg.ms-live-reconnecting .ms-live-pip { animation: ms-blink 1s steps(1) infinite; }
+.moonrise .ms-live-connecting .ms-live-pip { background: var(--signal-dim); box-shadow: none; }
+.moonrise .ms-live-reconnecting .ms-live-pip { animation: ms-blink 1s steps(1) infinite; }
 /* ---- Buttons and links ---- */
 .moonrise .ms-btn {
-  font: inherit;
-  font-size: 15px;
-  font-weight: 500;
-  line-height: 22px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: var(--space-2);
-  height: 44px;
-  padding: 0 var(--space-6);
-  border-radius: var(--radius-s);
-  border: 1px solid transparent;
-  cursor: pointer;
-  white-space: nowrap;
-  color: var(--ink);
-  background: none;
-  transition:
-    background-color var(--dur-fast) var(--ease-drift),
-    color var(--dur-fast) var(--ease-drift),
-    border-color var(--dur-fast) var(--ease-drift),
-    background-size var(--dur-fast) var(--ease-drift);
+  font: inherit; font-size: 15px; font-weight: 500; line-height: 22px;
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2);
+  height: 44px; padding: 0 var(--space-6); border-radius: var(--radius-s); border: 1px solid transparent;
+  cursor: pointer; white-space: nowrap; color: var(--ink); background: none;
+  transition: background-color var(--dur-fast) var(--ease-drift), color var(--dur-fast) var(--ease-drift), border-color var(--dur-fast) var(--ease-drift), background-size var(--dur-fast) var(--ease-drift);
 }
 .moonrise .ms-btn-primary {
-  color: var(--on-ink);
-  border-color: var(--glass-edge);
-  background: linear-gradient(
-    180deg,
-    var(--silver-hi) 0%,
-    var(--silver-mid) 48%,
-    var(--silver-lo) 100%
-  );
+  color: var(--on-ink); border-color: var(--glass-edge);
+  background: linear-gradient(180deg, var(--silver-hi) 0%, var(--silver-mid) 48%, var(--silver-lo) 100%);
   /* Everything stays inside the button: inset highlights only, no outer shadow. */
-  box-shadow:
-    inset 0 1px 0 var(--silver-hi),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.2);
-  transition:
-    filter var(--dur-fast) var(--ease-drift),
-    box-shadow var(--dur-fast) var(--ease-drift);
+  box-shadow: inset 0 1px 0 var(--silver-hi), inset 0 -1px 0 rgba(0, 0, 0, 0.2);
+  transition: filter var(--dur-fast) var(--ease-drift), box-shadow var(--dur-fast) var(--ease-drift);
 }
-.moonrise .ms-btn-primary:hover:not(:disabled) {
-  filter: brightness(1.08);
-}
-.moonrise .ms-btn-primary:active:not(:disabled) {
-  filter: brightness(0.96);
-  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
-}
-.moonrise .ms-btn-glass {
-  background: var(--glass);
-  border-color: var(--line-strong);
-  -webkit-backdrop-filter: blur(var(--blur-glass));
-  backdrop-filter: blur(var(--blur-glass));
-}
-.moonrise .ms-btn-glass:hover:not(:disabled) {
-  border-color: var(--ink);
-}
+.moonrise .ms-btn-primary:hover:not(:disabled) { filter: brightness(1.08); }
+.moonrise .ms-btn-primary:active:not(:disabled) { filter: brightness(0.96); box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25); }
+.moonrise .ms-btn-glass { background: var(--glass); border-color: var(--line-strong); -webkit-backdrop-filter: blur(var(--blur-glass)); backdrop-filter: blur(var(--blur-glass)); }
+.moonrise .ms-btn-glass:hover:not(:disabled) { border-color: var(--ink); }
 .moonrise .ms-btn-text,
 .moonrise .ms-link {
-  height: auto;
-  padding: 2px 0;
-  border: 0;
-  border-radius: 0;
-  color: var(--ink-2);
-  font-weight: 400;
-  text-decoration: none;
-  background-image: linear-gradient(var(--ink), var(--ink));
-  background-repeat: no-repeat;
-  background-position: 0 100%;
-  background-size: 0 1px;
-  transition:
-    color var(--dur-fast) var(--ease-drift),
-    background-size var(--dur-base) var(--ease-drift);
+  height: auto; padding: 2px 0; border: 0; border-radius: 0; color: var(--ink-2); font-weight: 400; text-decoration: none;
+  background-image: linear-gradient(var(--ink), var(--ink)); background-repeat: no-repeat; background-position: 0 100%; background-size: 0 1px;
+  transition: color var(--dur-fast) var(--ease-drift), background-size var(--dur-base) var(--ease-drift);
 }
 .moonrise .ms-btn-text:hover:not(:disabled),
-.moonrise .ms-link:hover {
-  color: var(--ink);
-  background-size: 100% 1px;
-}
-.moonrise .ms-btn-cancel:hover:not(:disabled) {
-  color: var(--signal-ink);
-  background-image: linear-gradient(var(--signal-ink), var(--signal-ink));
-}
-.moonrise .ms-btn:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+.moonrise .ms-link:hover { color: var(--ink); background-size: 100% 1px; }
+.moonrise .ms-btn-cancel:hover:not(:disabled) { color: var(--signal-ink); background-image: linear-gradient(var(--signal-ink), var(--signal-ink)); }
+.moonrise .ms-btn:disabled { opacity: .45; cursor: not-allowed; }
 .moonrise .ms-btn:focus-visible,
-.moonrise .ms-link:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 3px;
-}
+.moonrise .ms-link:focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; }
 /* ---- Fields ---- */
-.moonrise .ms-field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-  min-width: 0;
-}
-.moonrise .ms-field-label {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-2);
-}
-.moonrise .ms-field-row {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-3);
-  border-bottom: 1px solid var(--line-strong);
-  transition:
-    border-color var(--dur-fast) var(--ease-drift),
-    box-shadow var(--dur-fast) var(--ease-drift);
-}
-.moonrise .ms-field:focus-within .ms-field-row {
-  border-color: var(--ink);
-  box-shadow: 0 1px 0 var(--ink);
-}
-.moonrise .ms-input {
-  flex: 1;
-  min-width: 0;
-  background: none;
-  border: 0;
-  outline: none;
-  color: var(--ink);
-  font: inherit;
-  font-size: 17px;
-  line-height: 26px;
-  padding: var(--space-2) 0;
-  font-variant-numeric: tabular-nums;
-}
-.moonrise .ms-input::placeholder {
-  color: var(--ink-3);
-}
-.moonrise .ms-field-hint {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-3);
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-.moonrise .ms-field-error .ms-field-row {
-  border-color: var(--alert);
-}
-.moonrise .ms-field-msg {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--alert);
-}
+.moonrise .ms-field { display: flex; flex-direction: column; gap: var(--space-2); min-width: 0; }
+.moonrise .ms-field-label { font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.moonrise .ms-field-row { display: flex; align-items: baseline; gap: var(--space-3); border-bottom: 1px solid var(--line-strong); transition: border-color var(--dur-fast) var(--ease-drift), box-shadow var(--dur-fast) var(--ease-drift); }
+.moonrise .ms-field:focus-within .ms-field-row { border-color: var(--ink); box-shadow: 0 1px 0 var(--ink); }
+.moonrise .ms-input { flex: 1; min-width: 0; background: none; border: 0; outline: none; color: var(--ink); font: inherit; font-size: 17px; line-height: 26px; padding: var(--space-2) 0; font-variant-numeric: tabular-nums; }
+.moonrise .ms-input::placeholder { color: var(--ink-3); }
+.moonrise .ms-field-hint { font-size: 13px; line-height: 18px; color: var(--ink-3); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.moonrise .ms-field-error .ms-field-row { border-color: var(--alert); }
+.moonrise .ms-field-msg { font-size: 13px; line-height: 18px; color: var(--alert); }
 /* ---- Start form ---- */
 .moonrise .ms-start-bar {
-  display: flex;
-  align-items: flex-end;
-  gap: var(--space-6);
+  display: flex; align-items: flex-end; gap: var(--space-6);
   padding: var(--space-4) var(--space-4) var(--space-4) var(--space-6);
-  background: var(--glass);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-m);
-  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.2);
-  backdrop-filter: blur(var(--blur-glass)) saturate(1.2);
+  background: var(--glass); border: 1px solid var(--line); border-radius: var(--radius-m);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.2); backdrop-filter: blur(var(--blur-glass)) saturate(1.2);
 }
-.moonrise .ms-start-name {
-  flex: 1 1 240px;
-}
-.moonrise .ms-start-secs {
-  flex: 0 1 180px;
-}
-.moonrise .ms-start-go {
-  flex: none;
-}
+.moonrise .ms-start-name { flex: 1 1 240px; }
+.moonrise .ms-start-secs { flex: 0 1 180px; }
+.moonrise .ms-start-go { flex: none; }
 @media (max-width: 560px) {
-  .moonrise .ms-start-bar {
-    flex-wrap: wrap;
-    padding: var(--space-4);
-    gap: var(--space-4);
-  }
-  .moonrise .ms-start-name {
-    flex-basis: 100%;
-  }
-  .moonrise .ms-start-secs {
-    flex: 1 1 120px;
-  }
+.moonrise .ms-start-bar { flex-wrap: wrap; padding: var(--space-4); gap: var(--space-4); }
+.moonrise .ms-start-name { flex-basis: 100%; }
+.moonrise .ms-start-secs { flex: 1 1 120px; }
 }
 /* ---- Glass panels ---- */
 .moonrise .ms-panel {
-  background: var(--glass);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-m);
-  padding: var(--space-6);
-  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.2);
-  backdrop-filter: blur(var(--blur-glass)) saturate(1.2);
+  background: var(--glass); border: 1px solid var(--line); border-radius: var(--radius-m); padding: var(--space-6);
+  -webkit-backdrop-filter: blur(var(--blur-glass)) saturate(1.2); backdrop-filter: blur(var(--blur-glass)) saturate(1.2);
 }
-.moonrise .ms-panel-strong {
-  background: var(--glass-strong);
-  border-radius: var(--radius-l);
-}
-.moonrise .ms-panel-glow {
-  box-shadow: var(--glow-card);
-}
+.moonrise .ms-panel-strong { background: var(--glass-strong); border-radius: var(--radius-l); }
+.moonrise .ms-panel-glow { box-shadow: var(--glow-card); }
 /* Liquid glass: lighter and more refractive than plain glass (timer cards, live feed). */
 .moonrise .ms-panel-liquid {
-  background:
-    linear-gradient(
-      155deg,
-      var(--glass-liquid-hi) 0%,
-      var(--glass-liquid-lo) 45%,
-      var(--glass-liquid-lo) 70%,
-      rgba(255, 255, 255, 0.09) 100%
-    ),
-    rgba(30, 30, 33, 0.35);
+  background: linear-gradient(155deg, var(--glass-liquid-hi) 0%, var(--glass-liquid-lo) 45%, var(--glass-liquid-lo) 70%, rgba(255, 255, 255, 0.09) 100%), rgba(30, 30, 33, 0.35);
   border-color: var(--glass-edge);
-  -webkit-backdrop-filter: blur(30px) saturate(1.7) brightness(1.12);
-  backdrop-filter: blur(30px) saturate(1.7) brightness(1.12);
-  box-shadow:
-    inset 0 1px 0 var(--glass-edge),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.03),
-    0 24px 60px -30px rgba(0, 0, 0, 0.7);
+  -webkit-backdrop-filter: blur(30px) saturate(1.7) brightness(1.12); backdrop-filter: blur(30px) saturate(1.7) brightness(1.12);
+  box-shadow: inset 0 1px 0 var(--glass-edge), inset 0 0 0 1px rgba(255, 255, 255, 0.03), 0 24px 60px -30px rgba(0, 0, 0, 0.7);
 }
-.moonrise .ms-panel-liquid.ms-panel-glow {
-  box-shadow:
-    inset 0 1px 0 var(--glass-edge),
-    0 24px 60px -30px rgba(0, 0, 0, 0.7);
-}
+.moonrise .ms-panel-liquid.ms-panel-glow { box-shadow: inset 0 1px 0 var(--glass-edge), 0 24px 60px -30px rgba(0, 0, 0, 0.7); }
 /* ---- Timer card ---- */
-.moonrise .ms-timer {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 0;
-}
-.moonrise .ms-timer-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: var(--space-4);
-}
-.moonrise .ms-timer-title {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  min-width: 0;
-}
-.moonrise .ms-timer-name {
-  margin: 0;
-  font-size: 20px;
-  line-height: 28px;
-  font-weight: 500;
-  overflow-wrap: anywhere;
-}
-.moonrise .ms-id {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-3);
-  font-variant-numeric: tabular-nums;
-}
-.moonrise .ms-timer-time {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: var(--space-3);
-}
-.moonrise .ms-timer-state {
-  margin: 0;
-  font-size: 13px;
-  line-height: 18px;
-  font-weight: 500;
-}
-.moonrise .ms-timer-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-4);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--line);
-  font-size: 13px;
-  line-height: 18px;
-}
-.moonrise .ms-timer-foot .ms-btn {
-  font-size: 13px;
-  line-height: 18px;
-}
-.moonrise .ms-timer-actions {
-  display: inline-flex;
-  gap: var(--space-6);
-}
-.moonrise .ms-exit-finished {
-  animation: ms-set var(--dur-slow) var(--ease-drift) forwards;
-}
-.moonrise .ms-exit-cancelled {
-  animation: ms-fade var(--dur-slow) var(--ease-drift) forwards;
-}
+.moonrise .ms-timer { position: relative; display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.moonrise .ms-timer-head { display: flex; justify-content: space-between; align-items: flex-start; gap: var(--space-4); }
+.moonrise .ms-timer-title { display: flex; flex-direction: column; gap: var(--space-1); min-width: 0; }
+.moonrise .ms-timer-name { margin: 0; font-size: 20px; line-height: 28px; font-weight: 500; overflow-wrap: anywhere; }
+.moonrise .ms-id { font-size: 13px; line-height: 18px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.moonrise .ms-timer-time { display: flex; flex-direction: column; align-items: flex-start; gap: var(--space-3); }
+.moonrise .ms-timer-state { margin: 0; font-size: 13px; line-height: 18px; font-weight: 500; }
+.moonrise .ms-timer-foot { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: var(--space-4); padding-top: var(--space-4); border-top: 1px solid var(--line); font-size: 13px; line-height: 18px; }
+.moonrise .ms-timer-foot .ms-btn { font-size: 13px; line-height: 18px; }
+.moonrise .ms-timer-actions { display: inline-flex; gap: var(--space-6); }
+.moonrise .ms-exit-finished { animation: ms-set var(--dur-slow) var(--ease-drift) forwards; }
+.moonrise .ms-exit-cancelled { animation: ms-fade var(--dur-slow) var(--ease-drift) forwards; }
 /* ---- History popovers: they float, so cards and table rows never move ---- */
-.moonrise .ms-history-pop {
-  position: absolute;
-  z-index: 20;
-  padding: var(--space-4);
-  border-radius: var(--radius-s);
-  background: var(--glass-strong);
-  border: 1px solid var(--line-strong);
-  -webkit-backdrop-filter: blur(var(--blur-glass));
-  backdrop-filter: blur(var(--blur-glass));
-  box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8);
-  text-align: left;
-  animation: ms-pop var(--dur-fast) var(--ease-drift);
-}
-.moonrise .ms-history-pop-card {
-  left: var(--space-4);
-  right: var(--space-4);
-  bottom: 64px;
-  max-height: calc(100% - 96px);
-  overflow: auto;
-}
-.moonrise .ms-history-pop-row {
-  right: 0;
-  top: calc(100% - 8px);
-  width: 320px;
-  max-width: calc(100vw - 32px);
-}
+.moonrise .ms-history-pop { position: absolute; z-index: 20; padding: var(--space-4); border-radius: var(--radius-s); background: var(--glass-strong); border: 1px solid var(--line-strong);
+  -webkit-backdrop-filter: blur(var(--blur-glass)); backdrop-filter: blur(var(--blur-glass)); box-shadow: 0 18px 40px -16px rgba(0, 0, 0, 0.8); text-align: left; animation: ms-pop var(--dur-fast) var(--ease-drift); }
+.moonrise .ms-history-pop-card { left: var(--space-4); right: var(--space-4); bottom: 64px; max-height: calc(100% - 96px); overflow: auto; }
+.moonrise .ms-history-pop-row { right: 0; top: calc(100% - 8px); width: 320px; max-width: calc(100vw - 32px); }
 /* ---- History ---- */
-.moonrise .ms-history {
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 var(--space-4);
-  border-left: 1px solid var(--line-strong);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2);
-}
-.moonrise .ms-history-item {
-  position: relative;
-  display: grid;
-  grid-template-columns: 3.5em 1fr auto;
-  gap: var(--space-3);
-  font-size: 13px;
-  line-height: 18px;
-  font-variant-numeric: tabular-nums;
-}
-.moonrise .ms-history-item::before {
-  content: '';
-  position: absolute;
-  left: calc(-1 * var(--space-4));
-  top: 9px;
-  width: 8px;
-  height: 1px;
-  background: var(--line-strong);
-}
-.moonrise .ms-history-id {
-  color: var(--ink-3);
-}
+.moonrise .ms-history { list-style: none; margin: 0; padding: 0 0 0 var(--space-4); border-left: 1px solid var(--line-strong); display: flex; flex-direction: column; gap: var(--space-2); }
+.moonrise .ms-history-item { position: relative; display: grid; grid-template-columns: 3.5em 1fr auto; gap: var(--space-3); font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; }
+.moonrise .ms-history-item::before { content: ""; position: absolute; left: calc(-1 * var(--space-4)); top: 9px; width: 8px; height: 1px; background: var(--line-strong); }
+.moonrise .ms-history-id { color: var(--ink-3); }
 /* ---- Live feed ---- */
-.moonrise .ms-feed {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-4);
-  min-width: 0;
-}
-.moonrise .ms-feed-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-4);
-}
-.moonrise .ms-feed-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  max-height: 360px;
-  overflow: auto;
-}
-.moonrise .ms-feed-line {
-  display: grid;
-  grid-template-columns: 3.5em minmax(0, 1fr) auto auto;
-  gap: var(--space-3);
-  padding: var(--space-2) 0;
-  border-bottom: 1px solid var(--line);
-  font-size: 13px;
-  line-height: 18px;
-  font-variant-numeric: tabular-nums;
-}
-.moonrise .ms-feed-id {
-  color: var(--ink-3);
-}
-.moonrise .ms-feed-name {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-.moonrise .ms-feed-new {
-  animation: ms-newline 1.2s var(--ease-drift);
-}
-.moonrise .ms-feed-empty {
-  margin: 0;
-  font-size: 13px;
-}
-.moonrise .ms-feed-foot {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-2);
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--line);
-}
-.moonrise .ms-scroll-fade {
-  padding-top: 28px;
-  padding-bottom: 48px;
-  margin-top: -28px;
-  margin-bottom: -48px;
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    transparent 0,
-    #000 28px,
-    #000 calc(100% - 64px),
-    transparent 100%
-  );
-  mask-image: linear-gradient(
-    180deg,
-    transparent 0,
-    #000 28px,
-    #000 calc(100% - 64px),
-    transparent 100%
-  );
-}
+.moonrise .ms-feed { display: flex; flex-direction: column; gap: var(--space-4); min-width: 0; }
+.moonrise .ms-feed-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+.moonrise .ms-feed-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; max-height: 360px; overflow: auto; }
+.moonrise .ms-feed-line { display: grid; grid-template-columns: 3.5em minmax(0, 1fr) auto auto; gap: var(--space-3); padding: var(--space-2) 0; border-bottom: 1px solid var(--line); font-size: 13px; line-height: 18px; font-variant-numeric: tabular-nums; }
+.moonrise .ms-feed-id { color: var(--ink-3); }
+.moonrise .ms-feed-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.moonrise .ms-feed-new { animation: ms-newline 1.2s var(--ease-drift); }
+.moonrise .ms-feed-empty { margin: 0; font-size: 13px; }
+.moonrise .ms-feed-foot { font-size: 13px; line-height: 18px; color: var(--ink-2); padding-top: var(--space-3); border-top: 1px solid var(--line); }
+.moonrise .ms-scroll-fade { padding-top: 28px; padding-bottom: 48px; margin-top: -28px; margin-bottom: -48px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 28px, #000 calc(100% - 64px), transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0, #000 28px, #000 calc(100% - 64px), transparent 100%); }
 /* Scroll areas that hold growing lists (timer cards, the live feed) so they never push the page. */
-.moonrise .ms-scroll {
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
-}
-.moonrise .ms-scroll::-webkit-scrollbar {
-  width: 6px;
-}
-.moonrise .ms-scroll::-webkit-scrollbar-thumb {
-  background: var(--line-strong);
-  border-radius: 3px;
-}
-.moonrise .ms-feed-list {
-  scrollbar-width: thin;
-  scrollbar-color: var(--line-strong) transparent;
-  overscroll-behavior: contain;
-}
-.moonrise .ms-feed-fill {
-  height: 100%;
-}
-.moonrise .ms-feed-fill .ms-feed-list {
-  flex: 1;
-  min-height: 0;
-  max-height: none;
-}
+.moonrise .ms-scroll { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; }
+.moonrise .ms-scroll::-webkit-scrollbar { width: 6px; }
+.moonrise .ms-scroll::-webkit-scrollbar-thumb { background: var(--line-strong); border-radius: 3px; }
+.moonrise .ms-feed-list { scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; overscroll-behavior: contain; }
+.moonrise .ms-feed-fill { height: 100%; }
+.moonrise .ms-feed-fill .ms-feed-list { flex: 1; min-height: 0; max-height: none; }
 /* ---- Stats ---- */
-.moonrise .ms-stats {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  margin: 0;
-}
-.moonrise .ms-stat {
-  display: flex;
-  flex-direction: column-reverse;
-  justify-content: flex-end;
-  gap: var(--space-2);
-  padding: 0 var(--space-6);
-  border-left: 1px solid var(--line);
-  min-width: 0;
-}
-.moonrise .ms-stat:first-child {
-  padding-left: 0;
-  border-left: 0;
-}
-.moonrise .ms-stat-value {
-  margin: 0;
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 700;
-  font-size: 56px;
-  line-height: 1;
-  letter-spacing: -0.02em;
-  font-variant-numeric: tabular-nums;
-  overflow-wrap: anywhere;
-}
-.moonrise .ms-stat-label {
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-2);
-}
+.moonrise .ms-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; }
+.moonrise .ms-stat { display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: var(--space-2); padding: 0 var(--space-6); border-left: 1px solid var(--line); min-width: 0; }
+.moonrise .ms-stat:first-child { padding-left: 0; border-left: 0; }
+.moonrise .ms-stat-value { margin: 0; font-family: var(--font-display); font-stretch: 125%; font-weight: 700; font-size: 56px; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+.moonrise .ms-stat-label { font-size: 13px; line-height: 18px; color: var(--ink-2); }
 @media (max-width: 560px) {
-  .moonrise .ms-stat {
-    padding: 0 var(--space-3);
-  }
-  .moonrise .ms-stat-value {
-    font-size: 32px;
-  }
+.moonrise .ms-stat { padding: 0 var(--space-3); }
+.moonrise .ms-stat-value { font-size: 32px; }
 }
 /* ---- Archive table ---- */
-.moonrise .ms-archive {
-  position: relative;
-}
-.moonrise .ms-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 15px;
-  line-height: 22px;
-}
-.moonrise .ms-table th {
-  text-align: left;
-  font-weight: 400;
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-2);
-  padding: 0 var(--space-4) var(--space-3) 0;
-  border-bottom: 1px solid var(--line-strong);
-}
-.moonrise .ms-table td {
-  padding: var(--space-4) var(--space-4) var(--space-4) 0;
-  border-bottom: 1px solid var(--line);
-  vertical-align: baseline;
-}
-.moonrise .ms-row-name {
-  font-weight: 500;
-}
-.moonrise .ms-row-cancelled .ms-cell-duration {
-  color: var(--ink-3);
-  text-decoration: line-through;
-}
-.moonrise .ms-cell-action {
-  position: relative;
-  text-align: right;
-  padding-right: 0 !important;
-}
-.moonrise .ms-row-history td {
-  padding-top: 0;
-}
-.moonrise .ms-showall {
-  margin-top: var(--space-4);
-}
+.moonrise .ms-archive { position: relative; }
+.moonrise .ms-table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 22px; }
+.moonrise .ms-table th { text-align: left; font-weight: 400; font-size: 13px; line-height: 18px; color: var(--ink-2); padding: 0 var(--space-4) var(--space-3) 0; border-bottom: 1px solid var(--line-strong); }
+.moonrise .ms-table td { padding: var(--space-4) var(--space-4) var(--space-4) 0; border-bottom: 1px solid var(--line); vertical-align: baseline; }
+.moonrise .ms-row-name { font-weight: 500; }
+.moonrise .ms-row-cancelled .ms-cell-duration { color: var(--ink-3); text-decoration: line-through; }
+.moonrise .ms-cell-action { position: relative; text-align: right; padding-right: 0 !important; }
+.moonrise .ms-row-history td { padding-top: 0; }
+.moonrise .ms-showall { margin-top: var(--space-4); }
 @media (max-width: 640px) {
-  .moonrise .ms-table thead {
-    display: none;
-  }
-  .moonrise .ms-table tr.ms-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    gap: var(--space-1) var(--space-4);
-    padding: var(--space-4) 0;
-    border-bottom: 1px solid var(--line);
-  }
-  .moonrise .ms-table tr.ms-row td {
-    border: 0;
-    padding: 0;
-  }
-  .moonrise .ms-table tr.ms-row td[data-label='Name'] {
-    grid-column: 1 / -1;
-  }
-  .moonrise .ms-table tr.ms-row td[data-label='Duration']::before {
-    content: 'Duration ';
-    color: var(--ink-3);
-    display: inline-block;
-    margin-right: 4px;
-    text-decoration: none;
-  }
-  .moonrise .ms-table tr.ms-row td[data-label='Ended']::before {
-    content: 'Ended ';
-    color: var(--ink-3);
-  }
-  .moonrise .ms-table tr.ms-row-history,
-  .moonrise .ms-table tr.ms-row-history td {
-    display: block;
-    border: 0;
-  }
+.moonrise .ms-table thead { display: none; }
+.moonrise .ms-table tr.ms-row { display: grid; grid-template-columns: 1fr auto; gap: var(--space-1) var(--space-4); padding: var(--space-4) 0; border-bottom: 1px solid var(--line); }
+.moonrise .ms-table tr.ms-row td { border: 0; padding: 0; }
+.moonrise .ms-table tr.ms-row td[data-label="Name"] { grid-column: 1 / -1; }
+.moonrise .ms-table tr.ms-row td[data-label="Duration"]::before { content: "Duration "; color: var(--ink-3); display: inline-block; margin-right: 4px; text-decoration: none; }
+.moonrise .ms-table tr.ms-row td[data-label="Ended"]::before { content: "Ended "; color: var(--ink-3); }
+.moonrise .ms-table tr.ms-row-history,
+.moonrise .ms-table tr.ms-row-history td { display: block; border: 0; }
 }
 /* ---- Sheet (drawer, modal) ---- */
-.moonrise .ms-sheet {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-6);
-  padding: var(--space-8);
-}
-.moonrise .ms-sheet-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-4);
-}
-.moonrise .ms-sheet-head .ms-title {
-  font-size: 20px;
-  line-height: 28px;
-}
-.moonrise .ms-sheet-body {
-  min-width: 0;
-}
-.moonrise .ms-sheet-foot {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-4);
-  flex-wrap: wrap;
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--line);
-  font-size: 13px;
-  line-height: 18px;
-  color: var(--ink-2);
-}
-.moonrise .ms-note {
-  margin: 0;
-  padding: var(--space-4);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--radius-s);
-  color: var(--ink-2);
-}
-.moonrise .ms-files {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-.moonrise .ms-files li {
-  display: flex;
-  align-items: baseline;
-  gap: var(--space-6);
-  padding: var(--space-4) 0;
-  border-bottom: 1px solid var(--line);
-}
-.moonrise .ms-files li > :first-child {
-  flex: 1;
-  min-width: 0;
-  font-weight: 500;
-}
+.moonrise .ms-sheet { display: flex; flex-direction: column; gap: var(--space-6); padding: var(--space-8); }
+.moonrise .ms-sheet-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); }
+.moonrise .ms-sheet-head .ms-title { font-size: 20px; line-height: 28px; }
+.moonrise .ms-sheet-body { min-width: 0; }
+.moonrise .ms-sheet-foot { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); flex-wrap: wrap; padding-top: var(--space-4); border-top: 1px solid var(--line); font-size: 13px; line-height: 18px; color: var(--ink-2); }
+.moonrise .ms-note { margin: 0; padding: var(--space-4); border: 1px solid var(--line-strong); border-radius: var(--radius-s); color: var(--ink-2); }
+.moonrise .ms-files { list-style: none; margin: 0; padding: 0; }
+.moonrise .ms-files li { display: flex; align-items: baseline; gap: var(--space-6); padding: var(--space-4) 0; border-bottom: 1px solid var(--line); }
+.moonrise .ms-files li > :first-child { flex: 1; min-width: 0; font-weight: 500; }
 /* ---- Notebook: closed on its cover, then the cover swings open on the spine ----
    Page images are 2:3 with tabs; their straight edge (the spine side) sits 3.3% in from the left.
    Pages overlap by 6.5% of a page so the two straight edges meet. */
-.moonrise .ms-notebook {
-  --nb-o: calc(var(--nb-w) * 0.065);
-  display: flex;
-  justify-content: center;
-  perspective: calc(var(--nb-w) * 6);
-}
-.moonrise .ms-nb-book {
-  position: relative;
-  flex: none;
-  width: calc(var(--nb-w) * 2 - var(--nb-o));
-  height: calc(var(--nb-w) * 1.5);
-  transform-style: preserve-3d;
-  transform: translateX(calc((var(--nb-w) - var(--nb-o)) / -2));
-  transition: transform 1100ms var(--ease-drift);
-}
-.moonrise .ms-notebook-open .ms-nb-book {
-  transform: translateX(0);
-}
+.moonrise .ms-notebook { --nb-o: calc(var(--nb-w) * 0.065); display: flex; justify-content: center; perspective: calc(var(--nb-w) * 6); }
+.moonrise .ms-nb-book { position: relative; flex: none; width: calc(var(--nb-w) * 2 - var(--nb-o)); height: calc(var(--nb-w) * 1.5); transform-style: preserve-3d;
+  transform: translateX(calc((var(--nb-w) - var(--nb-o)) / -2)); transition: transform 1100ms var(--ease-drift); }
+.moonrise .ms-notebook-open .ms-nb-book { transform: translateX(0); }
 .moonrise .ms-nb-page,
-.moonrise .ms-nb-leaf {
-  position: absolute;
-  top: 0;
-  left: calc(var(--nb-w) - var(--nb-o));
-  width: var(--nb-w);
-  height: 100%;
-}
-.moonrise .ms-nb-leaf {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-  transform-style: preserve-3d;
-  transform-origin: 3.3% 50%;
-  transition: transform 1100ms cubic-bezier(0.65, 0.05, 0.25, 1);
-}
+.moonrise .ms-nb-leaf { position: absolute; top: 0; left: calc(var(--nb-w) - var(--nb-o)); width: var(--nb-w); height: 100%; }
+.moonrise .ms-nb-leaf { margin: 0; padding: 0; border: 0; background: none; cursor: pointer; transform-style: preserve-3d; transform-origin: 3.3% 50%;
+  transition: transform 1100ms cubic-bezier(0.65, 0.05, 0.25, 1); }
 /* Same transform functions in both states, so the browser rotates instead of squashing through a matrix blend. */
-.moonrise .ms-nb-leaf {
-  transform: rotateY(0deg) translateZ(1px);
-}
-.moonrise .ms-notebook-open .ms-nb-leaf {
-  transform: rotateY(-180deg) translateZ(1px);
-  cursor: default;
-}
+.moonrise .ms-nb-leaf { transform: rotateY(0deg) translateZ(1px); }
+.moonrise .ms-notebook-open .ms-nb-leaf { transform: rotateY(-180deg) translateZ(1px); cursor: default; }
 /* Each side of the cover leaf shows only on its own half of the turn (the swap happens at 90°,
    half of the 1100 ms turn), and the right page's handwriting shows only while the book is open.
    Blend modes on the scans can escape backface-visibility, so this is what keeps the
    content out of sight until the pages are really open. */
-.moonrise .ms-nb-face {
-  isolation: isolate;
-}
-.moonrise .ms-nb-back {
-  visibility: hidden;
-  transition: visibility 0s linear 550ms;
-}
-.moonrise .ms-notebook-open .ms-nb-back {
-  visibility: visible;
-}
-.moonrise .ms-notebook-open .ms-nb-front {
-  visibility: hidden;
-  transition: visibility 0s linear 550ms;
-}
-.moonrise .ms-nb-front {
-  transition: visibility 0s linear 550ms;
-}
+.moonrise .ms-nb-face { isolation: isolate; }
+.moonrise .ms-nb-back { visibility: hidden; transition: visibility 0s linear 550ms; }
+.moonrise .ms-notebook-open .ms-nb-back { visibility: visible; }
+.moonrise .ms-notebook-open .ms-nb-front { visibility: hidden; transition: visibility 0s linear 550ms; }
+.moonrise .ms-nb-front { transition: visibility 0s linear 550ms; }
 .moonrise .ms-nb-right .ms-nb-ink,
-.moonrise .ms-nb-right > svg {
-  visibility: hidden;
-  transition: visibility 0s linear 1100ms;
-}
+.moonrise .ms-nb-right > svg { visibility: hidden; transition: visibility 0s linear 1100ms; }
 .moonrise .ms-notebook-open .ms-nb-right .ms-nb-ink,
-.moonrise .ms-notebook-open .ms-nb-right > svg {
-  visibility: visible;
-  transition-delay: 0s;
-}
-.moonrise .ms-nb-leaf:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: 4px;
-}
-.moonrise .ms-nb-face {
-  position: absolute;
-  inset: 0;
-  display: block;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-.moonrise .ms-nb-back {
-  transform: rotateY(180deg);
-}
+.moonrise .ms-notebook-open .ms-nb-right > svg { visibility: visible; transition-delay: 0s; }
+.moonrise .ms-nb-leaf:focus-visible { outline: 2px solid var(--ink); outline-offset: 4px; }
+.moonrise .ms-nb-face { position: absolute; inset: 0; display: block; backface-visibility: hidden; -webkit-backface-visibility: hidden; }
+.moonrise .ms-nb-back { transform: rotateY(180deg); }
 .moonrise .ms-nb-face img,
-.moonrise .ms-nb-paper {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  display: block;
-}
-.moonrise .ms-nb-front img {
-  filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55));
-}
-.moonrise .ms-nb-mirror {
-  transform: scaleX(-1);
-}
-.moonrise .ms-nb-spine {
-  position: absolute;
-  top: 6.4%;
-  bottom: 2%;
-  width: 5.5%;
-  pointer-events: none;
-}
-.moonrise .ms-nb-spine-l {
-  left: 3.3%;
-  background: linear-gradient(
-    90deg,
-    rgba(40, 28, 12, 0.32),
-    rgba(40, 28, 12, 0)
-  );
-}
-.moonrise .ms-nb-spine-r {
-  right: 3.3%;
-  background: linear-gradient(
-    270deg,
-    rgba(40, 28, 12, 0.32),
-    rgba(40, 28, 12, 0)
-  );
-}
+.moonrise .ms-nb-paper { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+.moonrise .ms-nb-front img { filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.55)); }
+.moonrise .ms-nb-mirror { transform: scaleX(-1); }
+.moonrise .ms-nb-spine { position: absolute; top: 6.4%; bottom: 2%; width: 5.5%; pointer-events: none; }
+.moonrise .ms-nb-spine-l { left: 3.3%; background: linear-gradient(90deg, rgba(40, 28, 12, 0.32), rgba(40, 28, 12, 0)); }
+.moonrise .ms-nb-spine-r { right: 3.3%; background: linear-gradient(270deg, rgba(40, 28, 12, 0.32), rgba(40, 28, 12, 0)); }
 /* Handwriting scans are purple ink on white: multiply drops the white, the hue shift turns the ink red. */
-.moonrise .ms-notebook .ms-nb-ink {
-  position: absolute;
-  top: 7%;
-  right: auto;
-  bottom: auto;
-  left: 6%;
-  width: 84%;
-  height: 88%;
-  mix-blend-mode: multiply;
-  filter: hue-rotate(105deg) saturate(1.15);
-}
-.moonrise .ms-notebook .ms-nb-ink-left {
-  left: 10%;
-}
+.moonrise .ms-notebook .ms-nb-ink { position: absolute; top: 7%; right: auto; bottom: auto; left: 6%; width: 84%; height: 88%; mix-blend-mode: multiply; filter: hue-rotate(105deg) saturate(1.15); }
+.moonrise .ms-notebook .ms-nb-ink-left { left: 10%; }
 .moonrise .ms-notebook img,
 .moonrise .ms-scene img,
-.moonrise .ms-floor img {
-  -webkit-user-drag: none;
-  user-select: none;
-  -webkit-user-select: none;
-  pointer-events: none;
-}
-.moonrise .ms-nb-page > svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
+.moonrise .ms-floor img { -webkit-user-drag: none; user-select: none; -webkit-user-select: none; pointer-events: none; }
+.moonrise .ms-nb-page > svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; pointer-events: none; }
 @media (prefers-reduced-motion: reduce) {
-  .moonrise .ms-nb-book,
-  .moonrise .ms-nb-leaf {
-    transition-duration: 1ms;
-  }
-  .moonrise .ms-nb-face,
-  .moonrise .ms-nb-right .ms-nb-ink,
-  .moonrise .ms-nb-right > svg {
-    transition-delay: 0s !important;
-  }
+.moonrise .ms-nb-book,
+.moonrise .ms-nb-leaf { transition-duration: 1ms; }
+.moonrise .ms-nb-face,
+.moonrise .ms-nb-right .ms-nb-ink,
+.moonrise .ms-nb-right > svg { transition-delay: 0s !important; }
 }
 /* ---- Readout: the transcript preview as an Apollo-era console screen ----
    The one place monospace is allowed. Phosphor text with a soft glow, scanlines, a curved-glass
    vignette, a status strip and a blinking block cursor. */
-.moonrise .ms-crt {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  min-height: 0;
-  overflow: hidden;
-  border-radius: var(--radius-s);
-  background: radial-gradient(
-    ellipse 120% 90% at 50% 45%,
-    #0d0f0d 0%,
-    #070807 60%,
-    #030303 100%
-  );
-  border: 1px solid var(--line-strong);
-  box-shadow:
-    inset 0 0 0 6px #0a0a0a,
-    inset 0 0 60px rgba(0, 0, 0, 0.85);
-}
-.moonrise .ms-crt::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  border-radius: inherit;
-  background:
-    repeating-linear-gradient(
-      180deg,
-      rgba(0, 0, 0, 0.28) 0 1px,
-      rgba(0, 0, 0, 0) 1px 3px
-    ),
-    radial-gradient(
-      ellipse 100% 100% at 50% 50%,
-      rgba(0, 0, 0, 0) 60%,
-      rgba(0, 0, 0, 0.55) 100%
-    );
-}
-.moonrise .ms-crt-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-4);
-  padding: var(--space-3) var(--space-6);
-  border-bottom: 1px solid var(--line);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  line-height: 16px;
-  letter-spacing: 0.06em;
-  color: var(--ink-3);
-}
-.moonrise .ms-crt-head .ms-live {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.06em;
-}
-.moonrise .ms-crt-text {
-  flex: 1;
-  min-height: 0;
-  overflow: auto;
-  margin: 0;
-  padding: var(--space-6);
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  font-family: var(--font-mono);
-  font-size: 13px;
-  line-height: 21px;
-  color: #d8dccf;
-  text-shadow:
-    0 0 1px rgba(216, 220, 207, 0.9),
-    0 0 6px rgba(216, 220, 207, 0.35),
-    0 0 14px rgba(216, 220, 207, 0.12);
-}
-.moonrise .ms-crt-cursor {
-  display: inline-block;
-  width: 0.6em;
-  height: 1.1em;
-  margin-left: 2px;
-  vertical-align: -0.2em;
-  background: #d8dccf;
-  box-shadow: 0 0 8px rgba(216, 220, 207, 0.6);
-  animation: ms-blink 1.06s steps(1) infinite;
-}
+.moonrise .ms-crt { position: relative; display: flex; flex-direction: column; min-height: 0; overflow: hidden; border-radius: var(--radius-s);
+  background: radial-gradient(ellipse 120% 90% at 50% 45%, #0d0f0d 0%, #070807 60%, #030303 100%);
+  border: 1px solid var(--line-strong); box-shadow: inset 0 0 0 6px #0a0a0a, inset 0 0 60px rgba(0, 0, 0, 0.85); }
+.moonrise .ms-crt::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+  background: repeating-linear-gradient(180deg, rgba(0, 0, 0, 0.28) 0 1px, rgba(0, 0, 0, 0) 1px 3px),
+              radial-gradient(ellipse 100% 100% at 50% 50%, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.55) 100%); }
+.moonrise .ms-crt-head { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); padding: var(--space-3) var(--space-6);
+  border-bottom: 1px solid var(--line); font-family: var(--font-mono); font-size: 11px; line-height: 16px; letter-spacing: 0.06em; color: var(--ink-3); }
+.moonrise .ms-crt-head .ms-live { font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em; }
+.moonrise .ms-crt-text { flex: 1; min-height: 0; overflow: auto; margin: 0; padding: var(--space-6); white-space: pre-wrap; overflow-wrap: anywhere;
+  font-family: var(--font-mono); font-size: 13px; line-height: 21px; color: #d8dccf;
+  text-shadow: 0 0 1px rgba(216, 220, 207, 0.9), 0 0 6px rgba(216, 220, 207, 0.35), 0 0 14px rgba(216, 220, 207, 0.12); }
+.moonrise .ms-crt-cursor { display: inline-block; width: 0.6em; height: 1.1em; margin-left: 2px; vertical-align: -0.2em; background: #d8dccf;
+  box-shadow: 0 0 8px rgba(216, 220, 207, 0.6); animation: ms-blink 1.06s steps(1) infinite; }
 @media (prefers-reduced-motion: reduce) {
-  .moonrise .ms-crt-cursor {
-    animation: none;
-  }
+.moonrise .ms-crt-cursor { animation: none; }
 }
 /* Page scroll lock while a drawer or modal is open (Moonrise.util.lockScroll). */
 /* ---- Nav and logo ---- */
-.moonrise .ms-nav {
-  display: flex;
-  align-items: center;
-  gap: var(--space-8);
-  padding: var(--space-6) 0;
-}
-.moonrise .ms-nav-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-6);
-  margin-left: auto;
-}
-.moonrise .ms-nav-menu {
-  display: none;
-}
+.moonrise .ms-nav { display: flex; align-items: center; gap: var(--space-8); padding: var(--space-6) 0; }
+.moonrise .ms-nav-links { display: flex; flex-wrap: wrap; gap: var(--space-6); margin-left: auto; }
+.moonrise .ms-nav-menu { display: none; }
 @media (max-width: 720px) {
-  .moonrise .ms-nav {
-    gap: var(--space-4);
-  }
-  .moonrise .ms-nav-links {
-    display: none;
-  }
-  .moonrise .ms-nav .ms-live {
-    margin-left: auto;
-  }
-  .moonrise .ms-nav-menu {
-    display: inline-flex;
-  }
+.moonrise .ms-nav { gap: var(--space-4); }
+.moonrise .ms-nav-links { display: none; }
+.moonrise .ms-nav .ms-live { margin-left: auto; }
+.moonrise .ms-nav-menu { display: inline-flex; }
 }
-.moonrise .ms-logo {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  color: var(--ink);
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 700;
-  font-size: 17px;
-  line-height: 1;
-  letter-spacing: -0.01em;
-}
-.moonrise .ms-logo svg {
-  display: block;
-  overflow: visible;
-}
-.moonrise .ms-logo-moon {
-  fill: var(--ink);
-}
-.moonrise .ms-logo-seg {
-  fill: var(--signal);
-  filter: drop-shadow(0 0 2px var(--signal));
-}
+.moonrise .ms-logo { display: inline-flex; align-items: center; gap: var(--space-2); color: var(--ink); font-family: var(--font-display); font-stretch: 125%; font-weight: 700; font-size: 17px; line-height: 1; letter-spacing: -0.01em; }
+.moonrise .ms-logo svg { display: block; overflow: visible; }
+.moonrise .ms-logo-moon { fill: var(--ink); }
+.moonrise .ms-logo-seg { fill: var(--signal); filter: drop-shadow(0 0 2px var(--signal)); }
 /* ---- Scene: the hero. Black sky, a silver glow on the horizon, the moon ---- */
 .moonrise .ms-scene {
-  position: relative;
-  overflow: hidden;
-  isolation: isolate;
-  z-index: 1;
+  position: relative; overflow: hidden; isolation: isolate; z-index: 1;
   /* sized by its own box (container units), never the viewport, so it also renders inside tall canvases */
   container-type: size;
   view-timeline-name: --ms-hero;
   background:
-    radial-gradient(
-      ellipse 70% 34% at 50% calc(var(--ms-horizon, 68) * 1%),
-      var(--steel) 0%,
-      var(--sky-2) 34%,
-      var(--sky-0) 66%
-    ),
+    radial-gradient(ellipse 70% 34% at 50% calc(var(--ms-horizon, 68) * 1%), var(--steel) 0%, var(--sky-2) 34%, var(--sky-0) 66%),
     var(--sky-0);
 }
-.moonrise .ms-stars {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-.moonrise .ms-stars i {
-  position: absolute;
-  border-radius: 50%;
-  background: var(--ink);
-}
+.moonrise .ms-stars { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.moonrise .ms-stars i { position: absolute; border-radius: 50%; background: var(--ink); }
 /* The photo has a black sky of its own: lighten drops it into the gradient. */
 /* The photo's limb sits 29% down the image (image height = 0.562 × width).
    --ms-horizon (unitless, % of the hero height) is where the limb lands; default 74. */
 /* lighten sits on the layer, not the img: the layer is transformed by the parallax, which would isolate a blend set on the img */
-.moonrise .ms-scene-moonlayer {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  mix-blend-mode: lighten;
-}
-.moonrise .ms-scene-moon {
-  position: absolute;
-  top: calc(var(--ms-horizon, 68) * 1cqh - max(100cqw, 135cqh) * 0.163);
-  left: 50%;
-  transform: translateX(-50%);
-  width: max(100cqw, 135cqh);
-  max-width: none;
-  height: auto;
-  user-select: none;
-}
+.moonrise .ms-scene-moonlayer { position: absolute; inset: 0; z-index: 1; pointer-events: none; mix-blend-mode: lighten; }
+.moonrise .ms-scene-moon { position: absolute; top: calc(var(--ms-horizon, 68) * 1cqh - max(100cqw, 135cqh) * 0.163); left: 50%; transform: translateX(-50%); width: max(100cqw, 135cqh); max-width: none; height: auto; user-select: none; }
 /* Shade over the moon's red-lit top. It darkens when the 1337 display's light drops:
    a segment drop-out, a dip, the boot scramble (data-clock-light, set by SegmentClock)
    and the display's own keyframe flicker (the -k layer runs the same 6.5 s cycle). */
@@ -1244,413 +373,100 @@
      exactly at the moon's edge: nothing outside the moon darkens. */
   --mw: max(100cqw, 135cqh);
   --moon-r: 0.539;
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  transition: opacity 700ms var(--ease-drift);
-  background: radial-gradient(
-    circle at calc(50% - var(--mw) * 0.008)
-      calc(var(--ms-horizon, 68) * 1cqh + var(--mw) * var(--moon-r)),
+  position: absolute; inset: 0; opacity: 0; transition: opacity 700ms var(--ease-drift);
+  background: radial-gradient(circle at calc(50% - var(--mw) * 0.008) calc(var(--ms-horizon, 68) * 1cqh + var(--mw) * var(--moon-r)),
     rgba(5, 5, 5, 0) calc(var(--mw) * 0.43),
     rgba(5, 5, 5, 0.55) calc(var(--mw) * 0.49),
     rgba(5, 5, 5, 0.92) calc(var(--mw) * 0.522),
     rgba(5, 5, 5, 0.92) calc(var(--mw) * var(--moon-r) - 1.5px),
-    rgba(5, 5, 5, 0) calc(var(--mw) * var(--moon-r))
-  );
+    rgba(5, 5, 5, 0) calc(var(--mw) * var(--moon-r)));
 }
-.moonrise
-  .ms-scene[data-clock-light='drop']
-  .ms-scene-rimshade:not(.ms-scene-rimshade-k) {
-  opacity: 0.4;
-  transition: none;
-}
-.moonrise
-  .ms-scene[data-clock-light='dip']
-  .ms-scene-rimshade:not(.ms-scene-rimshade-k) {
-  opacity: 0.75;
-  transition: none;
-}
-.moonrise
-  .ms-scene[data-clock-light='boot']
-  .ms-scene-rimshade:not(.ms-scene-rimshade-k) {
-  opacity: 0.9;
-  transition: none;
-}
-.moonrise .ms-scene:has(.ms-clock-flicker) .ms-scene-rimshade-k {
-  transition: none;
-  animation: ms-rim-flicker 6.5s steps(1) infinite;
-}
-.moonrise .ms-moon-wrap {
-  position: absolute;
-  top: calc(var(--ms-horizon, 68) * 1%);
-  left: 50%;
-  transform: translateX(-50%);
-  width: max(130cqw, 220cqh);
-  pointer-events: none;
-}
-.moonrise .ms-moon {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: var(--radius-full);
-  box-shadow: var(--rim-signal);
-}
+.moonrise .ms-scene[data-clock-light="drop"] .ms-scene-rimshade:not(.ms-scene-rimshade-k) { opacity: .4; transition: none; }
+.moonrise .ms-scene[data-clock-light="dip"] .ms-scene-rimshade:not(.ms-scene-rimshade-k) { opacity: .75; transition: none; }
+.moonrise .ms-scene[data-clock-light="boot"] .ms-scene-rimshade:not(.ms-scene-rimshade-k) { opacity: .9; transition: none; }
+.moonrise .ms-scene:has(.ms-clock-flicker) .ms-scene-rimshade-k { transition: none; animation: ms-rim-flicker 6.5s steps(1) infinite; }
+.moonrise .ms-moon-wrap { position: absolute; top: calc(var(--ms-horizon, 68) * 1%); left: 50%; transform: translateX(-50%); width: max(130cqw, 220cqh); pointer-events: none; }
+.moonrise .ms-moon { width: 100%; aspect-ratio: 1; border-radius: var(--radius-full); box-shadow: var(--rim-signal); }
 .moonrise .ms-moon-placeholder {
   background:
-    radial-gradient(
-      ellipse 26% 10% at 40% 16%,
-      var(--moon-shade),
-      var(--ink-fade)
-    ),
-    radial-gradient(
-      ellipse 18% 8% at 64% 22%,
-      var(--moon-shade),
-      var(--ink-fade)
-    ),
-    radial-gradient(
-      ellipse 30% 9% at 52% 30%,
-      var(--moon-shade),
-      var(--ink-fade)
-    ),
-    radial-gradient(
-      circle at 50% 8%,
-      var(--moon) 0%,
-      var(--moon-mid) 30%,
-      var(--moon-shade) 62%,
-      var(--moon-shadow) 90%
-    );
+    radial-gradient(ellipse 26% 10% at 40% 16%, var(--moon-shade), var(--ink-fade)),
+    radial-gradient(ellipse 18% 8% at 64% 22%, var(--moon-shade), var(--ink-fade)),
+    radial-gradient(ellipse 30% 9% at 52% 30%, var(--moon-shade), var(--ink-fade)),
+    radial-gradient(circle at 50% 8%, var(--moon) 0%, var(--moon-mid) 30%, var(--moon-shade) 62%, var(--moon-shadow) 90%);
 }
-.moonrise .ms-scene-content {
-  position: absolute;
-  z-index: 3;
-  inset: 0 0 10% 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 max(16px, 6vw);
-}
-.moonrise .ms-scene-content > .ms-clock {
-  width: min(90%, 760px);
-}
+.moonrise .ms-scene-content { position: absolute; z-index: 3; inset: 0 0 10% 0; display: flex; align-items: center; justify-content: center; padding: 0 max(16px, 6vw); }
+.moonrise .ms-scene-content > .ms-clock { width: min(90%, 760px); }
 /* A giant word between the moon and the clouds: in front of the moon, behind the clouds
    (CloudFloor stacks above the whole Scene). It rises into view as the hero scrolls away. */
-.moonrise .ms-scene-word {
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  right: 0;
-  bottom: 2cqh;
-  display: flex;
-  justify-content: center;
-  pointer-events: none;
-}
-.moonrise .ms-scene-word-static {
-  transform: translateY(-48%);
-}
-.moonrise .ms-scene-word span {
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
-  font-size: clamp(72px, 15cqw, 260px);
-  line-height: 0.8;
-  letter-spacing: -0.03em;
-  white-space: nowrap;
-  background: linear-gradient(
-    180deg,
-    var(--ink) 0%,
-    var(--ink) 38%,
-    var(--silver) 72%,
-    var(--ink-fade) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+.moonrise .ms-scene-word { position: absolute; z-index: 2; left: 0; right: 0; bottom: 2cqh; display: flex; justify-content: center; pointer-events: none; }
+.moonrise .ms-scene-word-static { transform: translateY(-48%); }
+.moonrise .ms-scene-word span { font-family: var(--font-display); font-stretch: 125%; font-weight: 800; font-size: clamp(72px, 15cqw, 260px); line-height: .8; letter-spacing: -0.03em; white-space: nowrap; background: linear-gradient(180deg, var(--ink) 0%, var(--ink) 38%, var(--silver) 72%, var(--ink-fade) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @supports (animation-timeline: view()) {
-  .moonrise .ms-scene-word:not(.ms-scene-word-static) {
-    animation: ms-word-rise linear both;
-    animation-timeline: --ms-hero;
-    animation-range: exit 0% exit 55%;
-  }
-  .moonrise .ms-scene-moonlayer {
-    animation: ms-moon-lag linear both;
-    animation-timeline: --ms-hero;
-    animation-range: exit 0% exit 100%;
-  }
-  .moonrise .ms-floor-clouds {
-    animation: ms-cloud-lead linear both;
-    animation-timeline: view();
-    animation-range: cover 0% cover 100%;
-  }
+.moonrise .ms-scene-word:not(.ms-scene-word-static) { animation: ms-word-rise linear both; animation-timeline: --ms-hero; animation-range: exit 0% exit 55%; }
+.moonrise .ms-scene-moonlayer { animation: ms-moon-lag linear both; animation-timeline: --ms-hero; animation-range: exit 0% exit 100%; }
+.moonrise .ms-floor-clouds { animation: ms-cloud-lead linear both; animation-timeline: view(); animation-range: cover 0% cover 100%; }
 }
 /* ---- Cloud floor: clouds overlap the moon, then a hard gradient to black ---- */
 .moonrise .ms-floor {
-  position: relative;
-  z-index: 2;
-  display: flow-root;
+  position: relative; z-index: 2; display: flow-root;
   background:
-    linear-gradient(
-        180deg,
-        var(--cloud-floor) 0%,
-        var(--steel) 9%,
-        var(--sky-2) 26%,
-        var(--sky-1) 50%,
-        var(--sky-0) 80%
-      )
-      top / 100% max(80vw, 720px) no-repeat,
+    linear-gradient(180deg, var(--cloud-floor) 0%, var(--steel) 9%, var(--sky-2) 26%, var(--sky-1) 50%, var(--sky-0) 80%) top / 100% max(80vw, 720px) no-repeat,
     var(--sky-0);
 }
-.moonrise .ms-floor-clouds {
-  display: block;
-  position: relative;
-  width: max(100%, 900px);
-  max-width: none;
-  height: auto;
-  margin-left: 50%;
-  transform: translateX(-50%);
-  margin-top: calc(max(100%, 900px) * -0.24);
-  filter: grayscale(1) contrast(1.05);
-  pointer-events: none;
-  user-select: none;
-  -webkit-mask-image: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 76%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 76%,
-    rgba(0, 0, 0, 0) 100%
-  );
-}
-.moonrise .ms-floor-haze {
-  height: 160px;
-  margin-top: -120px;
-  background: radial-gradient(
-    ellipse 60% 100% at 50% 100%,
-    var(--cloud-floor),
-    var(--ink-fade)
-  );
-}
-.moonrise .ms-floor-content {
-  position: relative;
-}
+.moonrise .ms-floor-clouds { display: block; position: relative; width: max(100%, 900px); max-width: none; height: auto; margin-left: 50%; transform: translateX(-50%); margin-top: calc(max(100%, 900px) * -0.24); filter: grayscale(1) contrast(1.05); pointer-events: none; user-select: none;
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 76%, rgba(0, 0, 0, 0) 100%); mask-image: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 1) 76%, rgba(0, 0, 0, 0) 100%); }
+.moonrise .ms-floor-haze { height: 160px; margin-top: -120px; background: radial-gradient(ellipse 60% 100% at 50% 100%, var(--cloud-floor), var(--ink-fade)); }
+.moonrise .ms-floor-content { position: relative; }
 /* ---- Grain: hard film noise in the backgrounds only ----
    It sits on the sky, the cloud floor, the page ground and the footer gradient, under every
    image, panel and word. Put .ms-noise on any other background that should carry it. */
-.moonrise {
-  --ms-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='2.4' intercept='-0.7'/><feFuncG type='linear' slope='2.4' intercept='-0.7'/><feFuncB type='linear' slope='2.4' intercept='-0.7'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-}
-.moonrise .ms-noise {
-  position: relative;
-}
+.moonrise { --ms-noise: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/><feComponentTransfer><feFuncR type='linear' slope='2.4' intercept='-0.7'/><feFuncG type='linear' slope='2.4' intercept='-0.7'/><feFuncB type='linear' slope='2.4' intercept='-0.7'/></feComponentTransfer></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); }
+.moonrise .ms-noise { position: relative; }
 .moonrise .ms-noise,
 .moonrise .ms-scene,
 .moonrise .ms-floor,
-.moonrise .ms-wordmark {
-  isolation: isolate;
-}
+.moonrise .ms-wordmark { isolation: isolate; }
 .moonrise .ms-noise::before,
 .moonrise .ms-scene::before,
 .moonrise .ms-floor::before,
 .moonrise .ms-wordmark::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background-image: var(--ms-noise);
-  background-size: 200px 200px;
-  opacity: var(--grain-opacity);
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background-image: var(--ms-noise); background-size: 200px 200px; opacity: var(--grain-opacity);
 }
 /* Legacy full-screen overlay; prefer .ms-noise. */
-.moonrise .ms-grain {
-  position: fixed;
-  inset: 0;
-  z-index: 100;
-  pointer-events: none;
-  opacity: var(--grain-opacity);
-  background-image: var(--ms-noise);
-  background-size: 200px 200px;
-}
+.moonrise .ms-grain { position: fixed; inset: 0; z-index: 100; pointer-events: none; opacity: var(--grain-opacity); background-image: var(--ms-noise); background-size: 200px 200px; }
 /* ---- Footer: a belt of white rules carrying the links, on top of the wordmark ---- */
-.moonrise .ms-footer {
-  display: flex;
-  flex-direction: column;
-}
-.moonrise .ms-belt {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  border-top: 1px solid var(--ink);
-  border-bottom: 1px solid var(--ink);
-}
-.moonrise .ms-belt-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 72px;
-  padding: var(--space-4);
-  border-left: 1px solid var(--ink);
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 700;
-  font-size: clamp(15px, 2vw, 26px);
-  line-height: 1;
-  letter-spacing: -0.01em;
-  color: var(--ink);
-  text-decoration: none;
-  text-align: center;
-  transition:
-    background-color var(--dur-fast) var(--ease-drift),
-    color var(--dur-fast) var(--ease-drift);
-}
-.moonrise .ms-belt-link:first-child {
-  border-left: 0;
-}
-.moonrise .ms-belt-link:hover {
-  background: var(--ink);
-  color: var(--on-ink);
-}
-.moonrise .ms-belt-link:focus-visible {
-  outline: 2px solid var(--ink);
-  outline-offset: -4px;
-}
+.moonrise .ms-footer { display: flex; flex-direction: column; }
+.moonrise .ms-belt { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--ink); }
+.moonrise .ms-belt-link { display: flex; align-items: center; justify-content: center; min-height: 72px; padding: var(--space-4); border-left: 1px solid var(--ink);
+  font-family: var(--font-display); font-stretch: 125%; font-weight: 700; font-size: clamp(15px, 2vw, 26px); line-height: 1; letter-spacing: -0.01em;
+  color: var(--ink); text-decoration: none; text-align: center; transition: background-color var(--dur-fast) var(--ease-drift), color var(--dur-fast) var(--ease-drift); }
+.moonrise .ms-belt-link:first-child { border-left: 0; }
+.moonrise .ms-belt-link:hover { background: var(--ink); color: var(--on-ink); }
+.moonrise .ms-belt-link:focus-visible { outline: 2px solid var(--ink); outline-offset: -4px; }
 @media (max-width: 560px) {
-  .moonrise .ms-belt-link {
-    min-height: 56px;
-    padding: var(--space-3) var(--space-2);
-    font-stretch: 100%;
-    font-size: 15px;
-  }
+.moonrise .ms-belt-link { min-height: 56px; padding: var(--space-3) var(--space-2); font-stretch: 100%; font-size: 15px; }
 }
 /* ---- Footer wordmark ---- */
-.moonrise .ms-wordmark {
-  position: relative;
-  overflow: hidden;
-  height: 0.7em;
-  padding-top: 0.12em;
-  background: linear-gradient(
-    180deg,
-    var(--sky-0) 0%,
-    var(--steel) 62%,
-    var(--silver) 100%
-  );
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
-  font-size: clamp(96px, 28vw, 420px);
-  line-height: 0.85;
-  letter-spacing: -0.04em;
-  white-space: nowrap;
-}
-.moonrise .ms-wordmark span {
-  display: block;
-  background: linear-gradient(180deg, var(--ink) 15%, var(--ink-fade) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
+.moonrise .ms-wordmark { position: relative; overflow: hidden; height: .7em; padding-top: .12em; background: linear-gradient(180deg, var(--sky-0) 0%, var(--steel) 62%, var(--silver) 100%); font-family: var(--font-display); font-stretch: 125%; font-weight: 800; font-size: clamp(96px, 28vw, 420px); line-height: .85; letter-spacing: -0.04em; white-space: nowrap; }
+.moonrise .ms-wordmark span { display: block; background: linear-gradient(180deg, var(--ink) 15%, var(--ink-fade) 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
 @media (prefers-reduced-motion: reduce) {
-  .moonrise .ms-feed-new,
-  .moonrise .ms-live-pip,
-  .moonrise .ms-live-lg .ms-live-pip,
-  .moonrise .ms-scene-moonlayer,
-  .moonrise .ms-floor-clouds,
-  .moonrise .ms-scene-rimshade {
-    animation: none !important;
-  }
-  .moonrise .ms-scene-word {
-    animation: none !important;
-    opacity: 1;
-    transform: none;
-  }
-  .moonrise .ms-exit-finished,
-  .moonrise .ms-exit-cancelled {
-    animation: ms-fade var(--dur-base) linear forwards;
-  }
+.moonrise .ms-feed-new,
+.moonrise .ms-live-pip,
+.moonrise .ms-live-lg .ms-live-pip,
+.moonrise .ms-scene-moonlayer,
+.moonrise .ms-floor-clouds,
+.moonrise .ms-scene-rimshade { animation: none !important; }
+.moonrise .ms-scene-word { animation: none !important; opacity: 1; transform: none; }
+.moonrise .ms-exit-finished,
+.moonrise .ms-exit-cancelled { animation: ms-fade var(--dur-base) linear forwards; }
 }
-@keyframes ms-live-breathe {
-  50% {
-    opacity: 0.65;
-  }
-}
-@keyframes ms-set {
-  30% {
-    border-color: var(--moon);
-    box-shadow: 0 0 0 1px var(--moon);
-  }
-  100% {
-    transform: translateY(24px);
-    opacity: 0;
-  }
-}
-@keyframes ms-fade {
-  100% {
-    opacity: 0;
-  }
-}
-@keyframes ms-pop {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-}
-@keyframes ms-newline {
-  from {
-    background: var(--signal-ghost);
-  }
-}
-@keyframes ms-rim-flicker {
-  0%,
-  100% {
-    opacity: 0;
-  }
-  31% {
-    opacity: 0.25;
-  }
-  31.6% {
-    opacity: 0;
-  }
-  58% {
-    opacity: 0.15;
-  }
-  58.4% {
-    opacity: 0.42;
-  }
-  59% {
-    opacity: 0;
-  }
-  83% {
-    opacity: 0.2;
-  }
-  83.5% {
-    opacity: 0;
-  }
-}
-@keyframes ms-word-rise {
-  from {
-    opacity: 0;
-    transform: translateY(70%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(-48%);
-  }
-}
-@keyframes ms-moon-lag {
-  from {
-    transform: translateY(0);
-  }
-  to {
-    transform: translateY(28%);
-  }
-}
-@keyframes ms-cloud-lead {
-  from {
-    transform: translateX(-50%) translateY(14%);
-  }
-  to {
-    transform: translateX(-50%) translateY(-10%);
-  }
-}
+@keyframes ms-live-breathe { 50% { opacity: .65; } }
+@keyframes ms-set { 30% { border-color: var(--moon); box-shadow: 0 0 0 1px var(--moon); } 100% { transform: translateY(24px); opacity: 0; } }
+@keyframes ms-fade { 100% { opacity: 0; } }
+@keyframes ms-pop { from { opacity: 0; transform: translateY(4px); } }
+@keyframes ms-newline { from { background: var(--signal-ghost); } }
+@keyframes ms-rim-flicker { 0%, 100% { opacity: 0; } 31% { opacity: .25; } 31.6% { opacity: 0; } 58% { opacity: .15; } 58.4% { opacity: .42; } 59% { opacity: 0; } 83% { opacity: .2; } 83.5% { opacity: 0; } }
+@keyframes ms-word-rise { from { opacity: 0; transform: translateY(70%); } to { opacity: 1; transform: translateY(-48%); } }
+@keyframes ms-moon-lag { from { transform: translateY(0); } to { transform: translateY(28%); } }
+@keyframes ms-cloud-lead { from { transform: translateX(-50%) translateY(14%); } to { transform: translateX(-50%) translateY(-10%); } }
