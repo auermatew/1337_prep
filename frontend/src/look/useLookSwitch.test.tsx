@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { LOOK_KEY } from './look';
-import { TIMING } from './timing';
+import { STALL_MS, TIMING, holdMs } from './timing';
 import { useLookSwitch } from './useLookSwitch';
 
 vi.mock('./loadMoonrise', () => ({
@@ -10,6 +10,9 @@ vi.mock('./loadMoonrise', () => ({
   isMoonriseReady: vi.fn(() => false),
 }));
 import { isMoonriseReady, loadMoonrise } from './loadMoonrise';
+
+vi.mock('./reload', () => ({ reloadInto: vi.fn() }));
+import { reloadInto } from './reload';
 
 const mockLoad = vi.mocked(loadMoonrise);
 const mockReady = vi.mocked(isMoonriseReady);
@@ -52,7 +55,9 @@ describe('useLookSwitch', () => {
     expect(mockLoad).toHaveBeenCalledTimes(1);
     await wait(T.moonCover);
     expect(result.current.phase).toBe('boot');
-    await wait(T.moonHold - 1);
+    // The lock-in overlaps the end of the hold, so 1337 locks at moonHold.
+    expect(holdMs(T, false)).toBe(T.moonHold - T.lock);
+    await wait(holdMs(T, false) - 1);
     expect(result.current.phase).toBe('boot');
     await wait(1);
     expect(result.current.phase).toBe('lock');
@@ -71,7 +76,8 @@ describe('useLookSwitch', () => {
     const { result } = renderHook(() => useLookSwitch());
     act(() => result.current.switchTo('moon', origin));
     await wait(T.moonCover);
-    await wait(T.fastHold);
+    expect(holdMs(T, true)).toBe(0);
+    await wait(0);
     expect(result.current.phase).toBe('lock');
   });
 
@@ -81,22 +87,38 @@ describe('useLookSwitch', () => {
     const { result } = renderHook(() => useLookSwitch());
     act(() => result.current.switchTo('moon', origin));
     await wait(T.moonCover);
-    await wait(T.moonHold + 3000);
+    await wait(holdMs(T, false) + 3000);
     expect(result.current.phase).toBe('boot');
     await act(async () => resolve(MOD));
     expect(result.current.phase).toBe('lock');
   });
 
-  it('fails, retries, and goes back to classic', async () => {
+  it('tries again by reloading into the night', async () => {
     mockLoad.mockRejectedValue(new Error('chunk'));
     const { result } = renderHook(() => useLookSwitch());
     act(() => result.current.switchTo('moon', origin));
     await wait(T.moonCover);
     expect(result.current.phase).toBe('failed');
     act(() => result.current.retry());
+    expect(vi.mocked(reloadInto)).toHaveBeenCalledWith('moon');
+  });
+
+  it('gives up on a stalled download', async () => {
+    mockLoad.mockReturnValue(new Promise(() => {}));
+    const { result } = renderHook(() => useLookSwitch());
+    act(() => result.current.switchTo('moon', origin));
+    await wait(T.moonCover);
+    await wait(STALL_MS - 1);
     expect(result.current.phase).toBe('boot');
-    expect(mockLoad).toHaveBeenCalledTimes(2);
-    await wait(0);
+    await wait(1);
+    expect(result.current.phase).toBe('failed');
+  });
+
+  it('fails and goes back to classic', async () => {
+    mockLoad.mockRejectedValue(new Error('chunk'));
+    const { result } = renderHook(() => useLookSwitch());
+    act(() => result.current.switchTo('moon', origin));
+    await wait(T.moonCover);
     expect(result.current.phase).toBe('failed');
     act(() => result.current.back());
     expect(result.current.phase).toBe('uncover');
@@ -120,7 +142,7 @@ describe('useLookSwitch', () => {
     const { result } = renderHook(() => useLookSwitch());
     act(() => result.current.switchTo('moon', origin));
     await wait(T.moonCover);
-    await wait(T.moonHold);
+    await wait(holdMs(T, false));
     await wait(T.lock);
     await wait(T.moonReveal);
     act(() => result.current.switchTo('classic', origin));
@@ -140,7 +162,7 @@ describe('useLookSwitch', () => {
     expect(result.current.shown).toBeNull();
     expect(result.current.phase).toBe('boot');
     expect(document.documentElement.dataset.look).toBe('moon');
-    await wait(T.moonHold);
+    await wait(holdMs(T, false));
     expect(result.current.phase).toBe('lock');
     await wait(T.lock);
     expect(result.current.shown).toBe('moon');
@@ -149,7 +171,7 @@ describe('useLookSwitch', () => {
   it('does not remember a ?look= link on its own', async () => {
     window.history.replaceState(null, '', '/?look=moon');
     const { result } = renderHook(() => useLookSwitch());
-    await wait(T.moonHold);
+    await wait(holdMs(T, false));
     await wait(T.lock);
     expect(result.current.shown).toBe('moon');
     expect(localStorage.getItem(LOOK_KEY)).toBeNull();

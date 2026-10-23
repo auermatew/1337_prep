@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import type { MouseEvent } from 'react';
 import { preloadMoonrise } from './loadMoonrise';
 import type { Look } from './look';
@@ -43,12 +44,26 @@ export function LookSwitch({
   onSwitch: (origin: Origin) => void;
 }) {
   const moon = look === 'moon';
+  const ref = useRef<HTMLButtonElement>(null);
+  const wasBusy = useRef(busy);
+
+  // The button is disabled during a switch, which drops its focus: give it
+  // back when the switch is over, unless focus has gone somewhere else.
+  useEffect(() => {
+    const active = document.activeElement;
+    if (wasBusy.current && !busy && (!active || active === document.body)) {
+      ref.current?.focus();
+    }
+    wasBusy.current = busy;
+  }, [busy]);
+
   const click = (e: MouseEvent<HTMLButtonElement>) => {
     const box = e.currentTarget.getBoundingClientRect();
     onSwitch({ x: box.left + box.width / 2, y: box.top + box.height / 2 });
   };
   return (
     <button
+      ref={ref}
       type="button"
       className={moon ? 'look-switch look-switch-moon' : 'look-switch'}
       aria-label={moon ? 'Switch to classic' : 'Switch to Moonrise'}

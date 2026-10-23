@@ -33,6 +33,17 @@ export const TIMING = {
   },
 };
 
+/** A Moonrise download still not in after this long counts as failed. */
+export const STALL_MS = 10000;
+
+/**
+ * How long the boot holds the scramble before the lock-in may start. The
+ * lock-in overlaps the end of the hold, so 1337 is locked by the hold's end.
+ */
+export function holdMs(t: (typeof TIMING)['full'], fast: boolean): number {
+  return Math.max(0, (fast ? t.fastHold : t.moonHold) - t.lock);
+}
+
 /** Under reduced motion, "Loading…" appears once loading takes this long. */
 export const LOADING_NOTE_MS = 400;
 

@@ -19,7 +19,9 @@ vi.mock('./loadMoonrise', () => ({
   preloadMoonrise: vi.fn(),
   isMoonriseReady: () => false,
 }));
-import { loadMoonrise } from './loadMoonrise';
+
+vi.mock('./reload', () => ({ reloadInto: vi.fn() }));
+import { reloadInto } from './reload';
 
 const T = TIMING.full;
 const NONE: never[] = [];
@@ -51,19 +53,35 @@ afterEach(() => {
 
 describe('a failed Moonrise load', () => {
   it('says so, tries again, and goes back to classic', async () => {
+    // (Try again reloads the page into ?look=moon; see useLookSwitch.)
     const { container } = render(<App />);
     fireEvent.click(screen.getByRole('button', { name: 'Switch to Moonrise' }));
     await step(T.moonCover);
     expect(screen.getByRole('alert').textContent).toContain(
       "Couldn't load the night. Try again.",
     );
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Try again' }),
+    );
     fireEvent.click(screen.getByRole('button', { name: 'Try again' }));
-    await step(0);
-    expect(vi.mocked(loadMoonrise)).toHaveBeenCalledTimes(2);
+    expect(vi.mocked(reloadInto)).toHaveBeenCalledWith('moon');
     fireEvent.click(screen.getByRole('button', { name: 'Back' }));
     await step(T.uncover);
     expect(screen.queryByRole('alert')).toBeNull();
     expect(container.querySelector('.top')).not.toBeNull();
     expect(localStorage.getItem(LOOK_KEY)).toBe('classic');
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Switch to Moonrise' }),
+    );
+  });
+
+  it('keeps the page underneath out of reach while covered', async () => {
+    const { container } = render(<App />);
+    fireEvent.click(screen.getByRole('button', { name: 'Switch to Moonrise' }));
+    expect(container.querySelector('.top')!.closest('[inert]')).not.toBeNull();
+    await step(T.moonCover);
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }));
+    await step(T.uncover);
+    expect(container.querySelector('[inert]')).toBeNull();
   });
 });

@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { isMoonriseReady, loadMoonrise } from './loadMoonrise';
 import { applyLookAttr, readInitialLook, saveLook, type Look } from './look';
-import { timing } from './timing';
+import { reloadInto } from './reload';
+import { STALL_MS, holdMs, timing } from './timing';
 
 export type Phase =
   | 'idle'
@@ -11,7 +12,7 @@ export type Phase =
   | 'boot'
   /** Loaded: the scramble locks into 1337. */
   | 'lock'
-  /** The chunk failed: Try again or Back. */
+  /** The chunk failed or stalled: Try again (reload) or Back. */
   | 'failed'
   /** Back from a failure: the night shrinks into the button. */
   | 'uncover'
@@ -122,7 +123,7 @@ export function useLookSwitch() {
         });
       case 'boot':
         if (holdDone) return;
-        return after(fast ? t.fastHold : t.moonHold, () =>
+        return after(holdMs(t, fast), () =>
           setState((s) => ({ ...s, holdDone: true })),
         );
       case 'lock':
@@ -146,6 +147,20 @@ export function useLookSwitch() {
     // holdDone and fast only matter inside the boot; attempt restarts it.
   }, [phase, target, attempt, holdDone, fast, save]);
 
+  // A download that never arrives (captive portal, a dead connection) must
+  // not leave the page stuck under the night: it fails, with Back.
+  useEffect(() => {
+    if (phase !== 'boot') return;
+    const id = setTimeout(
+      () =>
+        setState((s) =>
+          s.phase === 'boot' && !s.loaded ? { ...s, loadFailed: true } : s,
+        ),
+      STALL_MS,
+    );
+    return () => clearTimeout(id);
+  }, [phase, attempt]);
+
   const switchTo = useCallback((next: Look, origin: Origin) => {
     setState((s) => {
       if (s.phase !== 'idle' || s.shown === next) return s;
@@ -167,20 +182,9 @@ export function useLookSwitch() {
     });
   }, []);
 
-  const retry = useCallback(() => {
-    setState((s) =>
-      s.phase !== 'failed'
-        ? s
-        : {
-            ...s,
-            phase: 'boot',
-            attempt: s.attempt + 1,
-            loaded: false,
-            loadFailed: false,
-            holdDone: false,
-          },
-    );
-  }, []);
+  // A failed chunk stays failed for the page's life: try again by reloading
+  // straight into the night.
+  const retry = useCallback(() => reloadInto('moon'), []);
 
   const back = () => {
     if (phase !== 'failed') return;

@@ -54,12 +54,15 @@ export default function App() {
 
   return (
     <>
-      {sw.shown === 'classic' && <ClassicLook {...desk} />}
-      {sw.shown === 'moon' && (
-        <Suspense fallback={null}>
-          <MoonriseLook {...desk} />
-        </Suspense>
-      )}
+      {/* Out of reach (keyboard, screen readers) while the curtain is up. */}
+      <div inert={busy}>
+        {sw.shown === 'classic' && <ClassicLook {...desk} />}
+        {sw.shown === 'moon' && (
+          <Suspense fallback={null}>
+            <MoonriseLook {...desk} />
+          </Suspense>
+        )}
+      </div>
       <LookSwitch
         look={sw.shown ?? sw.target}
         busy={busy}

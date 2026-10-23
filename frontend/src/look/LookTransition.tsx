@@ -101,7 +101,13 @@ export function LookTransition({
         <div className="look-failed" role="alert">
           <p>Couldn&apos;t load the night. Try again.</p>
           <span className="look-failed-actions">
-            <button type="button" className="look-failed-btn" onClick={onRetry}>
+            <button
+              type="button"
+              className="look-failed-btn"
+              onClick={onRetry}
+              // The page underneath is inert: start the keyboard here.
+              autoFocus
+            >
               Try again
             </button>
             <button type="button" className="look-failed-btn" onClick={onBack}>
