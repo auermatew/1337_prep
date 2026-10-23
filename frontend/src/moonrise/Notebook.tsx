@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DrawLayer } from '../components/DrawLayer';
 import { reducedMotion } from './clock/motion';
 import { Sheet } from './Sheet';
@@ -41,6 +41,8 @@ export function MoonNotebook({
   // A new key remounts the draw layer, which wipes it.
   const [page, setPage] = useState(0);
   const [width, setWidth] = useState(pageWidth);
+  const leafRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   // Every opening starts on the closed cover with a blank page.
   const [prevOpen, setPrevOpen] = useState(open);
@@ -63,6 +65,13 @@ export function MoonNotebook({
     );
     return () => clearTimeout(t);
   }, [open, bookOpen, closing]);
+
+  // The cover is no longer a control once open: focus moves on to Close.
+  useEffect(() => {
+    if (bookOpen && document.activeElement === leafRef.current) {
+      closeRef.current?.focus();
+    }
+  }, [bookOpen]);
 
   useEffect(() => {
     if (!bookOpen) return;
@@ -102,6 +111,7 @@ export function MoonNotebook({
               Clear
             </button>
             <button
+              ref={closeRef}
               type="button"
               className="ms-btn ms-btn-glass ms-btn-small"
               onClick={close}
@@ -133,6 +143,7 @@ export function MoonNotebook({
             />
           </div>
           <button
+            ref={leafRef}
             type="button"
             className="ms-nb-leaf"
             onClick={() => setBookOpen(true)}

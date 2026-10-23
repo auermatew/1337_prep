@@ -55,6 +55,15 @@ describe('MoonNotebook', () => {
     expect(book().classList.contains('ms-notebook-open')).toBe(true);
   });
 
+  it('hands focus from the cover to Close once it swings open', () => {
+    render(<MoonNotebook open onClose={vi.fn()} />);
+    screen.getByRole('button', { name: 'Open the notebook' }).focus();
+    act(() => vi.advanceTimersByTime(1800));
+    expect(document.activeElement).toBe(
+      screen.getByRole('button', { name: 'Close' }),
+    );
+  });
+
   it('ignores Esc', () => {
     const onClose = vi.fn();
     render(<MoonNotebook open onClose={onClose} />);
