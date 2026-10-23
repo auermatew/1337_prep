@@ -1,18 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import {
+  TRANSCRIPTS,
+  transcriptHref as href,
+  type Transcript,
+} from '../logic/transcripts';
+import { useTranscript } from '../logic/useTranscript';
 import { Dialog } from './Dialog';
 import './SideTabs.css';
 import './Transcripts.css';
-
-const TRANSCRIPTS = [
-  { title: '1337 design system', file: '1337-design-system.md', bytes: 14250 },
-  { title: 'Backend planning', file: 'backend-planning.md', bytes: 15191 },
-  { title: 'Backend build session', file: 'backend-build.md', bytes: 84326 },
-];
-
-type Transcript = (typeof TRANSCRIPTS)[number];
-type Text = { file: string; text: string } | { file: string; failed: true };
-
-const href = (t: Transcript) => `/transcripts/${t.file}`;
 
 function Download({ t }: { t: Transcript }) {
   return (
@@ -25,27 +20,7 @@ function Download({ t }: { t: Transcript }) {
 export function Transcripts() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [selected, setSelected] = useState<Transcript | null>(null);
-  const [loaded, setLoaded] = useState<Text | null>(null);
-
-  useEffect(() => {
-    if (!selected) return;
-    let alive = true;
-    fetch(href(selected))
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.text();
-      })
-      .then(
-        (text) => alive && setLoaded({ file: selected.file, text }),
-        () => alive && setLoaded({ file: selected.file, failed: true }),
-      );
-    return () => {
-      alive = false;
-    };
-  }, [selected]);
-
-  // Only show text that belongs to the transcript currently open.
-  const current = loaded && loaded.file === selected?.file ? loaded : null;
+  const current = useTranscript(selected);
   const closePreview = () => setSelected(null);
   const closeDrawer = () => {
     setSelected(null);
@@ -92,10 +67,7 @@ export function Transcripts() {
               <button
                 type="button"
                 className="link-btn"
-                onClick={() => {
-                  setLoaded(null);
-                  setSelected(t);
-                }}
+                onClick={() => setSelected(t)}
               >
                 PREVIEW
               </button>
@@ -123,12 +95,12 @@ export function Transcripts() {
           )
         }
       >
-        {current === null ? (
+        {current === null || current.status === 'loading' ? (
           <p className="hist-note">LOADING…</p>
-        ) : 'failed' in current ? (
+        ) : current.status === 'failed' ? (
           <p className="err-line">COULD NOT LOAD TRANSCRIPT</p>
         ) : (
-          <pre className="tr-text">{current.text}</pre>
+          <pre className="tr-text">{current.value}</pre>
         )}
       </Dialog>
     </>

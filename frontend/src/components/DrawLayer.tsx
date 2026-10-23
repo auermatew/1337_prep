@@ -11,7 +11,7 @@ type Point = [x: number, y: number];
 // A transparent canvas over the notebook paper. Mouse, touch and pen all
 // arrive as pointer events. Strokes live only as long as this component:
 // remount it (a new key) to wipe the page.
-export function DrawLayer() {
+export function DrawLayer({ ink = INK }: { ink?: string }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const strokes = useRef<Point[][]>([]);
   const active = useRef<{ id: number; stroke: Point[] } | null>(null);
@@ -49,14 +49,14 @@ export function DrawLayer() {
     canvas.width = Math.round(width * dpr);
     canvas.height = Math.round(height * dpr);
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.strokeStyle = INK;
+    ctx.strokeStyle = ink;
     ctx.lineWidth = LINE_WIDTH;
     ctx.lineCap = 'round';
     ctx.lineJoin = 'round';
     for (const stroke of strokes.current) {
       stroke.forEach((p, i) => segment(stroke[i - 1] ?? p, p));
     }
-  }, [context, segment]);
+  }, [context, segment, ink]);
 
   useEffect(() => {
     const canvas = ref.current;

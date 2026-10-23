@@ -1,12 +1,10 @@
-import { Fragment, memo, useMemo, useState } from 'react';
+import { Fragment, memo, useState } from 'react';
 import type { TaskDto } from '../api/types';
+import { ARCHIVE_PAGE, useArchive } from '../logic/useArchive';
 import { formatClock, formatCountdown, formatSpent } from '../time/format';
-import { archiveStats } from '../time/stats';
 import { History } from './History';
 import { TaskId } from './TaskId';
 import './Archive.css';
-
-const PAGE = 20;
 
 export const Archive = memo(function Archive({
   tasks,
@@ -15,21 +13,11 @@ export const Archive = memo(function Archive({
   tasks: TaskDto[];
   newestEventIds: Map<string, number>;
 }) {
-  const [showAll, setShowAll] = useState(false);
+  const { sorted, rows, showAll, toggleShowAll, stats } = useArchive(tasks);
   const [open, setOpen] = useState<ReadonlySet<string>>(() => new Set());
-
-  const sorted = useMemo(
-    () =>
-      [...tasks].sort(
-        (a, b) => Date.parse(b.updatedAt) - Date.parse(a.updatedAt),
-      ),
-    [tasks],
-  );
-  const stats = useMemo(() => archiveStats(tasks), [tasks]);
 
   if (sorted.length === 0) return null;
 
-  const rows = showAll ? sorted : sorted.slice(0, PAGE);
   const toggle = (id: string) =>
     setOpen((cur) => {
       const next = new Set(cur);
@@ -119,11 +107,11 @@ export const Archive = memo(function Archive({
           })}
         </tbody>
       </table>
-      {sorted.length > PAGE && (
+      {sorted.length > ARCHIVE_PAGE && (
         <button
           type="button"
           className="link-btn arc-more"
-          onClick={() => setShowAll((v) => !v)}
+          onClick={toggleShowAll}
         >
           {showAll ? 'SHOW LESS' : `SHOW ALL (${sorted.length})`}
         </button>

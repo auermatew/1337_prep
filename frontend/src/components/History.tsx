@@ -1,10 +1,6 @@
-import { useEffect, useState } from 'react';
-import { taskEvents } from '../api/client';
-import type { TaskEventDto } from '../api/types';
+import { useTaskHistory } from '../logic/useTaskHistory';
 import { formatClock } from '../time/format';
 import './History.css';
-
-type Result = { events: TaskEventDto[] } | { failed: true };
 
 export function History({
   taskId,
@@ -13,30 +9,17 @@ export function History({
   taskId: string;
   refreshKey: number | null;
 }) {
-  const [result, setResult] = useState<Result | null>(null);
+  const result = useTaskHistory(taskId, refreshKey);
 
-  useEffect(() => {
-    let alive = true;
-    taskEvents(taskId).then(
-      (events) => {
-        if (alive) setResult({ events });
-      },
-      () => {
-        if (alive) setResult({ failed: true });
-      },
-    );
-    return () => {
-      alive = false;
-    };
-  }, [taskId, refreshKey]);
-
-  if (result === null) return <p className="hist-note">LOADING…</p>;
-  if ('failed' in result) {
+  if (result.status === 'loading') {
+    return <p className="hist-note">LOADING…</p>;
+  }
+  if (result.status === 'failed') {
     return <p className="hist-note err-line">COULD NOT LOAD HISTORY</p>;
   }
   return (
     <ol className="hist">
-      {result.events.map((e) => (
+      {result.value.map((e) => (
         <li key={e.id} className="hist-row">
           <span className="hist-id">#{e.id}</span>
           <span
