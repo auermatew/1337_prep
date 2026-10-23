@@ -394,7 +394,9 @@
 }
 
 /* The archive's columns keep their widths, so opening a row's history
-   ("History" → "Hide history") never pushes State, Duration or Ended. */
+   ("History" → "Hide history") never pushes State, Duration or Ended. They
+   are fixed, slimmer on narrow screens; Name gets the rest, so names stay
+   whole words at every width. */
 @media (min-width: 641px) {
   .moonrise .ms-table {
     table-layout: fixed;
@@ -412,7 +414,25 @@
     width: 112px;
   }
   .moonrise .ms-row-name {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
+  }
+  .moonrise .ms-table .ms-id {
+    white-space: nowrap;
+  }
+}
+
+@media (min-width: 641px) and (max-width: 960px) {
+  .moonrise .ms-table th:nth-child(2) {
+    width: 80px;
+  }
+  .moonrise .ms-table th:nth-child(3) {
+    width: 56px;
+  }
+  .moonrise .ms-table th:nth-child(4) {
+    width: 72px;
+  }
+  .moonrise .ms-table th:nth-child(5) {
+    width: 96px;
   }
 }
 
@@ -608,4 +628,12 @@
 .moonrise .ms-scene:has(.ms-clock-flicker) .ms-scene-rimshade-k {
   animation: none;
   opacity: calc((1 - var(--ms-flick)) * 1.4);
+}
+
+/* The moon relights with the display: the design faded the shade back over
+   700 ms (meant for the boot scramble, which now runs on the switch curtain,
+   not the hero), so after every drop-out the moon stayed dark while the
+   digits were already lit again. */
+.moonrise .ms-scene-rimshade {
+  transition: none;
 }
