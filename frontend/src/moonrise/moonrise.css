@@ -190,3 +190,93 @@
     animation: none;
   }
 }
+
+/* ---- Sheets: native modal dialogs on strong glass ---- */
+.moonrise .ms-dialog {
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ink);
+  overflow: visible;
+  animation: ms-pop var(--dur-base) var(--ease-drift);
+}
+
+.moonrise .ms-dialog::backdrop {
+  background: rgba(5, 5, 5, 0.76);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+
+.moonrise .ms-sheet {
+  box-sizing: border-box;
+  max-height: calc(100dvh - 32px);
+  overflow: auto;
+}
+
+.moonrise .ms-sheet-transcripts {
+  width: min(640px, calc(100vw - 32px));
+}
+
+.moonrise .ms-sheet-preview {
+  width: min(880px, calc(100vw - 32px));
+}
+
+.moonrise .ms-sheet-preview .ms-sheet-body {
+  display: flex;
+  flex-direction: column;
+  height: min(620px, 70vh);
+}
+
+.moonrise .ms-sheet-preview .ms-crt {
+  flex: 1;
+}
+
+.moonrise .ms-sheet-body > .ms-note {
+  margin-bottom: var(--space-6);
+}
+
+.moonrise .ms-sheet-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.moonrise .ms-btn-small {
+  height: 36px;
+  padding: 0 16px;
+}
+
+.moonrise .ms-crt-error {
+  color: var(--alert);
+  text-shadow: none;
+}
+
+/* The draw layer lies over the whole open spread, above the 3D cover. */
+.moonrise .ms-notebook {
+  position: relative;
+}
+
+.moonrise .ms-nb-drawzone {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: calc(var(--nb-w) * 2 - var(--nb-o));
+  height: calc(var(--nb-w) * 1.5);
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.moonrise .ms-nb-drawzone.ms-nb-inking {
+  pointer-events: auto;
+}
+
+.moonrise .ms-nb-drawzone .nb-draw {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  touch-action: none;
+}

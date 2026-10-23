@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import type { DeskProps } from '../look/types';
 import { SegmentClock } from './clock/SegmentClock';
 import { MoonArchive } from './Archive';
 import { CloudFloor } from './CloudFloor';
 import { Footer } from './Footer';
+import { MoonNotebook } from './Notebook';
+import { MoonTranscripts } from './Transcripts';
 import { LiveFeed } from './LiveFeed';
 import { LiveIndicator } from './LiveIndicator';
 import { Scene } from './Scene';
@@ -31,7 +33,8 @@ export default function MoonriseLook({
   newestEventIds,
   now,
 }: DeskProps) {
-  const [, setSheet] = useState<SheetName>(null);
+  const [sheet, setSheet] = useState<SheetName>(null);
+  const closeSheet = useCallback(() => setSheet(null), []);
 
   return (
     <div className="moonrise">
@@ -83,6 +86,8 @@ export default function MoonriseLook({
           onTranscripts={() => setSheet('transcripts')}
           onNotebook={() => setSheet('notebook')}
         />
+        <MoonTranscripts open={sheet === 'transcripts'} onClose={closeSheet} />
+        <MoonNotebook open={sheet === 'notebook'} onClose={closeSheet} />
       </div>
     </div>
   );
