@@ -2,7 +2,7 @@ import { moonriseStylesApplied } from './moonriseStyles';
 
 type MoonriseModule = typeof import('../moonrise/MoonriseLook');
 
-const PHOTOS = ['/moonrise/moon.webp', '/moonrise/clouds.webp'];
+const PHOTOS = ['/moonrise/moon-cutout.webp', '/moonrise/clouds.webp'];
 const FONTS = ['700 64px Archivo', '400 15px Geist'];
 /** Fonts and photos never hold the switch longer than this. */
 const EXTRAS_CAP_MS = 8000;

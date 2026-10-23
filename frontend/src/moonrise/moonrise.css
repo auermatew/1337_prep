@@ -540,12 +540,12 @@
 }
 
 @keyframes ms-word-rise-from-clouds {
+  /* Transform only: the word starts fully behind the clouds, so it needs no
+     fade, and a pure slide is the cheapest thing to move on scroll. */
   from {
-    opacity: 0;
     transform: translateY(calc(100% + var(--ms-word-foot)));
   }
   to {
-    opacity: 1;
     transform: translateY(var(--ms-word-lift));
   }
 }
@@ -660,4 +660,59 @@
 .moonrise .ms-scene-moonlayer,
 .moonrise .ms-scene-word {
   will-change: transform;
+}
+
+/* The word is fully opaque at rest and while it rises (the generated
+   design rule starts it at opacity 0). */
+.moonrise .ms-scene-word {
+  opacity: 1;
+}
+
+/* The moon is a cut-out on transparent sky (moon-cutout.webp: the design's
+   photo with its black sky turned into transparency), so it no longer needs
+   mix-blend-mode: lighten to drop that sky. A blended layer that moves on
+   scroll is re-composited with everything behind it on every frame, which
+   made the moon and TIMER choppy in desktop Safari. */
+.moonrise .ms-scene-moonlayer {
+  mix-blend-mode: normal;
+}
+
+/* Scroll effects run on fixed scroll distances, not the visible screen
+   height. On iPhone the address bar grows and shrinks while you scroll,
+   which changes the screen height mid-scroll: effects timed against it
+   (view timelines) jumped. --ms-hero-h is the hero's height (100svh, 86svh
+   on phones), which the address bar never changes. */
+.moonrise {
+  --ms-hero-h: 100svh;
+}
+
+@media (max-width: 640px) {
+  .moonrise {
+    --ms-hero-h: 86svh;
+  }
+}
+
+@supports (animation-timeline: scroll()) {
+  /* The moon lags while the hero scrolls away: scroll 0 → the hero's
+     height. */
+  .moonrise .ms-scene-moonlayer {
+    animation-timeline: scroll(root);
+    animation-range: 0px var(--ms-hero-h);
+  }
+
+  /* TIMER rises over the first 55% of that. */
+  .moonrise .ms-scene-word:not(.ms-scene-word-static) {
+    animation-timeline: scroll(root);
+    animation-range: 0px calc(var(--ms-hero-h) * 0.55);
+  }
+
+  /* The clouds drift while they cross the screen: from when their top
+     would enter at the bottom (it starts above, so this is before scroll 0)
+     until they have scrolled out at the top. The bank's top sits at the
+     hero's height minus 76% of its own height (a third of --ms-bank). */
+  .moonrise .ms-floor-clouds {
+    animation-timeline: scroll(root);
+    animation-range: calc(var(--ms-hero-h) - var(--ms-bank) * 0.2533 - 100svh)
+      calc(var(--ms-hero-h) + var(--ms-bank) * 0.08);
+  }
 }
