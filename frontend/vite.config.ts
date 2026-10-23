@@ -30,5 +30,11 @@ export default defineConfig({
       },
     },
   },
-  test: { environment: 'jsdom', setupFiles: ['./src/test/dialog.ts'] },
+  test: {
+    environment: 'jsdom',
+    setupFiles: ['./src/test/dialog.ts'],
+    // Tests that render the whole app (both looks) can pass 5 s when the
+    // machine is busy; they take under a second on their own.
+    testTimeout: 15000,
+  },
 });

@@ -43,6 +43,15 @@ describe('MoonriseLook', () => {
     expect(container.querySelector('.ms-moon-arrive')).toBeNull();
   });
 
+  it('flanks the cloud bank with mirrored copies for wide screens', () => {
+    const { container } = render(<MoonriseLook {...deskProps()} />);
+    const bank = container.querySelector('.ms-floor-clouds .ms-bank')!;
+    expect(bank.querySelector('img')?.getAttribute('src')).toBe(
+      '/moonrise/clouds.webp',
+    );
+    expect(bank.querySelectorAll('.ms-bank-side')).toHaveLength(2);
+  });
+
   it('says the connection is live', () => {
     render(<MoonriseLook {...deskProps({ status: 'open' })} />);
     expect(screen.getByRole('status').textContent).toBe('Live');

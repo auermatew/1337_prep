@@ -422,9 +422,25 @@
    solid band between, or it shows as a straight edge across the moon. So:
    the seam sits at 76% of the bank's height, the fade starts at 86%, and the
    bank drifts only -4%…+6% on scroll (the design had 72%, 76% and -10%…+14%,
-   which let the seam slip out at some scroll positions). */
+   which let the seam slip out at some scroll positions).
+
+   The bank is --ms-bank wide (a third as tall): the screen's width, at least
+   900px, at most twice the screen's height. Past that, on ultra-wide
+   screens, it would tower over the moon; mirrored copies fill the sides. */
+.moonrise {
+  --ms-bank: max(900px, min(100vw, 200svh));
+  /* The moon photo follows the same cap: max(100%, 135% of the hero's
+     height) in the design, now never wider than twice the hero's height. */
+  --ms-moon-w: max(135cqh, min(100cqw, 200cqh));
+}
+
 .moonrise .ms-floor-clouds {
-  margin-top: calc(max(100%, 900px) * -0.2533);
+  display: block;
+  position: relative;
+  width: 100%;
+  margin-left: 0;
+  margin-top: calc(var(--ms-bank) * -0.2533);
+  transform: none;
   -webkit-mask-image: linear-gradient(
     180deg,
     #000 0%,
@@ -432,6 +448,36 @@
     transparent 100%
   );
   mask-image: linear-gradient(180deg, #000 0%, #000 86%, transparent 100%);
+}
+
+.moonrise .ms-bank {
+  position: relative;
+  width: var(--ms-bank);
+  margin-left: 50%;
+  transform: translateX(-50%);
+}
+
+.moonrise .ms-bank img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.moonrise .ms-bank-side {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/moonrise/clouds.webp') 0 0 / 100% 100% no-repeat;
+  transform: scaleX(-1);
+}
+
+.moonrise .ms-bank-left {
+  right: 100%;
+}
+
+.moonrise .ms-bank-right {
+  left: 100%;
 }
 
 @supports (animation-timeline: view()) {
@@ -442,10 +488,10 @@
 
 @keyframes ms-cloud-drift {
   from {
-    transform: translateX(-50%) translateY(6%);
+    transform: translateY(6%);
   }
   to {
-    transform: translateX(-50%) translateY(-4%);
+    transform: translateY(-4%);
   }
 }
 
@@ -455,7 +501,7 @@
    reduced motion and browsers without scroll timelines show it in place.
    On scroll it rises from fully behind the clouds into that place. */
 .moonrise .ms-scene-word {
-  --ms-word-foot: calc(max(100cqw, 900px) * 0.031);
+  --ms-word-foot: calc(var(--ms-bank) * 0.031);
   bottom: var(--ms-word-foot);
   transform: none;
 }
@@ -490,4 +536,13 @@
    in the middle instead of at the left edge. */
 .moonrise .ms-wordmark {
   text-align: center;
+}
+
+.moonrise .ms-scene-moon {
+  width: var(--ms-moon-w);
+  top: calc(var(--ms-horizon, 68) * 1cqh - var(--ms-moon-w) * 0.163);
+}
+
+.moonrise .ms-scene-rimshade {
+  --mw: var(--ms-moon-w);
 }
