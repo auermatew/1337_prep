@@ -59,3 +59,14 @@ body::after {
     transform: none;
   }
 }
+
+/* The Moonrise look owns the page ground: no paper, no classic glow or
+   grain behind it (data-look is set on <html> by src/look/look.ts). */
+html[data-look='moon'] body {
+  background: #050505;
+}
+
+html[data-look='moon'] body::before,
+html[data-look='moon'] body::after {
+  display: none;
+}

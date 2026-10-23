@@ -5,6 +5,27 @@
     <link rel="icon" href="data:," />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>1337</title>
+    <script>
+      // Mirrors readInitialLook() in src/look/look.ts: mark the page before
+      // the bundle runs, so a Moonrise visitor never sees paper flash.
+      (function () {
+        var look = new URLSearchParams(location.search).get('look');
+        if (look !== 'classic' && look !== 'moon') {
+          try {
+            look = localStorage.getItem('1337.look');
+          } catch (e) {
+            look = null;
+          }
+        }
+        document.documentElement.dataset.look =
+          look === 'moon' ? 'moon' : 'classic';
+      })();
+    </script>
+    <style>
+      html[data-look='moon'] {
+        background: #050505;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
