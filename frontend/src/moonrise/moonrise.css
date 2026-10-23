@@ -1,0 +1,192 @@
+/* The Moonrise page: its ground and layout, on top of the generated
+   component styles (moonrise.generated.css). Everything sits under
+   .moonrise, so nothing here can reach the classic look. */
+
+.moonrise {
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-size: 15px;
+  line-height: 22px;
+  -webkit-font-smoothing: antialiased;
+  background: var(--sky-0);
+}
+
+/* The classic look sets border-box on everything; Moonrise is drawn on the
+   browser's own defaults. */
+.moonrise *,
+.moonrise *::before,
+.moonrise *::after {
+  box-sizing: revert;
+}
+
+.moonrise .ms-page {
+  min-height: 100vh;
+}
+
+.moonrise .ms-wrap {
+  box-sizing: border-box;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 48px;
+  padding-right: 48px;
+}
+
+.moonrise .ms-sec-desk {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-top: 48px;
+  padding-bottom: 96px;
+}
+
+.moonrise .ms-sec-archive {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  padding-top: 72px;
+  padding-bottom: 72px;
+}
+
+.moonrise .ms-sec-archive .display-m {
+  margin: 0;
+}
+
+.moonrise .ms-desk {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: stretch;
+}
+
+.moonrise .ms-desk-cards {
+  max-height: 724px;
+  align-content: start;
+  padding-left: 4px;
+  padding-right: 12px;
+  margin-left: -4px;
+  margin-right: -12px;
+}
+
+.moonrise .ms-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.moonrise .ms-desk-feed {
+  height: 660px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.moonrise .ms-desk-feed .ms-feed {
+  flex: 1;
+  min-height: 0;
+}
+
+.moonrise .ms-desk-feed .ms-live {
+  align-self: flex-end;
+}
+
+.moonrise .ms-empty {
+  margin: 0;
+  padding: var(--space-12) 0;
+  color: var(--ink-2);
+}
+
+.moonrise .ms-page-error {
+  margin: 0;
+  font-size: 13px;
+  line-height: 18px;
+  color: var(--alert);
+}
+
+.moonrise .ms-page-foot {
+  margin-top: 48px;
+}
+
+/* Footer belt entries that open sheets are buttons, styled as the links. */
+.moonrise button.ms-belt-link {
+  font: inherit;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: clamp(15px, 2vw, 26px);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  background: none;
+  border: 0;
+  border-left: 1px solid var(--ink);
+  cursor: pointer;
+}
+
+.moonrise button.ms-belt-link:first-child {
+  border-left: 0;
+}
+
+.moonrise button.ms-belt-link:hover {
+  background: var(--ink);
+}
+
+@media (max-width: 1000px) {
+  .moonrise .ms-desk {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .moonrise .ms-desk-feed {
+    height: 440px;
+  }
+}
+
+@media (max-width: 640px) {
+  .moonrise .ms-wrap {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .moonrise .ms-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .moonrise .ms-desk-cards {
+    max-height: 584px;
+  }
+  .moonrise .ms-sec-desk,
+  .moonrise .ms-sec-archive {
+    padding-top: 48px;
+    padding-bottom: 48px;
+  }
+  .moonrise .display-m {
+    font-size: 40px;
+  }
+}
+
+@media (max-width: 560px) {
+  .moonrise button.ms-belt-link {
+    font-stretch: 100%;
+    font-size: 15px;
+  }
+}
+
+/* Cards enter by rising 24px and fading in. */
+.moonrise .ms-enter {
+  animation: ms-enter var(--dur-slow) var(--ease-drift) both;
+}
+
+@keyframes ms-enter {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+}
+
+/* Classic base.css turns every animation off under reduced motion with
+   !important. Moonrise keeps its plain exit fades there, so they need
+   !important too (the higher specificity then wins). */
+@media (prefers-reduced-motion: reduce) {
+  .moonrise .ms-exit-finished,
+  .moonrise .ms-exit-cancelled {
+    animation: ms-fade var(--dur-base) linear forwards !important;
+  }
+  .moonrise .ms-enter {
+    animation: none;
+  }
+}
