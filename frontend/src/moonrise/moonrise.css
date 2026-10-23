@@ -325,3 +325,74 @@
     flex-basis: 100%;
   }
 }
+
+/* ---- Phones ---- */
+@media (max-width: 640px) {
+  /* More of the clouds in the first screen: a wider bank, pulled up over the
+     moon's lower half. */
+  .moonrise .ms-floor-clouds {
+    width: max(100%, 1000px);
+    margin-top: calc(max(100%, 1000px) * -0.36);
+  }
+
+  /* TIMER spans most of the width, and rises from higher up: the bigger
+     cloud bank would hide it otherwise. */
+  .moonrise .ms-scene-word {
+    bottom: 24cqh;
+  }
+  .moonrise .ms-scene-word span {
+    font-size: clamp(72px, 23cqw, 260px);
+  }
+
+  /* No scroll boxes inside the page: on a touch screen they trap the swipe.
+     Cards and the feed sit in the page at their own height. */
+  .moonrise .ms-desk-cards {
+    max-height: none;
+    overflow: visible;
+    padding: 0;
+    margin: 0;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .moonrise .ms-desk-feed {
+    height: auto;
+  }
+  .moonrise .ms-feed-fill .ms-feed-list {
+    overflow: visible;
+    max-height: none;
+  }
+  /* The feed keeps its newest eight lines. */
+  .moonrise .ms-feed-line:nth-last-child(n + 9) {
+    display: none;
+  }
+}
+
+/* The horizon's glow on its own layer (it was the Scene's background), so
+   it can rise in with the moon instead of being lit before the moon is. */
+.moonrise .ms-scene {
+  background: var(--sky-0);
+}
+
+.moonrise .ms-scene-glow {
+  position: absolute;
+  inset: 0;
+  /* Under the grain (z-index -1), over the sky. */
+  z-index: -2;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse 70% 34% at 50% calc(var(--ms-horizon, 68) * 1%),
+    var(--steel) 0%,
+    var(--sky-2) 34%,
+    var(--sky-0) 66%
+  );
+}
+
+.moonrise .ms-scene:has(.ms-moon-arrive) .ms-scene-glow {
+  animation: ms-glow-arrive 2600ms cubic-bezier(0.33, 1, 0.68, 1) 300ms both;
+}
+
+@keyframes ms-glow-arrive {
+  from {
+    opacity: 0;
+  }
+}

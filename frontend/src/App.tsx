@@ -77,12 +77,14 @@ export default function App() {
         onRetry={sw.retry}
         onBack={sw.back}
       />
-      <p className="visually-hidden" aria-live="polite">
+      {/* A div, not a p: a p's default margins would add a strip under the
+          page even while it is visually hidden. */}
+      <div className="visually-hidden" aria-live="polite">
         {busy &&
           (sw.target === 'moon'
             ? 'Switching to Moonrise…'
             : 'Switching to classic…')}
-      </p>
+      </div>
     </>
   );
 }

@@ -26,6 +26,7 @@ export function Scene({
       aria-label="1337"
       style={{ '--ms-horizon': '68' } as React.CSSProperties}
     >
+      <div className="ms-scene-glow" aria-hidden="true" />
       <div className="ms-stars" aria-hidden="true">
         {stars.map((st, i) => (
           <i key={i} style={st} />

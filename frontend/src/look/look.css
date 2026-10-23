@@ -98,15 +98,10 @@
   );
 }
 
+/* Plain night: the horizon's glow belongs to the moon, so it only arrives
+   with the hero when the curtain lifts. */
 .look-curtain-moon {
-  background:
-    radial-gradient(
-      ellipse 70% 34% at 50% 68%,
-      #3c3d40 0%,
-      #1d1d1f 34%,
-      #050505 66%
-    ),
-    #050505;
+  background: #050505;
 }
 
 .look-curtain-classic {
