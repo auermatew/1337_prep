@@ -258,9 +258,13 @@ main {
     color var(--dur-fast) ease;
 }
 
-.btn:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--ink-shadow-hard-sm);
+/* Hover looks only where there is a real hover: on touch screens a tapped
+   element would keep its hover look until the next tap. */
+@media (hover: hover) {
+  .btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--ink-shadow-hard-sm);
+  }
 }
 
 .btn-ghost {
@@ -269,8 +273,10 @@ main {
   box-shadow: var(--ink-shadow-ring);
 }
 
-.btn-ghost:hover:not(:disabled) {
-  box-shadow: var(--ink-shadow-ring), var(--ink-shadow-hard-sm);
+@media (hover: hover) {
+  .btn-ghost:hover:not(:disabled) {
+    box-shadow: var(--ink-shadow-ring), var(--ink-shadow-hard-sm);
+  }
 }
 
 .btn-sm {
@@ -309,8 +315,10 @@ main {
   transition: background-size 0.3s var(--ease-1337);
 }
 
-.link-btn:hover {
-  background-size: 100% 1.5px;
+@media (hover: hover) {
+  .link-btn:hover {
+    background-size: 100% 1.5px;
+  }
 }
 
 /* Machine voice for errors: uppercase mono, one per line. */

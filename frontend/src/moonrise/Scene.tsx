@@ -9,9 +9,12 @@ export const MOON_SRC = '/moonrise/moon.webp';
 // giant word that rises between moon and clouds as the hero scrolls away.
 export function Scene({
   word,
+  flicker,
   children,
 }: {
   word?: string;
+  /** The display inside flickers: the moon's shade follows it. */
+  flicker?: boolean;
   children?: ReactNode;
 }) {
   const stars = useMemo(() => starField(), []);
@@ -22,7 +25,14 @@ export function Scene({
   );
   return (
     <section
-      className="ms-scene ms-scene-full"
+      className={[
+        'ms-scene',
+        'ms-scene-full',
+        flicker && 'ms-scene-flicker',
+        arriving && 'ms-scene-arriving',
+      ]
+        .filter(Boolean)
+        .join(' ')}
       aria-label="1337"
       style={{ '--ms-horizon': '68' } as React.CSSProperties}
     >

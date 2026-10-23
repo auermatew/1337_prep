@@ -81,9 +81,16 @@
     color var(--dur-instant) ease;
 }
 
-.arc-row:hover,
 .arc-row.open {
   background: var(--paper-sunk);
+}
+
+/* Hover looks only where there is a real hover: on touch screens a tapped
+   row would keep its hover look until the next tap. */
+@media (hover: hover) {
+  .arc-row:hover {
+    background: var(--paper-sunk);
+  }
 }
 
 .arc td.arc-name {

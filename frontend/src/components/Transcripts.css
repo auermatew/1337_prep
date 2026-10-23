@@ -29,8 +29,12 @@
   transition: background-color var(--dur-instant) ease;
 }
 
-.tr-row:hover {
-  background: var(--paper-sunk);
+/* Hover looks only where there is a real hover: on touch screens a tapped
+   element would keep its hover look until the next tap. */
+@media (hover: hover) {
+  .tr-row:hover {
+    background: var(--paper-sunk);
+  }
 }
 
 .tr-title {

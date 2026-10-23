@@ -21,9 +21,13 @@
     box-shadow var(--dur-base, 0.25s) var(--ease-1337, ease);
 }
 
-.look-switch:hover:not(:disabled) {
-  transform: translate(-2px, -2px);
-  box-shadow: var(--ink-shadow-hard-sm);
+/* Hover looks only where there is a real hover: on touch screens a tapped
+   element would keep its hover look until the next tap. */
+@media (hover: hover) {
+  .look-switch:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--ink-shadow-hard-sm);
+  }
 }
 
 .look-switch:focus-visible {
@@ -45,11 +49,13 @@
   backdrop-filter: blur(24px);
 }
 
-.look-switch-moon:hover:not(:disabled) {
-  transform: none;
-  box-shadow: none;
-  border-color: #ecedef;
-  color: #fbfbfc;
+@media (hover: hover) {
+  .look-switch-moon:hover:not(:disabled) {
+    transform: none;
+    box-shadow: none;
+    border-color: #ecedef;
+    color: #fbfbfc;
+  }
 }
 
 .look-switch-moon:focus-visible {
@@ -234,8 +240,10 @@
   cursor: pointer;
 }
 
-.look-failed-btn:hover {
-  border-color: #ecedef;
+@media (hover: hover) {
+  .look-failed-btn:hover {
+    border-color: #ecedef;
+  }
 }
 
 .look-failed-btn:focus-visible {

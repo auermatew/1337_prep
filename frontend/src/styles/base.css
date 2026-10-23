@@ -70,3 +70,12 @@ html[data-look='moon'] body::before,
 html[data-look='moon'] body::after {
   display: none;
 }
+
+/* No grey flash over buttons and links when they are tapped (iOS). */
+a,
+button,
+input,
+summary,
+[role='button'] {
+  -webkit-tap-highlight-color: transparent;
+}

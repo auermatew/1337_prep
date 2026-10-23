@@ -43,9 +43,13 @@
   background: var(--purple);
 }
 
-.side-tab:hover {
-  transform: translate(2px, -2px);
-  box-shadow: var(--ink-shadow-hard-sm);
+/* Hover looks only where there is a real hover: on touch screens a tapped
+   element would keep its hover look until the next tap. */
+@media (hover: hover) {
+  .side-tab:hover {
+    transform: translate(2px, -2px);
+    box-shadow: var(--ink-shadow-hard-sm);
+  }
 }
 
 .side-tab:focus-visible {

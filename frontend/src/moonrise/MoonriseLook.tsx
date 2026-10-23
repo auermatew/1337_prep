@@ -47,7 +47,7 @@ export default function MoonriseLook({
   return (
     <div className="moonrise">
       <div className="ms-page ms-noise">
-        <Scene word="TIMER">
+        <Scene word="TIMER" flicker>
           <SegmentClock
             value="1337"
             fluid

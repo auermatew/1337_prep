@@ -125,8 +125,12 @@
   border-left: 0;
 }
 
-.moonrise button.ms-belt-link:hover {
-  background: var(--ink);
+/* Hover looks only where there is a real hover: on touch screens a tapped
+   element would keep its hover look until the next tap. */
+@media (hover: hover) {
+  .moonrise button.ms-belt-link:hover {
+    background: var(--ink);
+  }
 }
 
 @media (max-width: 1000px) {
@@ -383,7 +387,7 @@
   );
 }
 
-.moonrise .ms-scene:has(.ms-moon-arrive) .ms-scene-glow {
+.moonrise .ms-scene-arriving .ms-scene-glow {
   animation: ms-glow-arrive 2600ms cubic-bezier(0.33, 1, 0.68, 1) 300ms both;
 }
 
@@ -522,8 +526,11 @@
    On scroll it rises from fully behind the clouds into that place. */
 .moonrise .ms-scene-word {
   --ms-word-foot: calc(var(--ms-bank) * 0.031);
+  /* Lifted a third of its height: the cloud tops at its ends (under the T
+     and the R) stand higher than the dip, and would hide half the letter. */
+  --ms-word-lift: -34%;
   bottom: var(--ms-word-foot);
-  transform: none;
+  transform: translateY(var(--ms-word-lift));
 }
 
 @supports (animation-timeline: view()) {
@@ -539,7 +546,7 @@
   }
   to {
     opacity: 1;
-    transform: none;
+    transform: translateY(var(--ms-word-lift));
   }
 }
 
@@ -578,7 +585,7 @@
   initial-value: 1;
 }
 
-.moonrise .ms-scene:has(.ms-clock-flicker) {
+.moonrise .ms-scene-flicker {
   animation: ms-flick 6.5s steps(1) infinite;
 }
 
@@ -625,7 +632,7 @@
 
 /* The shade over the moon's top darkens as the display dims: 0.82 → 0.25,
    0.7 → 0.42, the design's pairs. */
-.moonrise .ms-scene:has(.ms-clock-flicker) .ms-scene-rimshade-k {
+.moonrise .ms-scene-flicker .ms-scene-rimshade-k {
   animation: none;
   opacity: calc((1 - var(--ms-flick)) * 1.4);
 }
@@ -636,4 +643,21 @@
    digits were already lit again. */
 .moonrise .ms-scene-rimshade {
   transition: none;
+}
+
+/* The mirrored cloud copies only exist where the bank stops short of the
+   screen's edges (wider than 2:1). Elsewhere they would only widen the
+   filtered, masked, moving layer three times over, which Safari pays for on
+   every scroll frame. */
+@media (max-aspect-ratio: 2/1) {
+  .moonrise .ms-bank-side {
+    display: none;
+  }
+}
+
+/* Layers that move on scroll keep their own compositing layer. */
+.moonrise .ms-floor-clouds,
+.moonrise .ms-scene-moonlayer,
+.moonrise .ms-scene-word {
+  will-change: transform;
 }

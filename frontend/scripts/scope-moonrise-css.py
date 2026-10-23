@@ -83,9 +83,18 @@ def convert(items, top, keyframes, imports):
         if any(s.startswith('html') or s == 'body' for s in sels):
             continue
         sels = [s for s in sels if not CLOCK.match(s)]
+        # The flicker's link to the moon is a class the hero sets
+        # (.ms-scene-flicker, moonrise.css); :has() rules here would outrank
+        # it and cost Safari a re-check on every change inside the hero.
+        sels = [s for s in sels if ':has(' not in s]
         if not sels:
             continue
-        out.append(f'{scope(",".join(sels))} {{{body}}}')
+        rule = f'{scope(",".join(sels))} {{{body}}}'
+        # Hover looks only where there is a real hover: on touch screens a
+        # tapped element would keep its hover look until the next tap.
+        if ':hover' in pre:
+            rule = f'@media (hover: hover) {{\n{rule}\n}}'
+        out.append(rule)
     return '\n'.join(out)
 
 tokens, bundle = (open(p).read() for p in sys.argv[1:3])
