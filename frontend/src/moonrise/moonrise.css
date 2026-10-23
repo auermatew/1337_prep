@@ -396,3 +396,26 @@
     opacity: 0;
   }
 }
+
+/* The archive's columns keep their widths, so opening a row's history
+   ("History" → "Hide history") never pushes State, Duration or Ended. */
+@media (min-width: 641px) {
+  .moonrise .ms-table {
+    table-layout: fixed;
+  }
+  .moonrise .ms-table th:nth-child(2) {
+    width: 132px;
+  }
+  .moonrise .ms-table th:nth-child(3) {
+    width: 112px;
+  }
+  .moonrise .ms-table th:nth-child(4) {
+    width: 120px;
+  }
+  .moonrise .ms-table th:nth-child(5) {
+    width: 112px;
+  }
+  .moonrise .ms-row-name {
+    overflow-wrap: anywhere;
+  }
+}
