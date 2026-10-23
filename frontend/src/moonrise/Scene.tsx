@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { starField } from './clock/stars';
 
-export const MOON_SRC = '/moonrise/moon-cutout.webp';
+export const MOON_SRC = '/moonrise/moon.webp';
 
 // The hero: black sky with a steel glow on the horizon, stars, the moon
 // photograph rising from the bottom edge, the 1337 display above it, and a

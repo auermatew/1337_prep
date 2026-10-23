@@ -668,15 +668,6 @@
   opacity: 1;
 }
 
-/* The moon is a cut-out on transparent sky (moon-cutout.webp: the design's
-   photo with its black sky turned into transparency), so it no longer needs
-   mix-blend-mode: lighten to drop that sky. A blended layer that moves on
-   scroll is re-composited with everything behind it on every frame, which
-   made the moon and TIMER choppy in desktop Safari. */
-.moonrise .ms-scene-moonlayer {
-  mix-blend-mode: normal;
-}
-
 /* Scroll effects run on fixed scroll distances, not the visible screen
    height. On iPhone the address bar grows and shrinks while you scroll,
    which changes the screen height mid-scroll: effects timed against it
