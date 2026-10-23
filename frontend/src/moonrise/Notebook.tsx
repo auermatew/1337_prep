@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { DrawLayer } from '../components/DrawLayer';
+import { lastClickWasPointer } from '../look/inputModality';
 import { reducedMotion } from './clock/motion';
+import { COVER_SRC, NOTEBOOK_IMAGES, PAPER_SRC, preloadImages } from './images';
 import { pageWidth } from './pageWidth';
 import { paperClip } from './paperMask';
 import { Sheet } from './Sheet';
 
-export const COVER_SRC = '/moonrise/cover.webp';
-export const PAPER_SRC = '/moonrise/paper.webp';
 const INK = '#ff2a1f';
 /** The closed cover is held this long so its text can be read. */
 const HOLD_MS = 1800;
@@ -31,6 +31,9 @@ export function MoonNotebook({
   // A new key remounts the draw layer, which wipes it.
   const [page, setPage] = useState(0);
   const [width, setWidth] = useState(() => pageWidth());
+  // The cover, the paper and the handwriting are all in before the book
+  // shows, so it never opens on a half-loaded page.
+  const [ready, setReady] = useState(false);
   const leafRef = useRef<HTMLButtonElement>(null);
   const closeRef = useRef<HTMLButtonElement>(null);
   const [paper, setPaper] = useState<HTMLImageElement | null>(null);
@@ -51,17 +54,31 @@ export function MoonNotebook({
   }
 
   useEffect(() => {
-    if (!open || bookOpen || closing) return;
+    if (!open) return;
+    let alive = true;
+    preloadImages(NOTEBOOK_IMAGES).then(() => alive && setReady(true));
+    return () => {
+      alive = false;
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (!open || !ready || bookOpen || closing) return;
     const t = setTimeout(
       () => setBookOpen(true),
       reducedMotion() ? 0 : HOLD_MS,
     );
     return () => clearTimeout(t);
-  }, [open, bookOpen, closing]);
+  }, [open, ready, bookOpen, closing]);
 
-  // The cover is no longer a control once open: focus moves on to Close.
+  // The cover is no longer a control once open: a keyboard user's focus
+  // moves on to Close. After a tap or click there is no focus to move.
   useEffect(() => {
-    if (bookOpen && document.activeElement === leafRef.current) {
+    if (
+      bookOpen &&
+      document.activeElement === leafRef.current &&
+      !lastClickWasPointer()
+    ) {
       closeRef.current?.focus();
     }
   }, [bookOpen]);
@@ -116,7 +133,13 @@ export function MoonNotebook({
       }
     >
       <div
-        className={bookOpen ? 'ms-notebook ms-notebook-open' : 'ms-notebook'}
+        className={[
+          'ms-notebook',
+          bookOpen && 'ms-notebook-open',
+          !ready && 'ms-notebook-loading',
+        ]
+          .filter(Boolean)
+          .join(' ')}
         style={{ '--nb-w': `${width}px` } as React.CSSProperties}
       >
         <div className="ms-nb-book">

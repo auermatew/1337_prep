@@ -1,9 +1,10 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import type { DeskProps } from '../look/types';
 import { SegmentClock } from './clock/SegmentClock';
 import { MoonArchive } from './Archive';
 import { CloudFloor } from './CloudFloor';
 import { Footer } from './Footer';
+import { NOTEBOOK_IMAGES, preloadImages } from './images';
 import { MoonNotebook } from './Notebook';
 import { MoonTranscripts } from './Transcripts';
 import { LiveFeed } from './LiveFeed';
@@ -35,6 +36,13 @@ export default function MoonriseLook({
 }: DeskProps) {
   const [sheet, setSheet] = useState<SheetName>(null);
   const closeSheet = useCallback(() => setSheet(null), []);
+
+  // Warm the notebook's images once the hero has settled, so opening it
+  // later shows them at once.
+  useEffect(() => {
+    const id = setTimeout(() => void preloadImages(NOTEBOOK_IMAGES), 2500);
+    return () => clearTimeout(id);
+  }, []);
 
   return (
     <div className="moonrise">

@@ -20,6 +20,8 @@ vi.mock('./loadMoonrise', () => ({
   isMoonriseReady: () => false,
 }));
 
+import { loadMoonrise } from './loadMoonrise';
+
 vi.mock('./reload', () => ({ reloadInto: vi.fn() }));
 import { reloadInto } from './reload';
 
@@ -73,6 +75,26 @@ describe('a failed Moonrise load', () => {
     expect(document.activeElement).toBe(
       screen.getByRole('button', { name: 'Switch to Moonrise' }),
     );
+  });
+
+  it('leaves focus alone after a tap or click, so no ring stays behind', async () => {
+    vi.mocked(loadMoonrise).mockImplementationOnce(() =>
+      Promise.reject(new Error('chunk')),
+    );
+    render(<App />);
+    // A pointer click carries a click count; a keyboard press has none.
+    fireEvent.click(
+      screen.getByRole('button', { name: 'Switch to Moonrise' }),
+      {
+        detail: 1,
+      },
+    );
+    await step(T.moonCover);
+    fireEvent.click(screen.getByRole('button', { name: 'Back' }), {
+      detail: 1,
+    });
+    await step(T.uncover);
+    expect(document.activeElement).toBe(document.body);
   });
 
   it('keeps the page underneath out of reach while covered', async () => {

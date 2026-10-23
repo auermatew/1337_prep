@@ -335,11 +335,7 @@
     height: 86svh;
   }
 
-  /* TIMER spans most of the width, and rises from higher up: the bigger
-     cloud bank would hide it otherwise. */
-  .moonrise .ms-scene-word {
-    bottom: 24cqh;
-  }
+  /* TIMER spans most of the width. */
   .moonrise .ms-scene-word span {
     font-size: clamp(72px, 23cqw, 260px);
   }
@@ -451,4 +447,47 @@
   to {
     transform: translateX(-50%) translateY(-4%);
   }
+}
+
+/* TIMER rests where it ends up: in front of the moon, its foot tucked into
+   the clouds' dip (the dip is solid from 11% of the bank's height above the
+   hero's bottom; the bank is max(100%, 900px) wide and a third as tall). So
+   reduced motion and browsers without scroll timelines show it in place.
+   On scroll it rises from fully behind the clouds into that place. */
+.moonrise .ms-scene-word {
+  --ms-word-foot: calc(max(100cqw, 900px) * 0.031);
+  bottom: var(--ms-word-foot);
+  transform: none;
+}
+
+@supports (animation-timeline: view()) {
+  .moonrise .ms-scene-word:not(.ms-scene-word-static) {
+    animation-name: ms-word-rise-from-clouds;
+  }
+}
+
+@keyframes ms-word-rise-from-clouds {
+  from {
+    opacity: 0;
+    transform: translateY(calc(100% + var(--ms-word-foot)));
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* The notebook fades in once its images are in. */
+.moonrise .ms-notebook {
+  transition: opacity 500ms ease;
+}
+
+.moonrise .ms-notebook-loading {
+  opacity: 0;
+}
+
+/* The footer wordmark stops growing at 420px: on very wide screens it sits
+   in the middle instead of at the left edge. */
+.moonrise .ms-wordmark {
+  text-align: center;
 }

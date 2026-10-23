@@ -254,3 +254,14 @@
     animation: look-fade-out var(--lt-ms) linear both !important;
   }
 }
+
+/* On phones the hero is 86% of the screen (see moonrise.css): the curtain's
+   clock keeps to the same box, 90% of that height, so the hand-off to the
+   hero clock stays seamless. */
+@media (max-width: 640px) {
+  .look-clock {
+    inset: 0 0 auto 0;
+    height: 77.4vh;
+    height: 77.4svh;
+  }
+}

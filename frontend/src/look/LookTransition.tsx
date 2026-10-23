@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { SegmentClock } from '../moonrise/clock/SegmentClock';
 import { reducedMotion } from '../moonrise/clock/motion';
 import { starField } from '../moonrise/clock/stars';
+import { lastClickWasPointer } from './inputModality';
 import type { Look } from './look';
 import { LOADING_NOTE_MS, timing } from './timing';
 import type { Origin, Phase } from './useLookSwitch';
@@ -106,7 +107,7 @@ export function LookTransition({
               className="look-failed-btn"
               onClick={onRetry}
               // The page underneath is inert: start the keyboard here.
-              autoFocus
+              autoFocus={!lastClickWasPointer()}
             >
               Try again
             </button>

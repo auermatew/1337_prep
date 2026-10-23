@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import type { MouseEvent } from 'react';
+import { lastClickWasPointer } from './inputModality';
 import { preloadMoonrise } from './loadMoonrise';
 import type { Look } from './look';
 import type { Origin } from './useLookSwitch';
@@ -48,10 +49,12 @@ export function LookSwitch({
   const wasBusy = useRef(busy);
 
   // The button is disabled during a switch, which drops its focus: give it
-  // back when the switch is over, unless focus has gone somewhere else.
+  // back to keyboard users when the switch is over, unless focus has gone
+  // somewhere else. After a tap or click there is nothing to give back.
   useEffect(() => {
     const active = document.activeElement;
-    if (wasBusy.current && !busy && (!active || active === document.body)) {
+    const lost = !active || active === document.body;
+    if (wasBusy.current && !busy && lost && !lastClickWasPointer()) {
       ref.current?.focus();
     }
     wasBusy.current = busy;

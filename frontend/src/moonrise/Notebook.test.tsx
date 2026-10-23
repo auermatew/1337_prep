@@ -7,6 +7,12 @@ import {
 } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { MoonNotebook } from './Notebook';
+
+vi.mock('./images', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('./images')>()),
+  preloadImages: vi.fn(() => Promise.resolve()),
+}));
+import { preloadImages } from './images';
 import { pageWidth } from './pageWidth';
 
 const ctx = {
@@ -33,6 +39,13 @@ afterEach(() => {
 
 const book = () => document.querySelector('.ms-notebook')!;
 const canvas = () => screen.getByLabelText('Drawing layer');
+
+// Render, then let the (mocked, instant) image preload settle.
+async function show(ui: React.ReactElement) {
+  const result = render(ui);
+  await act(async () => {});
+  return result;
+}
 
 function draw() {
   fireEvent.pointerDown(canvas(), {
@@ -61,8 +74,23 @@ describe('pageWidth', () => {
 });
 
 describe('MoonNotebook', () => {
-  it('opens on the cover, then swings open by itself', () => {
+  it('waits for its images before it shows and starts swinging open', async () => {
+    let done!: () => void;
+    vi.mocked(preloadImages).mockReturnValueOnce(
+      new Promise<void>((r) => (done = r)),
+    );
     render(<MoonNotebook open onClose={vi.fn()} />);
+    expect(book().classList.contains('ms-notebook-loading')).toBe(true);
+    act(() => vi.advanceTimersByTime(3000));
+    expect(book().classList.contains('ms-notebook-open')).toBe(false);
+    await act(async () => done());
+    expect(book().classList.contains('ms-notebook-loading')).toBe(false);
+    act(() => vi.advanceTimersByTime(1800));
+    expect(book().classList.contains('ms-notebook-open')).toBe(true);
+  });
+
+  it('opens on the cover, then swings open by itself', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
     expect(
       screen.getByRole('button', { name: 'Open the notebook' }),
     ).toBeTruthy();
@@ -71,14 +99,14 @@ describe('MoonNotebook', () => {
     expect(book().classList.contains('ms-notebook-open')).toBe(true);
   });
 
-  it('opens at once when the cover is clicked', () => {
-    render(<MoonNotebook open onClose={vi.fn()} />);
+  it('opens at once when the cover is clicked', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
     fireEvent.click(screen.getByRole('button', { name: 'Open the notebook' }));
     expect(book().classList.contains('ms-notebook-open')).toBe(true);
   });
 
-  it('hands focus from the cover to Close once it swings open', () => {
-    render(<MoonNotebook open onClose={vi.fn()} />);
+  it('hands focus from the cover to Close once it swings open', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
     screen.getByRole('button', { name: 'Open the notebook' }).focus();
     act(() => vi.advanceTimersByTime(1800));
     expect(document.activeElement).toBe(
@@ -86,18 +114,18 @@ describe('MoonNotebook', () => {
     );
   });
 
-  it('ignores Esc', () => {
+  it('ignores Esc', async () => {
     const onClose = vi.fn();
-    render(<MoonNotebook open onClose={onClose} />);
+    await show(<MoonNotebook open onClose={onClose} />);
     const dialog = screen.getByRole('dialog', { name: 'Notebook' });
     fireEvent.keyDown(dialog, { key: 'Escape' });
     fireEvent(dialog, new Event('cancel', { cancelable: true }));
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('swings shut on Close and goes after 2.3 s', () => {
+  it('swings shut on Close and goes after 2.3 s', async () => {
     const onClose = vi.fn();
-    render(<MoonNotebook open onClose={onClose} />);
+    await show(<MoonNotebook open onClose={onClose} />);
     act(() => vi.advanceTimersByTime(1800));
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
     expect(book().classList.contains('ms-notebook-open')).toBe(false);
@@ -107,8 +135,8 @@ describe('MoonNotebook', () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it('draws in red over the whole spread once open', () => {
-    render(<MoonNotebook open onClose={vi.fn()} />);
+  it('draws in red over the whole spread once open', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
     expect(canvas().closest('.ms-nb-drawzone')).not.toBeNull();
     expect(
       canvas().closest('.ms-nb-drawzone')!.classList.contains('ms-nb-inking'),
@@ -122,8 +150,8 @@ describe('MoonNotebook', () => {
     expect(canvas().getAttribute('data-strokes')).toBe('1');
   });
 
-  it('keeps the ink on the paper', () => {
-    render(<MoonNotebook open onClose={vi.fn()} />);
+  it('keeps the ink on the paper', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
     act(() => vi.advanceTimersByTime(1800));
     act(() => vi.advanceTimersByTime(1100));
     vi.mocked(ctx.save).mockClear();
@@ -131,8 +159,8 @@ describe('MoonNotebook', () => {
     expect(ctx.save).toHaveBeenCalled();
   });
 
-  it('clears the drawing', () => {
-    render(<MoonNotebook open onClose={vi.fn()} />);
+  it('clears the drawing', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
     act(() => vi.advanceTimersByTime(1800));
     act(() => vi.advanceTimersByTime(1100));
     draw();
@@ -140,9 +168,9 @@ describe('MoonNotebook', () => {
     expect(canvas().getAttribute('data-strokes')).toBe('0');
   });
 
-  it('starts blank after closing and reopening', () => {
+  it('starts blank after closing and reopening', async () => {
     const onClose = vi.fn();
-    const { rerender } = render(<MoonNotebook open onClose={onClose} />);
+    const { rerender } = await show(<MoonNotebook open onClose={onClose} />);
     act(() => vi.advanceTimersByTime(1800));
     act(() => vi.advanceTimersByTime(1100));
     draw();
