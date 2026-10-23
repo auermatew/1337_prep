@@ -1,0 +1,123 @@
+/* The Moonrise seven-segment display. In the main bundle: the switch overlay
+   draws it before the Moonrise chunk arrives. Its colours live on the clock
+   itself, so it renders outside the .moonrise root too. */
+.ms-clock {
+  --signal: #ff2a1f;
+  --signal-dim: #7a120d;
+  --signal-ghost: rgba(255, 42, 31, 0.07);
+  --clock-ink-3: rgba(236, 237, 239, 0.56);
+  --clock-line: rgba(255, 255, 255, 0.08);
+  --k: 1;
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 0;
+  max-width: 100%;
+}
+.ms-clock svg {
+  display: block;
+  overflow: visible;
+  flex: none;
+}
+.ms-seg-off {
+  fill: var(--signal-ghost);
+}
+.ms-seg-on {
+  fill: var(--signal);
+}
+.ms-clock-lit {
+  animation: ms-breathe 4s ease-in-out infinite;
+}
+.ms-clock-fluid {
+  display: flex;
+  width: 100%;
+}
+.ms-clock-blinkcolon rect {
+  animation: ms-blink 1s steps(1) infinite;
+}
+.ms-clock-flash svg {
+  animation: ms-flash 320ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.ms-clock-flicker svg {
+  animation: ms-flicker 6.5s steps(1) infinite;
+}
+.ms-clock-dip svg {
+  opacity: 0.55;
+  animation: none;
+}
+.ms-clock-urgent .ms-clock-lit {
+  animation: ms-urgent 1s steps(1) infinite;
+}
+.ms-clock-dim .ms-seg-on {
+  fill: var(--clock-ink-3);
+}
+.ms-clock-dim .ms-seg-off {
+  fill: var(--clock-line);
+}
+.ms-clock-dim .ms-clock-lit {
+  animation: none;
+}
+@keyframes ms-breathe {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes ms-blink {
+  50% {
+    opacity: 0.12;
+  }
+}
+@keyframes ms-urgent {
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes ms-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  31% {
+    opacity: 0.82;
+  }
+  31.6% {
+    opacity: 1;
+  }
+  58% {
+    opacity: 0.9;
+  }
+  58.4% {
+    opacity: 0.7;
+  }
+  59% {
+    opacity: 1;
+  }
+  83% {
+    opacity: 0.86;
+  }
+  83.5% {
+    opacity: 1;
+  }
+}
+@keyframes ms-flash {
+  0% {
+    filter: brightness(1.9);
+  }
+  100% {
+    filter: brightness(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ms-clock-lit,
+  .ms-clock-blinkcolon rect,
+  .ms-clock-flash svg,
+  .ms-clock-urgent .ms-clock-lit,
+  .ms-clock-flicker svg {
+    animation: none !important;
+  }
+}
