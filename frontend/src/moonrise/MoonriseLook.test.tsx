@@ -31,6 +31,18 @@ describe('MoonriseLook', () => {
     expect(within(hero).getByText('TIMER')).toBeTruthy();
   });
 
+  it('lets the moon rise into place right after a switch', () => {
+    document.documentElement.setAttribute('data-arriving', '');
+    const { container } = render(<MoonriseLook {...deskProps()} />);
+    document.documentElement.removeAttribute('data-arriving');
+    expect(container.querySelector('.ms-moon-arrive')).not.toBeNull();
+  });
+
+  it('keeps the moon still on a plain render', () => {
+    const { container } = render(<MoonriseLook {...deskProps()} />);
+    expect(container.querySelector('.ms-moon-arrive')).toBeNull();
+  });
+
   it('says the connection is live', () => {
     render(<MoonriseLook {...deskProps({ status: 'open' })} />);
     expect(screen.getByRole('status').textContent).toBe('Live');

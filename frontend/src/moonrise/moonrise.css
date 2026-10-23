@@ -280,3 +280,15 @@
   cursor: crosshair;
   touch-action: none;
 }
+
+/* Right after a switch the moon rises the last stretch into place. On the
+   photo, with `translate`, so it composes with the layer's scroll parallax. */
+.moonrise .ms-moon-arrive .ms-scene-moon {
+  animation: ms-moon-arrive 1200ms var(--ease-drift) both;
+}
+
+@keyframes ms-moon-arrive {
+  from {
+    translate: 0 12%;
+  }
+}

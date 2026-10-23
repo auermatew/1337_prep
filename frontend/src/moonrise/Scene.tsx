@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import type { ReactNode } from 'react';
 import { starField } from './clock/stars';
 
@@ -9,15 +9,17 @@ export const MOON_SRC = '/moonrise/moon.webp';
 // giant word that rises between moon and clouds as the hero scrolls away.
 export function Scene({
   word,
-  arriving,
   children,
 }: {
   word?: string;
-  /** Just switched in: the moon rises the last stretch into place. */
-  arriving?: boolean;
   children?: ReactNode;
 }) {
   const stars = useMemo(() => starField(), []);
+  // Mounted by a look switch (data-arriving, set by useLookSwitch): the moon
+  // rises the last stretch into place as the curtain fades.
+  const [arriving] = useState(() =>
+    document.documentElement.hasAttribute('data-arriving'),
+  );
   return (
     <section
       className="ms-scene"

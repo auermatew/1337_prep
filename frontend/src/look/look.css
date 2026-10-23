@@ -1,0 +1,235 @@
+/* The look switch: its corner button and the curtain between the looks.
+   In the main bundle, so it works before the Moonrise chunk arrives. */
+
+.look-switch {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 900;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: var(--ink);
+  color: var(--paper);
+  cursor: pointer;
+  transition:
+    transform var(--dur-base, 0.25s) var(--ease-1337, ease),
+    box-shadow var(--dur-base, 0.25s) var(--ease-1337, ease);
+}
+
+.look-switch:hover:not(:disabled) {
+  transform: translate(-2px, -2px);
+  box-shadow: var(--ink-shadow-hard-sm);
+}
+
+.look-switch:focus-visible {
+  outline: 2px solid var(--purple);
+  outline-offset: 3px;
+}
+
+.look-switch:disabled {
+  cursor: progress;
+}
+
+/* In the night: frosted glass, a silver sun. */
+.look-switch-moon {
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 12px;
+  background: rgba(22, 22, 24, 0.5);
+  color: #d3d5d9;
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+}
+
+.look-switch-moon:hover:not(:disabled) {
+  transform: none;
+  box-shadow: none;
+  border-color: #ecedef;
+  color: #fbfbfc;
+}
+
+.look-switch-moon:focus-visible {
+  outline-color: #ecedef;
+}
+
+@media (max-width: 599px) {
+  .look-switch {
+    right: 16px;
+    bottom: 16px;
+  }
+}
+
+/* ---- The curtain ---- */
+.look-curtain {
+  --lt-r: 150vmax;
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.look-curtain-moon {
+  background:
+    radial-gradient(
+      ellipse 70% 34% at 50% 68%,
+      #3c3d40 0%,
+      #1d1d1f 34%,
+      #050505 66%
+    ),
+    #050505;
+}
+
+.look-curtain-classic {
+  background: var(--paper);
+}
+
+/* Covered phases block the page underneath. */
+.look-phase-boot,
+.look-phase-lock,
+.look-phase-failed {
+  pointer-events: auto;
+}
+
+.look-phase-cover {
+  animation: look-grow var(--lt-ms) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.look-phase-uncover {
+  animation: look-grow var(--lt-ms) cubic-bezier(0.22, 1, 0.36, 1) reverse both;
+}
+
+.look-phase-reveal {
+  animation: look-fade-out var(--lt-ms) cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes look-grow {
+  from {
+    clip-path: circle(0 at var(--lt-x) var(--lt-y));
+  }
+  to {
+    clip-path: circle(var(--lt-r) at var(--lt-x) var(--lt-y));
+  }
+}
+
+@keyframes look-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes look-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.look-stars {
+  position: absolute;
+  inset: 0;
+  animation: look-fade-in 600ms ease both;
+}
+
+.look-stars i {
+  position: absolute;
+  border-radius: 50%;
+  background: #ecedef;
+}
+
+/* Same box as the hero's .ms-scene-content > .ms-clock, so the hand-off to
+   the hero clock is seamless. */
+.look-clock {
+  position: absolute;
+  inset: 0 0 10% 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 max(16px, 6vw);
+  animation: look-fade-in 240ms ease both;
+}
+
+.look-clock > .ms-clock {
+  width: min(90%, 760px);
+}
+
+.look-note {
+  position: absolute;
+  inset: auto 0 45% 0;
+  margin: 0;
+  text-align: center;
+  font:
+    400 15px/22px Geist,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  color: rgba(236, 237, 239, 0.72);
+}
+
+.look-failed {
+  position: fixed;
+  z-index: 1001;
+  left: 0;
+  right: 0;
+  bottom: 24%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
+  text-align: center;
+  font:
+    400 15px/22px Geist,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  color: #f2b84b;
+}
+
+.look-failed p {
+  margin: 0;
+}
+
+.look-failed-actions {
+  display: flex;
+  gap: 24px;
+}
+
+.look-failed-btn {
+  height: 44px;
+  padding: 0 24px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 12px;
+  background: rgba(22, 22, 24, 0.5);
+  color: #ecedef;
+  font:
+    500 15px/22px Geist,
+    'Helvetica Neue',
+    Arial,
+    sans-serif;
+  cursor: pointer;
+}
+
+.look-failed-btn:hover {
+  border-color: #ecedef;
+}
+
+.look-failed-btn:focus-visible {
+  outline: 2px solid #ecedef;
+  outline-offset: 3px;
+}
+
+/* Reduced motion: fades only. Classic base.css turns every animation and
+   transition off with !important, so these carry it too. */
+@media (prefers-reduced-motion: reduce) {
+  .look-curtain.look-reduced.look-phase-cover {
+    animation: look-fade-in var(--lt-ms) linear both !important;
+  }
+  .look-curtain.look-reduced.look-phase-uncover,
+  .look-curtain.look-reduced.look-phase-reveal {
+    animation: look-fade-out var(--lt-ms) linear both !important;
+  }
+}
