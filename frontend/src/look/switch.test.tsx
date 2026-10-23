@@ -20,6 +20,9 @@ import { deskProps, task } from '../test/desk';
 import { loadMoonrise } from './loadMoonrise';
 import { TIMING } from './timing';
 
+// jsdom does not apply the chunk's CSS; the probe is checked in a browser.
+vi.mock('./moonriseStyles', () => ({ moonriseStylesApplied: () => true }));
+
 vi.mock('../stream/useTaskStream', () => ({ useTaskStream: vi.fn() }));
 import { useTaskStream } from '../stream/useTaskStream';
 

@@ -1,3 +1,5 @@
+import { moonriseStylesApplied } from './moonriseStyles';
+
 type MoonriseModule = typeof import('../moonrise/MoonriseLook');
 
 const PHOTOS = ['/moonrise/moon.webp', '/moonrise/clouds.webp'];
@@ -28,8 +30,11 @@ function dropChunkLinks(): void {
 // Loads a chunk (its JS and CSS), then its fonts and the hero photos, once.
 // Only the chunk can fail the load; fonts and photos are waited for at most
 // EXTRAS_CAP_MS and may still pop in. After a failure the next load starts
-// over.
-export function createMoonriseLoader<M>(importer: () => Promise<M>) {
+// over. A chunk whose styles did not arrive counts as failed.
+export function createMoonriseLoader<M>(
+  importer: () => Promise<M>,
+  stylesApplied: () => boolean = moonriseStylesApplied,
+) {
   let pending: Promise<M> | null = null;
   let ready = false;
 
@@ -37,6 +42,7 @@ export function createMoonriseLoader<M>(importer: () => Promise<M>) {
     if (!pending) {
       const photos = Promise.all(PHOTOS.map((src) => settle(decode(src))));
       const attempt = importer().then(async (mod) => {
+        if (!stylesApplied()) throw new Error('Moonrise styles did not load');
         // The fonts are declared by the chunk's stylesheet, now in the page.
         const fonts = Promise.all(
           FONTS.map((f) => settle(document.fonts?.load(f))),

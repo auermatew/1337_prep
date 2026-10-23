@@ -18,7 +18,7 @@ function failedLink(href: string) {
 describe('createMoonriseLoader', () => {
   it('imports once for many calls', async () => {
     const importer = vi.fn(() => Promise.resolve(MOD));
-    const loader = createMoonriseLoader(importer);
+    const loader = createMoonriseLoader(importer, () => true);
     await Promise.all([loader.load(), loader.load()]);
     expect(importer).toHaveBeenCalledTimes(1);
     expect(loader.isReady()).toBe(true);
@@ -29,7 +29,7 @@ describe('createMoonriseLoader', () => {
       .fn<() => Promise<typeof MOD>>()
       .mockRejectedValueOnce(new Error('chunk'))
       .mockResolvedValue(MOD);
-    const loader = createMoonriseLoader(importer);
+    const loader = createMoonriseLoader(importer, () => true);
     await expect(loader.load()).rejects.toThrow('chunk');
     expect(loader.isReady()).toBe(false);
     await expect(loader.load()).resolves.toBe(MOD);
@@ -45,6 +45,17 @@ describe('createMoonriseLoader', () => {
       l.getAttribute('href'),
     );
     expect(hrefs).toEqual(['/assets/index-xyz.css']);
+  });
+
+  it('fails when the chunk arrives without its styles', async () => {
+    // A server that answers a missing stylesheet with index.html (SPA
+    // fallback) lets the import resolve with nothing styled.
+    failedLink('/assets/MoonriseLook-abc123.css');
+    const importer = vi.fn(() => Promise.resolve(MOD));
+    const loader = createMoonriseLoader(importer, () => false);
+    await expect(loader.load()).rejects.toThrow('styles');
+    expect(document.head.querySelector('link')).toBeNull();
+    expect(loader.isReady()).toBe(false);
   });
 
   it('cleans up after a failed preload too', async () => {
@@ -63,7 +74,10 @@ describe('createMoonriseLoader', () => {
       value: fonts,
       configurable: true,
     });
-    const loader = createMoonriseLoader(() => Promise.resolve(MOD));
+    const loader = createMoonriseLoader(
+      () => Promise.resolve(MOD),
+      () => true,
+    );
     let done = false;
     void loader.load().then(() => (done = true));
     await vi.advanceTimersByTimeAsync(7999);
