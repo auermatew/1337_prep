@@ -14,15 +14,8 @@ import {
   layout,
   points,
 } from './segments';
+import { reducedMotion } from './motion';
 import './clock.css';
-
-export function reducedMotion(): boolean {
-  try {
-    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  } catch {
-    return false;
-  }
-}
 
 export interface SegmentClockProps {
   /** Digits, plus colons for countdowns. Default "1337" (a word: no colon). */
