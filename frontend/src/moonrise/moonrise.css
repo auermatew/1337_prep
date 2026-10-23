@@ -292,3 +292,11 @@
     translate: 0 12%;
   }
 }
+
+/* The cloud layer is at least 900px wide: clip it sideways so phones never
+   scroll horizontally. clip (not hidden) keeps it from becoming a scroll
+   container, so the clouds still overlap the moon above and their view
+   timeline still follows the page. */
+.moonrise .ms-floor {
+  overflow-x: clip;
+}
