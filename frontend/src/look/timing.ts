@@ -6,20 +6,20 @@ import { lockInMs } from '../moonrise/clock/segments';
 // animations off with !important, so those events may never fire.
 export const TIMING = {
   full: {
-    /** Night grows as a circle from the moon button. */
-    moonCover: 800,
+    /** Night grows as a soft-edged circle from the moon button. */
+    moonCover: 1100,
     /** Least time the 1337 scramble runs while Moonrise loads. */
     moonHold: 1200,
     /** The same, when chunk, fonts and photos are already loaded. */
     fastHold: 500,
     /** The scramble locking into 1337, digit by digit. */
     lock: lockInMs(4),
-    /** The overlay fades off the hero. */
-    moonReveal: 800,
-    classicCover: 600,
-    classicReveal: 300,
+    /** The overlay fades off the hero while the moon rises. */
+    moonReveal: 1600,
+    classicCover: 900,
+    classicReveal: 600,
     /** Back after a failed load: the night shrinks into the button. */
-    uncover: 800,
+    uncover: 1000,
   },
   reduced: {
     moonCover: 150,

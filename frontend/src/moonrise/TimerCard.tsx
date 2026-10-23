@@ -17,6 +17,7 @@ export function TimerCard({
   onChanged,
   newestEventId,
   glow,
+  order = 0,
 }: {
   task: TaskDto;
   now: number;
@@ -26,6 +27,8 @@ export function TimerCard({
   newestEventId: number | null;
   /** The countdown's bloom; off when many timers run. */
   glow: boolean;
+  /** Place on the desk: cards appear one after another. */
+  order?: number;
 }) {
   const { cancel, cancelling, locked, problem } = useCancelTask(
     task,
@@ -62,7 +65,11 @@ export function TimerCard({
   ].join(' ');
 
   return (
-    <article className={className} aria-label={`${task.name}, ${stateWord}`}>
+    <article
+      className={className}
+      aria-label={`${task.name}, ${stateWord}`}
+      style={{ '--ms-enter-i': String(order) } as React.CSSProperties}
+    >
       <header className="ms-timer-head">
         <div className="ms-timer-title">
           <h3 className="ms-timer-name">{task.name}</h3>

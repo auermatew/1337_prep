@@ -130,6 +130,14 @@ describe('MoonriseLook cards', () => {
     expect(screen.queryByText('Nothing running')).toBeNull();
   });
 
+  it('lets the cards appear one after another', () => {
+    render(<MoonriseLook {...deskProps({ onDesk: many(3) })} />);
+    const order = screen
+      .getAllByRole('article')
+      .map((a) => a.style.getPropertyValue('--ms-enter-i'));
+    expect(order).toEqual(['0', '1', '2']);
+  });
+
   it('drops the card glow above 20 timers', () => {
     const { container, unmount } = render(
       <MoonriseLook {...deskProps({ onDesk: many(20) })} />,

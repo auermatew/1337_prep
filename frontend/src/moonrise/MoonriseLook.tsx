@@ -61,9 +61,10 @@ export default function MoonriseLook({
                 <p className="display-s ms-empty">Nothing running</p>
               ) : (
                 <div className="ms-cards ms-scroll ms-scroll-fade ms-desk-cards">
-                  {onDesk.map((t) => (
+                  {onDesk.map((t, i) => (
                     <TimerCard
                       key={t.id}
+                      order={i}
                       task={t}
                       now={now}
                       departing={departing.has(t.id)}
