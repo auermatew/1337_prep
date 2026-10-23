@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { DeskProps } from '../look/types';
 import { SegmentClock } from './clock/SegmentClock';
+import { MoonArchive } from './Archive';
 import { CloudFloor } from './CloudFloor';
 import { Footer } from './Footer';
 import { LiveFeed } from './LiveFeed';
@@ -20,6 +21,7 @@ const GLOW_LIMIT = 20;
 
 export default function MoonriseLook({
   onDesk,
+  ended,
   departing,
   log,
   status,
@@ -76,6 +78,7 @@ export default function MoonriseLook({
             </div>
           </section>
         </CloudFloor>
+        <MoonArchive ended={ended} newestEventIds={newestEventIds} />
         <Footer
           onTranscripts={() => setSheet('transcripts')}
           onNotebook={() => setSheet('notebook')}
