@@ -271,10 +271,15 @@
   height: calc(var(--nb-w) * 1.5);
   transform: translateX(-50%);
   pointer-events: none;
+  /* It lies flat over the 3D cover, so the cover can't hide it: on Close the
+     ink fades out, and only then does the cover swing (INK_FADE_MS). */
+  opacity: 0;
+  transition: opacity 250ms ease;
 }
 
 .moonrise .ms-nb-drawzone.ms-nb-inking {
   pointer-events: auto;
+  opacity: 1;
 }
 
 .moonrise .ms-nb-drawzone .nb-draw {

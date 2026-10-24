@@ -12,7 +12,9 @@ const INK = '#ff2a1f';
 const HOLD_MS = 1800;
 /** The cover's turn; drawing starts once the spread lies open. */
 const TURN_MS = 1100;
-/** Close: the cover swings shut, rests, then the sheet goes. */
+/** Close: the ink fades out first (the draw zone's CSS transition). */
+const INK_FADE_MS = 250;
+/** Then the cover swings shut, rests, and the sheet goes. */
 const SHUT_MS = 2300;
 
 // The handwritten notebook: closed on its cover, then the cover swings open
@@ -84,20 +86,26 @@ export function MoonNotebook({
   }, [bookOpen]);
 
   useEffect(() => {
-    if (!bookOpen) return;
+    if (!bookOpen || closing) return;
     const t = setTimeout(() => setInking(true), reducedMotion() ? 0 : TURN_MS);
     return () => clearTimeout(t);
-  }, [bookOpen]);
+  }, [bookOpen, closing]);
 
+  // The ink lies flat over the 3D cover, so the cover can't hide it: it is
+  // gone before the cover starts to swing shut.
   useEffect(() => {
     if (!closing) return;
-    const t = setTimeout(onClose, reducedMotion() ? 0 : SHUT_MS);
-    return () => clearTimeout(t);
+    const fade = reducedMotion() ? 0 : INK_FADE_MS;
+    const shut = setTimeout(() => setBookOpen(false), fade);
+    const done = setTimeout(onClose, fade + (reducedMotion() ? 0 : SHUT_MS));
+    return () => {
+      clearTimeout(shut);
+      clearTimeout(done);
+    };
   }, [closing, onClose]);
 
   const close = () => {
     if (closing) return;
-    setBookOpen(false);
     setInking(false);
     setClosing(true);
   };

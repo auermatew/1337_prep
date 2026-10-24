@@ -123,16 +123,31 @@ describe('MoonNotebook', () => {
     expect(onClose).not.toHaveBeenCalled();
   });
 
-  it('swings shut on Close and goes after 2.3 s', async () => {
+  it('fades the ink on Close, then swings shut and goes 2.3 s later', async () => {
     const onClose = vi.fn();
     await show(<MoonNotebook open onClose={onClose} />);
     act(() => vi.advanceTimersByTime(1800));
+    act(() => vi.advanceTimersByTime(1100));
+    const zone = canvas().closest('.ms-nb-drawzone')!;
     fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    expect(zone.classList.contains('ms-nb-inking')).toBe(false);
+    expect(book().classList.contains('ms-notebook-open')).toBe(true);
+    act(() => vi.advanceTimersByTime(250));
     expect(book().classList.contains('ms-notebook-open')).toBe(false);
     act(() => vi.advanceTimersByTime(2299));
     expect(onClose).not.toHaveBeenCalled();
     act(() => vi.advanceTimersByTime(1));
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it('never starts inking once Close is pressed mid-turn', async () => {
+    await show(<MoonNotebook open onClose={vi.fn()} />);
+    act(() => vi.advanceTimersByTime(1800));
+    fireEvent.click(screen.getByRole('button', { name: 'Close' }));
+    act(() => vi.advanceTimersByTime(1100));
+    expect(
+      canvas().closest('.ms-nb-drawzone')!.classList.contains('ms-nb-inking'),
+    ).toBe(false);
   });
 
   it('draws in red over the whole spread once open', async () => {
