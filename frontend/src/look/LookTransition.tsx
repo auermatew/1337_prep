@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { CSSProperties } from 'react';
 import { SegmentClock } from '../moonrise/clock/SegmentClock';
 import { reducedMotion } from '../moonrise/clock/motion';
-import { starField } from '../moonrise/clock/stars';
+import { lowSky, starField } from '../moonrise/clock/stars';
 import { lastClickWasPointer } from './inputModality';
 import type { Look } from './look';
 import { LOADING_NOTE_MS, timing } from './timing';
@@ -26,7 +26,7 @@ export function LookTransition({
   onBack: () => void;
 }) {
   const reduced = reducedMotion();
-  const stars = useMemo(() => starField(), []);
+  const stars = useMemo(() => [...starField(), ...lowSky()], []);
   const [slow, setSlow] = useState(false);
 
   // Reduced motion has no scramble: say "Loading…" once it takes a while.
